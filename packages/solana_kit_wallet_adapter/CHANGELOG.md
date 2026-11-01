@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## wallet [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.3.1) (2026-11-01)
+
+### Fixes
+
+- **Verify browser wallet signing results.** Reject unverified browser wallet signing results. Check result counts, verify Ed25519 signatures, bind signed transactions and messages to their requests, validate every supplied sign-in challenge field and authorized account, and preserve offchain content and required signers. Copy request bytes before passing them to JavaScript so wallet providers cannot mutate the original request. _Owner:_ Ifiok Jr. · _Introduced in:_ [1448d3f](https://github.com/openbudgetfun/solana_kit/commit/1448d3f848348dec4e08b78e44c81fe1bafa05a1)
+- **Bind native SIWS proofs to the requested challenge.** Reject mobile Sign In With Solana proofs unless the signed bytes match the canonical message for the requested challenge and authorized account. This binds the nonce, origin, requested address, timestamps, request ID, and ordered resources, preventing valid signatures over stale or unrelated messages from satisfying a new request. Preserve trailing whitespace in SIWS field values so canonical serialization cannot collapse distinct challenges. _Owner:_ Ifiok Jr. · _Introduced in:_ [3d4f171](https://github.com/openbudgetfun/solana_kit/commit/3d4f171219d990605df88dfc9377d401a26c92a2)
+
 ## wallet [0.1.0](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.1.0) (2026-08-30)
 
 ### 💥 Breaking Change

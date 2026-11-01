@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Allow binary fixed-points whose fractionalBits exceed totalBits.** Ports the change from `@solana/fixed-points` v8.5.0 (#2102): binary fixed-point shapes where `fractionalBits` exceeds `totalBits` are now valid — e.g. an unsigned 8-bit value with 12 fractional bits represents values in `[0, 1/16)` — consistently with decimal fixed-points whose `decimals` may already exceed their `totalBits`. Values whose raw form does not fit in `totalBits` bits still fail the existing range checks. _Owner:_ Ifiok Jr. · _Introduced in:_ [253a913](https://github.com/openbudgetfun/solana_kit/commit/253a9130ef81c0dd25e822fdcecebad7508a01cf)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

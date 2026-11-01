@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Throw the address-scoped error for non-base58 address characters.** `assertIsAddress` validated string length and decoded byte count with dedicated `SolanaErrorCode`s, but a string in range whose characters fall outside the base58 alphabet leaked the codec's own error instead. That input now throws `SolanaErrorCode.addressesInvalidBase58EncodedAddress` with the `putativeAddress` context and the codec failure as its cause, matching the upstream `@solana/kit` error contract. `isAddress` still returns false for the same input. _Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

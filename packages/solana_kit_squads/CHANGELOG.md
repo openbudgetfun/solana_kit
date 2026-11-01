@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Repair corrupted README documentation sections.** Five package READMEs carried a mangled documentation region: a duplicated Installation section with an unfilled `^` version placeholder, a stray `:::` container marker, and an orphaned `packageDocumentationSection` closing tag with no opening tag. The sections now match the mdt consumer-block structure the rest of the workspace uses, so `mdt check` passes with validators that flag unmatched tags (mdt 0.9.6+) and the published READMEs no longer show two conflicting Installation sections. _Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

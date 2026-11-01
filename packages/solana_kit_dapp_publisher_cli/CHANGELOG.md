@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## solana_kit_dapp_publisher_cli [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_dapp_publisher_cli/v0.4.0) (2026-11-01)
+
+### Breaking changes
+
+#### Validate the complete intent of portal publication transactions
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [4459480](https://github.com/openbudgetfun/solana_kit/commit/4459480176305b1d1f7cd4366f6e4f4d7f146add)
+
+Require complete local intent validation before signing portal transactions. Release minting now checks the exact CreateV1/MintV1 sequence, metadata name and URI, token recipient, supply, authorities, account privileges and derived addresses. Collection verification checks the exact Verify(CollectionV1) instruction. Reject extra or altered instructions, lookup tables, v1 messages and excessive priority fees.
+
+`ReleaseMintValidation` now requires `expectedName` and `expectedMetadataUri`. Calling `signPreparedTransaction` without validation throws before signing. Only the documented publication instruction templates are accepted.
+
+```dart
+ReleaseMintValidation(
+  expectedBlockhash: prepared.blockhash,
+  expectedFeePayerAddress: payerAddress,
+  expectedSignerAddress: publisherAddress,
+  expectedMintAddress: prepared.mintAddress,
+  expectedAppMintAddress: appMintAddress,
+  expectedName: releaseName,
+  expectedMetadataUri: releaseMetadataUri,
+);
+```
+
 ## solana_kit_dapp_publisher_cli [0.1.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_dapp_publisher_cli/v0.1.0) (2026-09-06)
 
 ### 💥 Breaking Change

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## solana_kit_integration_tests [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_integration_tests/v0.3.1) (2026-11-01)
+
+### Fixes
+
+- **Reject incorrect instruction discriminators and trailing bytes.** Reject incorrect instruction discriminators and trailing bytes in the remaining legacy generated instruction data decoders and named parsers. Preserve their existing data classes, encoder APIs, and decoder size metadata. Add regression coverage for instruction classification, truncated input, and nonzero decoder offsets. _Owner:_ Ifiok Jr. · _Introduced in:_ [ed8882e](https://github.com/openbudgetfun/solana_kit/commit/ed8882e603d58d4d8def43d8578d4f87a4086fad)
+
 ## solana_kit_integration_tests [0.0.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_integration_tests/v0.0.1) (2026-08-18)
 
 ### 🚀 Feature

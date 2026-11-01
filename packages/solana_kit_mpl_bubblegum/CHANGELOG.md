@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## solana_kit_mpl_bubblegum [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.7.1) (2026-11-01)
+
+### Fixes
+
+- **Reject DAS responses with missing proof and compression fields.** `HeliusDasClient` silently defaulted missing DAS fields — a proof without `node_index` decoded as index zero, a missing `tree_id` as an empty tree address, a missing `leaf_id` as nonce zero — and those values flow directly into the leaf hash, nonce, and index of Bubblegum transfer and mint instructions, producing plausible on-chain garbage. The asset and proof parsers now throw `FormatException` naming the missing field for `id`, `ownership.owner`, `ownership.frozen`, every core `compression` field (`compressed`, `data_hash`, `creator_hash`, `asset_hash`, `tree`, `seq`, `leaf_id`), every `getAssetProof` field (`root`, `proof`, `node_index`, `leaf`, `tree_id`), and each creator's `address`/`share`/`verified`. Genuinely optional DAS companions (delegate, `non_transferable`, royalty and raw leaf fields, `collection_hash`, `asset_data_hash`, `flags`, content) still parse leniently. _Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+- **Reject incorrect instruction discriminators and trailing bytes.** Reject incorrect instruction discriminators and trailing bytes in the remaining legacy generated instruction data decoders and named parsers. Preserve their existing data classes, encoder APIs, and decoder size metadata. Add regression coverage for instruction classification, truncated input, and nonzero decoder offsets. _Owner:_ Ifiok Jr. · _Introduced in:_ [ed8882e](https://github.com/openbudgetfun/solana_kit/commit/ed8882e603d58d4d8def43d8578d4f87a4086fad)
+
 ## solana_kit_mpl_bubblegum [0.2.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.2.0) (2026-05-30)
 
 ### 💥 Breaking Change

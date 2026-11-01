@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Zero expanded-key intermediates after key generation and signing.** `KeyPair.dispose` zeroes the stored seed, but `generateKeyPair`, `signBytes`, and `getPublicKeyFromPrivateKey` each derived a fresh 64-byte expanded key — seed plus public key — and left it unzeroed on the heap until garbage collection. All three now zero the expanded key (and the seed copy) in a `finally` block, so the only surviving copy of key material lives in objects whose lifetime the caller controls. _Owner:_ Ifiok Jr. · _Introduced in:_ [ad4d903](https://github.com/openbudgetfun/solana_kit/commit/ad4d903443f06270c48a9ad135ad416147b020ae)
+- **Use trusted system permissions during key export.** Use an absolute system path for chmod during key pair export so an inherited PATH cannot substitute an executable. Preserve private staging directory and key file permissions. _Owner:_ Ifiok Jr. · _Introduced in:_ [f5511db](https://github.com/openbudgetfun/solana_kit/commit/f5511db86d75f6d90aec21c99d1d4f397252c954)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

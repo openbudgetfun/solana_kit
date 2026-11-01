@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Bound untrusted inbound transport payloads.** Add configurable inbound limits of 16 MiB, 64 JSON container levels, and one million JSON tokens. HTTP responses stop streaming on overflow, including when Content-Length is absent or understated, and custom decoders receive only bounded JSON. WebSocket channels close with application code 4009 on message or paused-listener queue overflow; queues default to 128 messages and 16 MiB per listener. Local and remote wallet sessions bound binary and base64 frames before copying or decrypting, validate decrypted JSON before parsing, and release session keys when a rejected frame closes the session. _Owner:_ Ifiok Jr. · _Introduced in:_ [f240282](https://github.com/openbudgetfun/solana_kit/commit/f240282055735bd5694832f94d7d8f6a905d5960)
+- **Correct the release-mode lockdown wording in transport docs.** The HTTP transport's insecure-scheme guard uses `dart.vm.product`, which is true in release builds but not in Flutter profile builds; the code comment claimed "release/profile mode". The comment (and the matching WebSocket one) now says release (product) builds, matching the enforced behavior and `SECURITY.md`. _Owner:_ Ifiok Jr. · _Introduced in:_ [ad4d903](https://github.com/openbudgetfun/solana_kit/commit/ad4d903443f06270c48a9ad135ad416147b020ae)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes
