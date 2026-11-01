@@ -282,6 +282,19 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Free disk space
+        run: |
+          # Coverage compiles every package's tests into kernel files under the
+          # runner's small root volume. Reclaim the preinstalled toolchains this
+          # job never uses so compilation does not exhaust the disk mid-run.
+          sudo rm -rf \
+            /usr/local/lib/android \
+            /usr/share/dotnet \
+            /opt/ghc \
+            /opt/hostedtoolcache/CodeQL \
+            /usr/local/share/boost
+          sudo apt-get clean
+          df -h /
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
