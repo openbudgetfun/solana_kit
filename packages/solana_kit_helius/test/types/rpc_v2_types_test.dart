@@ -88,10 +88,20 @@ void main() {
     test('transaction request and response include optional fields', () {
       const request = GetTransactionsForAddressRequest(
         address: 'address-1',
-        before: 'sig-before',
-        until: 'sig-until',
+        transactionDetails: 'signatures',
         limit: 5,
         commitment: CommitmentLevel.confirmed,
+        paginationToken: 'page-1',
+        sortOrder: 'desc',
+        filters: GetTransactionsForAddressFilters(
+          status: 'succeeded',
+          tokenTransfer: TokenTransferFilter(
+            withAddress: 'counterparty',
+            direction: 'out',
+            mint: 'mint-1',
+            amount: TransferComparisonFilter(gte: 1),
+          ),
+        ),
       );
       final requestJson = request.toJson();
       final parsedRequest = GetTransactionsForAddressRequest.fromJson(
@@ -99,24 +109,29 @@ void main() {
       );
 
       expect(parsedRequest.address, 'address-1');
-      expect(parsedRequest.before, 'sig-before');
-      expect(parsedRequest.until, 'sig-until');
+      expect(parsedRequest.transactionDetails, 'signatures');
       expect(parsedRequest.limit, 5);
       expect(parsedRequest.commitment, CommitmentLevel.confirmed);
+      expect(parsedRequest.paginationToken, 'page-1');
+      expect(parsedRequest.sortOrder, 'desc');
+      expect(parsedRequest.filters!.tokenTransfer!.withAddress, 'counterparty');
       expect(parsedRequest.toJson(), requestJson);
 
       final responseJson = {
-        'transactions': [
+        'data': [
           {
             'signature': 'sig-1',
             'slot': 123,
+            'transactionIndex': 1,
             'blockTime': 456,
             'err': {
               'InstructionError': [0, 'Custom'],
             },
             'memo': 'memo text',
+            'confirmationStatus': 'confirmed',
           },
         ],
+        'paginationToken': 'next',
       };
       final response = GetTransactionsForAddressResponse.fromJson(responseJson);
 
@@ -124,7 +139,29 @@ void main() {
       expect(response.transactions.single.err, {
         'InstructionError': [0, 'Custom'],
       });
+      expect(response.paginationToken, 'next');
       expect(response.toJson(), responseJson);
+    });
+
+    test('full transaction entries parse from data', () {
+      final response = GetTransactionsForAddressResponse.fromJson({
+        'data': [
+          {
+            'slot': 12,
+            'transactionIndex': 3,
+            'transaction': {
+              'signatures': ['sig'],
+            },
+            'meta': {'fee': 5000},
+          },
+        ],
+      });
+
+      final entry = response.data.single as TransactionForAddressFull;
+      expect(entry.slot, 12);
+      expect(entry.transactionIndex, 3);
+      expect(entry.meta, {'fee': 5000});
+      expect(response.transactions, isEmpty);
     });
 
     test(

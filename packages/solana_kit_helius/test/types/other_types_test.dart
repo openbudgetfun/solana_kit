@@ -233,10 +233,15 @@ void main() {
       'GetTransactionsForAddressRequest roundtrips',
       {
         'address': 'owner-1',
-        'before': 'sig-before',
-        'until': 'sig-until',
+        'transactionDetails': 'signatures',
         'limit': 10,
         'commitment': 'processed',
+        'filters': {
+          'tokenTransfer': {
+            'mint': 'mint-1',
+            'direction': 'in',
+          },
+        },
       },
       GetTransactionsForAddressRequest.fromJson,
       (value) => value.toJson(),
@@ -250,9 +255,10 @@ void main() {
     expectJsonRoundTrip(
       'GetTransactionsForAddressResponse roundtrips',
       {
-        'transactions': [
+        'data': [
           {'signature': 'sig-1', 'slot': 10, 'blockTime': 123456},
         ],
+        'paginationToken': 'next',
       },
       GetTransactionsForAddressResponse.fromJson,
       (value) => value.toJson(),

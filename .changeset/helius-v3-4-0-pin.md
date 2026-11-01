@@ -1,12 +1,18 @@
 ---
-"solana_kit_helius": patch
+"solana_kit_helius": minor
 ---
 
 # Track `helius-labs/helius-sdk` `v3.4.0`
 
-The reference pin advances from `v3.3.0` to `v3.4.0`, with two behavioral fixes ported to the Dart port:
+The reference pin advances from `v3.3.0` to `v3.4.0`, and the previously deferred v3 surfaces are ported:
 
-- `getAllTokenAccountsByOwner` now accepts both page shapes the endpoint returns: the flat shape (accounts and cursor at the top level, sent with `withContext`) and the value-wrapped shape (accounts under `value`, cursor as `paginationKey` next to it). The port previously parsed only the flat shape, which is not what the live endpoint returns by default.
-- The DAS `HeliusAssetInterface` enum now uses the corrected `LEGACY_NFT` wire value and gains the `MplCoreGroup` and `MplBubblegumV2` interfaces (#373).
+- **Parsed Events REST API** — `helius.parsedEvents` exposes `parseTransactions`, `getTransactionHistory`, and the new `scan` endpoint, with typed requests/responses, manual pagination, program/instruction/mint match filters, and a mainnet-only guard.
+- **Parsed Streams WebSocket client** — `helius.parsedStreams` subscribes to decoded transactions with program/instruction/account-role filters and `full`/`matched`/`raw` details, reconnects and resubscribes automatically, reports the last delivered slot, and exposes `describeProgram`.
+- **Preconfirmation filters, slot events, and coverage** — `preconfSubscribe` accepts server-side filters and `{slots: true}`, slot bank lifecycle frames decode as `PreconfSlotNotification`, and `getPreConfCoverage` reads the HTTPS coverage endpoint. Each subscription now uses its own connection, matching the upstream design.
+- **`kitRpc` and MEV Protect** — `HeliusClient.kitRpc` exposes a standard `solana_kit_rpc` client over the Helius transport, and `HeliusConfig.mevProtect` (plus per-call Sender overrides) appends `mev-protect=true`.
+- **Broadcast expiry re-check** — `broadcastTransaction` now polls to landing with an expiry derived from the latest blockhash and chain height, performing one final status read after the expiry height before throwing.
+- **`getTransactionsForAddress` filters** — the request models the full v3 filter surface, including `filters.tokenTransfer`, and responses parse the live `{data, paginationToken}` shape.
+- **DAS fixes** — `getAllTokenAccountsByOwner` accepts both page shapes, and the DAS `HeliusAssetInterface` enum uses the corrected `LEGACY_NFT` wire value with `MplCoreGroup` and `MplBubblegumV2`.
+- **Staking constants** — `stakingU64Max` and `lamportsPerSolBigInt` expose the upstream `BigInt` constants.
 
-The remaining v3.4.0 changes are new surfaces (the parsed-events `scan` endpoint, `kitRpc` exposure, preconfirmation filters) and fixes to surfaces the Dart port does not implement; they are tracked for follow-up ports in `docs/agents/upstream-audit-solana_kit_helius-v3.4.0.md`.
+The changeset is minor because the new clients and request fields are additive, while `GetTransactionsForAddressRequest` moves from the inaccurate `before`/`until` fields to the upstream `paginationToken` and `filters` shape.

@@ -79,6 +79,9 @@ class JsonReader {
   /// or null if absent / null.
   double? optDouble(String key) => (_json[key] as num?)?.toDouble();
 
+  /// Returns the [num] value for [key], or null if absent / null.
+  num? optNum(String key) => _json[key] as num?;
+
   /// Returns the raw [Map<String, Object?>] for [key], or null if absent /
   /// null.
   Map<String, Object?>? optMap(String key) =>
@@ -112,6 +115,14 @@ class JsonReader {
     final raw = _json[key];
 
     if (raw == null) return null;
+    return decoder(raw as Map<String, Object?>);
+  }
+
+  /// Returns a required typed value decoded by [decoder].
+  T requireDecoded<T>(String key, T Function(Map<String, Object?>) decoder) {
+    final raw = _json[key];
+
+    if (raw == null) _missing(key);
     return decoder(raw as Map<String, Object?>);
   }
 
