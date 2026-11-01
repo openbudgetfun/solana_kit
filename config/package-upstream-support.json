@@ -8,6 +8,15 @@
       "versionAxis": "package",
       "runs": [
         {
+          "from": "0.6.1",
+          "to": "0.6.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "address-lookup-table": "js@v0.16.0"
+          }
+        },
+        {
           "from": "0.6.0",
           "to": "0.6.0",
           "released": "2026-10-12",
@@ -71,9 +80,9 @@
       "runs": [
         {
           "from": "0.4.0",
-          "to": "0.9.0",
+          "to": "0.9.1",
           "released": "2026-05-30",
-          "releasedTo": "2026-10-12",
+          "releasedTo": "2026-11-01",
           "pins": {
             "associated-token-account": "program@v8.0.0"
           }
@@ -88,9 +97,9 @@
       "runs": [
         {
           "from": "0.1.0",
-          "to": "0.3.0",
+          "to": "0.3.1",
           "released": "2026-09-12",
-          "releasedTo": "2026-10-12",
+          "releasedTo": "2026-11-01",
           "pins": {
             "solana-attestation-service": "5b64cf09843d62ca800f7d73f8438ad3505de70e"
           }
@@ -103,6 +112,15 @@
       ],
       "versionAxis": "package",
       "runs": [
+        {
+          "from": "0.10.1",
+          "to": "0.10.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "compute-budget": "js@v0.20.0"
+          }
+        },
         {
           "from": "0.10.0",
           "to": "0.10.0",
@@ -167,9 +185,9 @@
       "runs": [
         {
           "from": "0.1.0",
-          "to": "0.4.0",
+          "to": "0.4.1",
           "released": "2026-06-01",
-          "releasedTo": "2026-10-12",
+          "releasedTo": "2026-11-01",
           "pins": {
             "config": "solana-config-program-client@v1.1.0"
           }
@@ -182,6 +200,15 @@
       ],
       "versionAxis": "package",
       "runs": [
+        {
+          "from": "0.8.1",
+          "to": "0.8.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "helius-sdk": "v3.4.0"
+          }
+        },
         {
           "from": "0.7.0",
           "to": "0.8.0",
@@ -218,6 +245,16 @@
       ],
       "versionAxis": "package",
       "runs": [
+        {
+          "from": "0.6.1",
+          "to": "0.6.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "loader-v3": "js@v0.8.0",
+            "loader-v4": "76f8ce27d3bcb7492e5adb83c6eae8b5a6d2ee39"
+          }
+        },
         {
           "from": "0.6.0",
           "to": "0.6.0",
@@ -296,6 +333,15 @@
       ],
       "versionAxis": "package",
       "runs": [
+        {
+          "from": "0.6.1",
+          "to": "0.6.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "memo": "js@v0.16.0"
+          }
+        },
         {
           "from": "0.6.0",
           "to": "0.6.0",
@@ -377,6 +423,15 @@
       "versionAxis": "package",
       "runs": [
         {
+          "from": "0.7.1",
+          "to": "0.7.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "mobile-wallet-adapter": "@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.1"
+          }
+        },
+        {
           "from": "0.7.0",
           "to": "0.7.0",
           "released": "2026-10-12",
@@ -420,6 +475,15 @@
       ],
       "versionAxis": "package",
       "runs": [
+        {
+          "from": "0.7.1",
+          "to": "0.7.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "mobile-wallet-adapter": "@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.1"
+          }
+        },
         {
           "from": "0.7.0",
           "to": "0.7.0",
@@ -466,9 +530,9 @@
       "runs": [
         {
           "from": "0.7.0",
-          "to": "0.7.0",
+          "to": "0.7.1",
           "released": "2026-10-12",
-          "releasedTo": "2026-10-12",
+          "releasedTo": "2026-11-01",
           "pins": {
             "mpl-bubblegum": "release/bubblegum@2.0.0"
           }
@@ -535,9 +599,9 @@
       "runs": [
         {
           "from": "0.3.1",
-          "to": "0.6.0",
+          "to": "0.6.1",
           "released": "2026-08-12",
-          "releasedTo": "2026-10-12",
+          "releasedTo": "2026-11-01",
           "pins": {
             "account-compression": "ac-mainnet-tag"
           }
@@ -576,6 +640,15 @@
       ],
       "versionAxis": "package",
       "runs": [
+        {
+          "from": "0.7.1",
+          "to": "0.7.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "stake": "js@v0.11.0"
+          }
+        },
         {
           "from": "0.7.0",
           "to": "0.7.0",
@@ -649,9 +722,9 @@
       "runs": [
         {
           "from": "0.1.1",
-          "to": "0.4.0",
+          "to": "0.4.1",
           "released": "2026-08-18",
-          "releasedTo": "2026-10-12",
+          "releasedTo": "2026-11-01",
           "pins": {
             "subscriptions": "ts-client-v0.5.0"
           }
@@ -673,6 +746,15 @@
       ],
       "versionAxis": "package",
       "runs": [
+        {
+          "from": "0.9.1",
+          "to": "0.9.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "system": "js@v0.16.0"
+          }
+        },
         {
           "from": "0.9.0",
           "to": "0.9.0",
@@ -736,6 +818,15 @@
       "versionAxis": "package",
       "runs": [
         {
+          "from": "0.10.1",
+          "to": "0.10.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "token": "js@v0.18.0"
+          }
+        },
+        {
           "from": "0.10.0",
           "to": "0.10.0",
           "released": "2026-10-12",
@@ -797,6 +888,15 @@
       ],
       "versionAxis": "package",
       "runs": [
+        {
+          "from": "0.10.1",
+          "to": "0.10.1",
+          "released": "2026-11-01",
+          "releasedTo": "2026-11-01",
+          "pins": {
+            "token-2022": "js@v0.20.0"
+          }
+        },
         {
           "from": "0.10.0",
           "to": "0.10.0",
