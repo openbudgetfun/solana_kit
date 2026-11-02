@@ -1804,10 +1804,13 @@ pre.code code {
     position: fixed;
     top: var(--header-height);
     left: 0;
-    bottom: 0;
     z-index: 25;
     width: min(19rem, 85vw);
-    height: auto;
+    height: calc(100vh - var(--header-height));
+    height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 1.5rem 1.25rem 3rem;
     border-right: 2px solid var(--ink);
     background: var(--paper);
