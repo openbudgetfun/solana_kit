@@ -82,11 +82,11 @@
       "url": "https://github.com/solana-program/token-2022",
       "ref": {
         "type": "tag",
-        "value": "js@v0.20.0"
+        "value": "js@v0.20.1"
       },
       "package": "solana_kit_token_2022",
       "notes": "SPL Token-2022 JS client. js@v0.17.0 renamed the program node to its canonical camelCase name and swapped the generated extension array for a hand-written TLV codec that stops at the first Uninitialized header, so accounts with unused extension space (including two-byte multisig padding) decode instead of throwing. js@v0.19.0 only bumps the Codama JS renderer and regenerates the TypeScript client; idl.json is byte-identical, so the Dart output is unchanged",
-      "checkedCommit": "e6b4af36a3dbdfe6f66aaf0c564427fa56671bb0"
+      "checkedCommit": "a2ef578666da2ab7562e8d524a235acc8e1d4729"
     },
     {
       "name": "subscriptions",
