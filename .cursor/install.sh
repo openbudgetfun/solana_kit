@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Idempotent cloud-agent bootstrap. Mirrors .github/actions/devenv:
-# Nix, the devenv binary cache, devenv, the FVM Flutter SDK from .fvmrc,
-# and workspace Dart packages (`install:all`).
+# Idempotent cloud-agent bootstrap.
+# Installs multi-user Nix (flakes + nix-command), devenv from the devenv
+# binary cache, and warms `devenv shell`. Dart dependencies are installed
+# inside that shell. There is no non-devenv toolchain fallback.
 set -euo pipefail
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
@@ -11,7 +12,12 @@ if ! command -v curl >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then
 	sudo apt-get install -y --no-install-recommends ca-certificates curl git xz-utils
 fi
 
+# Official multi-user installer, same family as CI's cachix/install-nix-action.
+# This image does not run systemd, so start.sh launches nix-daemon directly.
 if [ ! -x /nix/var/nix/profiles/default/bin/nix ]; then
+	# A removed Nix install leaves these backups behind, and the installer
+	# refuses to run again while they exist.
+	sudo find /etc -name '*.backup-before-nix' -delete
 	curl -fsSL https://nixos.org/nix/install | sh -s -- --daemon --yes
 fi
 
@@ -34,6 +40,9 @@ add_nix_setting() {
 add_nix_setting experimental-features "experimental-features = nix-command flakes"
 add_nix_setting accept-flake-config "accept-flake-config = true"
 add_nix_setting trusted-users "trusted-users = root ubuntu"
+# System-wide so the daemon uses the cache even for non-login shells.
+add_nix_setting extra-substituters "extra-substituters = https://devenv.cachix.org"
+add_nix_setting extra-trusted-public-keys "extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
 
 # shellcheck disable=SC1091
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/ensure-nix-daemon.sh"
@@ -46,19 +55,40 @@ fi
 
 ensure_nix_daemon
 
-if ! command -v cachix >/dev/null 2>&1; then
-	nix profile add --accept-flake-config nixpkgs#cachix
+profile_has() {
+	# nix colors the name when stdout is a terminal, which hides it from grep.
+	nix profile list 2>/dev/null |
+		sed 's/\x1b\[[0-9;]*m//g' |
+		grep -Eq "(^|[[:space:]])${1}($|[[:space:]])"
+}
+
+if ! profile_has cachix; then
+	nix profile install --accept-flake-config nixpkgs#cachix
 fi
 
+# Writes ~/.config/nix/nix.conf. The user is a trusted-user, so these
+# substituters are accepted. /etc/nix/nix.conf carries the same cache.
 cachix use devenv
 
-if ! command -v devenv >/dev/null 2>&1; then
-	nix profile add nixpkgs#devenv
+if ! profile_has devenv; then
+	nix profile install --accept-flake-config nixpkgs#devenv
 fi
 
-# Login shells source nix.sh, but devenv shell is not one of them.
-# shellcheck disable=SC1091
-. /etc/profile.d/nix.sh
+# /usr/local/bin is on the default PATH for login and non-login shells.
+# Profile snippets are not: non-interactive bash skips ~/.bashrc.
+link_on_path() {
+	local name="$1"
+	local target
+	target="$(command -v "$name")"
+	sudo ln -sfn "$target" "/usr/local/bin/$name"
+}
+
+link_on_path nix
+link_on_path cachix
+link_on_path devenv
+
+# Build the devenv shell closure once so later `devenv shell` starts fast.
+devenv shell -- true
 
 devenv shell -- bash -e <<'EOF'
 set -euo pipefail
