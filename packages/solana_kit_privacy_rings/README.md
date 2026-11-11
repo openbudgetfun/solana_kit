@@ -9,19 +9,23 @@ Helius publishes TypeScript (`@heliuslabs/spr`) and Rust (`spr-client`) SDKs. Th
 ## What you get
 
 - **Deposit** — a `deposit` instruction (tag 15) for native SOL and SPL or Token-2022, including the SOL interface account and per-mint SPL interface PDAs.
-- **Confidential transfer and withdraw** — a single-tree `transact` instruction (tag 16). A transfer has no public settlement accounts. A withdraw adds the SOL or SPL settlement accounts.
+- **Confidential transfer and withdraw** — a `transact` instruction (tag 16) for one or two input trees and up to 32 public settlement legs. Tag 16 accepts a confidential signer or confidential EdDSA selector, including the cached forms, and appends the cache account tail. Ring selectors are rejected.
+- **Poseidon witness** — circom x5 Poseidon over the BN254 scalar field, `owner_hash`, nullifier derivation, output blinding, UTXO commitments, and the confidential-transfer witness JSON. The vectors match `poseidon-parity-v1` and the Helius `owner_hash` fixture.
 - **Viewing-key decryption** — X25519, HKDF-SHA256, and AES-256-CTR with the `TSPP/hpke/TSPP/tx` info string. The same bytes are checked against `@noble`, which the TypeScript SDK uses.
-- **Private balance read** — pages `getShieldedTransactionsByTags` and `getEncryptedUtxosByTags`, decrypts confidential slots by their output index, and reads proofless deposit amounts in the clear.
+- **Private balance read** — pages `getShieldedTransactionsByTags` and `getEncryptedUtxosByTags`, decrypts confidential slots by their output index, and reads proofless deposit amounts in the clear. A leaf is counted once. Spent leaves and, when a nullifier key is supplied, notes whose nullifier already appears in the history are left out of the total.
 - **Indexer RPC** — typed calls for all seven privacy methods: `getEncryptedUtxosByTags`, `getShieldedTransactionsByTags`, `getShieldedTransactionsByNullifiers`, `getShieldedTransactionsBySignature`, `getMerkleProofs`, `getNonInclusionProofs`, and `getUserRecords`.
-- **Remote prover** — `POST /prove/{circuit}` with `X-Sync: true`, a `429` fallback to `X-Async`, and status polling. The returned gnark proof is compressed into the `TransactProof` the instruction carries, and the reported proving-key SHA-256 must match the pin copied from the TypeScript SDK.
+- **Remote prover** — `POST /prove/{circuit}` with `X-Sync: true`, a `429` fallback to `X-Async`, and status polling. `proveIndexed` posts `POST /prove/{circuit}/indexed`. The returned gnark proof is compressed into the `TransactProof` the instruction carries, and the reported proving-key SHA-256 must match the pin copied from the TypeScript SDK.
+- **Attested prover session** — HPKE (DHKEM(X25519, HKDF-SHA256), AES-256-GCM) with the `Spr-Tee: v1` headers. The session checks the platform, the image id, the GPU requirement, and the SHA-512 `report_data` binding.
 
 ## What this package does not compute
 
-Poseidon note commitments, `owner_hash`, nullifier derivation, and circuit witness assembly stay in the TypeScript and Rust SDKs. Those steps are the hash-to-field arithmetic the Groth16 witness is built from. A deposit takes the recipient `owner_hash` and view tag as arguments. A transfer or withdrawal takes a `TransactInstructionData` whose field elements you already have.
+Shielded seed expansion stays with the caller. `ownerHash` hashes an owner proof input hash with a nullifier public key, and `NullifierKey` derives a public key and note nullifiers from a 31-byte secret. This package does not expand a seed into those secrets.
 
-The remote prover proves a witness you post. It does not return the rest of the instruction. Attach the compressed proof with `TransactInstructionData.withProof`.
+`TeeSession` does not parse an AWS Nitro COSE certificate chain. Put only image ids you have already authenticated into `TeePolicy`. The session then checks that the attestation names one of them and that `report_data` binds the nonce and HPKE key.
 
-A prover that is not on a loopback address expects the attested session the TypeScript client calls `proverTee`. This package does not implement that session. `PrivacyProverClient` refuses a cleartext call to a remote prover unless `allowUnauthenticatedRemoteProver` is set. A local prover on `127.0.0.1:3001` accepts the JSON body directly.
+`getNullifierQueueElements` is not implemented. The published indexer schema does not include it.
+
+A prover that is not on a loopback address refuses a cleartext call unless `allowUnauthenticatedRemoteProver` is set or a `TeeSession` is attached. A local prover on `127.0.0.1` accepts the JSON body directly. The live Helius prover is not called unless you opt in.
 
 G2 twist-subgroup membership is checked by the on-chain verifier. This client checks that G2 coordinates are canonical field elements and that G1 points satisfy `y² = x³ + 3`.
 

@@ -21,4 +21,4 @@ final deposit = await depositInstruction(
 );
 ```
 
-The package starts at version 0.0.0 and is not published. Poseidon witness assembly stays with the caller; the prover client posts that witness and attaches the compressed proof.
+The package starts at version 0.0.0 and is not published. It hashes confidential-transfer witnesses with Poseidon, opens an attested prover session, and posts that witness to the remote prover. Attach the compressed proof with `TransactInstructionData.withProof`.

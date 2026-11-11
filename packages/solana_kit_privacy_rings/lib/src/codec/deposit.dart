@@ -30,9 +30,9 @@ class SplAssetKind extends DepositAssetKind {
 
 /// One deposit output.
 ///
-/// [recipientOwnerHash] is the recipient `owner_hash`. This package does not
-/// compute that Poseidon hash; pass the value from the recipient's shielded
-/// address.
+/// [recipientOwnerHash] is the recipient `owner_hash`. Compute it with
+/// `ownerHash` from the owner proof input hash and the nullifier public
+/// key. This package does not expand a shielded seed into those two values.
 class DepositEntry {
   /// Creates a deposit output.
   DepositEntry({

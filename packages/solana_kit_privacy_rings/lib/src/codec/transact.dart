@@ -244,6 +244,16 @@ class CacheAccess {
 
   /// Sixteen write slots, unused ones set to `0xff, 0xff`.
   final List<CacheWriteSlot> writeSlots;
+
+  /// Whether the bitmap reads any cache slot.
+  bool get readsCache => readBitmap != BigInt.zero;
+
+  /// Whether the first write slot is used.
+  ///
+  /// Upstream treats writes as a prefix ended by the `0xff, 0xff` sentinel,
+  /// so only the first slot decides whether the instruction writes the cache.
+  bool get writesCache =>
+      writeSlots.first.output != 0xff || writeSlots.first.slot != 0xff;
 }
 
 /// `CircuitId` wire value.
@@ -312,6 +322,13 @@ class CircuitId {
 
   /// Present for cached tags 4, 5, 6, and 8.
   final CacheAccess? cacheAccess;
+
+  /// Tag 16 accepts confidential signer and confidential EdDSA.
+  ///
+  /// Cached forms of those two are included. Ring selectors use a
+  /// different instruction, matching `Circuit::fits_transact` in the
+  /// Rust Kit client.
+  bool get fitsTransact => kind == 0 || kind == 4 || kind == 7 || kind == 8;
 }
 
 /// `TransactIxData` without the leading instruction tag.

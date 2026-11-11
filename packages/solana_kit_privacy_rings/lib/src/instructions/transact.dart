@@ -45,16 +45,132 @@ class SplWithdrawalTarget extends WithdrawalTarget {
   final Address splInterface;
 }
 
-/// Builds a single-tree `transact` instruction.
+/// One public settlement leg and the accounts it appends.
 ///
-/// Account order matches `transactInstruction` in
-/// `sdk-libs/ts/src/interface/instructions/index.ts`. [data] is the
-/// instruction body. For a transfer or withdrawal, that body includes the
-/// Groth16 proof returned by [the remote prover](https://www.helius.dev/docs/privacy/endpoints).
-/// This function does not invent a proof.
+/// Account order matches `Settlement::accounts` in the Rust Kit client.
+sealed class PublicSettlement {
+  const PublicSettlement();
+}
+
+/// Move public SOL into the pool.
+class SolDepositSettlement extends PublicSettlement {
+  /// Creates a SOL deposit leg.
+  const SolDepositSettlement({required this.funder, required this.amount});
+
+  /// System account that funds the deposit. It must sign.
+  final Address funder;
+
+  /// Lamports.
+  final BigInt amount;
+}
+
+/// Move private SOL to a public system account.
+class SolWithdrawalSettlement extends PublicSettlement {
+  /// Creates a SOL withdrawal leg.
+  const SolWithdrawalSettlement({
+    required this.recipient,
+    required this.amount,
+  });
+
+  /// System account that receives the lamports.
+  final Address recipient;
+
+  /// Lamports.
+  final BigInt amount;
+}
+
+/// Move public SPL into the pool.
+class SplDepositSettlement extends PublicSettlement {
+  /// Creates an SPL deposit leg.
+  const SplDepositSettlement({
+    required this.mint,
+    required this.splInterface,
+    required this.tokenAuthority,
+    required this.source,
+    required this.tokenProgram,
+    required this.amount,
+    required this.interfaceBump,
+  });
+
+  /// Mint.
+  final Address mint;
+
+  /// SPL interface PDA.
+  final Address splInterface;
+
+  /// Token-account authority. This account must sign.
+  final Address tokenAuthority;
+
+  /// Source token account.
+  final Address source;
+
+  /// Token program that owns [mint].
+  final Address tokenProgram;
+
+  /// Amount in base units.
+  final BigInt amount;
+
+  /// SPL interface bump.
+  final int interfaceBump;
+}
+
+/// Move private SPL to a public token account.
+class SplWithdrawalSettlement extends PublicSettlement {
+  /// Creates an SPL withdrawal leg.
+  const SplWithdrawalSettlement({
+    required this.mint,
+    required this.splInterface,
+    required this.recipientTokenAccount,
+    required this.tokenProgram,
+    required this.amount,
+    required this.interfaceBump,
+  });
+
+  /// Mint.
+  final Address mint;
+
+  /// SPL interface PDA.
+  final Address splInterface;
+
+  /// Destination token account.
+  final Address recipientTokenAccount;
+
+  /// Token program that owns [mint].
+  final Address tokenProgram;
+
+  /// Amount in base units.
+  final BigInt amount;
+
+  /// SPL interface bump.
+  final int interfaceBump;
+}
+
+/// Writable cache account and the signer that authorizes the write.
+class CacheWriter {
+  /// Creates a cache writer.
+  const CacheWriter({required this.cache, required this.writer});
+
+  /// Cache account. The instruction marks it writable.
+  final Address cache;
+
+  /// Cache writer. This account must sign.
+  final Address writer;
+}
+
+/// Builds a `transact` instruction.
 ///
-/// [withdrawal] is set for an unshield and omitted for a confidential
-/// transfer. It must agree with the single withdrawal leg inside [data].
+/// Account order matches `Transact::accounts` in the Rust Kit client and
+/// `transactInstruction` in
+/// `sdk-libs/ts/src/interface/instructions/index.ts`. Tag 16 accepts a
+/// confidential signer or confidential EdDSA selector, including the
+/// cached forms. Ring selectors are rejected. A cached selector appends
+/// the read-only cache and, when it writes, the writable cache plus its
+/// signer.
+///
+/// [inputTrees] lists one or two input trees. When it is omitted, the
+/// instruction uses [inputTree] alone. [settlements] is the public-leg
+/// list. When it is omitted, [withdrawal] is the single unshield leg.
+/// A confidential transfer passes neither.
 Future<Instruction> transactInstruction({
   required Address payer,
   required Address inputTree,
@@ -62,14 +178,69 @@ Future<Instruction> transactInstruction({
   required List<Address> ownerSigners,
   required TransactInstructionData data,
   WithdrawalTarget? withdrawal,
+  List<Address>? inputTrees,
+  List<PublicSettlement>? settlements,
+  Address? readCache,
+  CacheWriter? writeCache,
 }) async {
-  _checkWithdrawal(data, withdrawal);
-  if (data.treeContexts.length != 1 ||
-      data.inputs.any((input) => input.treeIndex != 0)) {
+  final circuit = data.circuit;
+  if (!circuit.fitsTransact) {
     throw PrivacyRingsException(
-      'this builder requires one input tree and tree index 0 on every input',
+      'tag 16 rejects ring circuit ${circuit.kind}',
+      code: 'transact_circuit',
+    );
+  }
+  final cache = circuit.cacheAccess;
+  final reads = cache?.readsCache ?? false;
+  final writes = cache?.writesCache ?? false;
+  if (cache != null && !reads && !writes) {
+    throw PrivacyRingsException(
+      'a cached circuit selects no cache slot',
+      code: 'transact_cache',
+    );
+  }
+  if (reads != (readCache != null) || writes != (writeCache != null)) {
+    throw PrivacyRingsException(
+      'cache accounts do not match the circuit selector',
+      code: 'settlement_mismatch',
+    );
+  }
+  final trees = inputTrees ?? [inputTree];
+  if (trees.isEmpty || trees.length > 2) {
+    throw PrivacyRingsException(
+      'transact takes one or two input trees',
       code: 'invalid_shape',
     );
+  }
+  if (data.treeContexts.length != trees.length ||
+      data.inputs.any((input) => input.treeIndex >= trees.length)) {
+    throw PrivacyRingsException(
+      'input trees do not match the instruction data',
+      code: 'invalid_shape',
+    );
+  }
+  if (data.outputs.length > 16) {
+    throw PrivacyRingsException(
+      'transact takes at most 16 outputs',
+      code: 'invalid_length',
+    );
+  }
+  if (settlements != null && withdrawal != null) {
+    throw PrivacyRingsException(
+      'pass settlements or withdrawal, not both',
+      code: 'withdrawal_mismatch',
+    );
+  }
+  if (settlements != null) {
+    if (settlements.length > 32) {
+      throw PrivacyRingsException(
+        'transact takes at most 32 settlement legs',
+        code: 'invalid_length',
+      );
+    }
+    _checkSettlements(data, settlements);
+  } else {
+    _checkWithdrawal(data, withdrawal);
   }
   final accounts = <AccountMeta>[
     AccountMeta(address: payer, role: AccountRole.writableSigner),
@@ -82,12 +253,17 @@ Future<Instruction> transactInstruction({
       address: systemProgramAddress,
       role: AccountRole.readonly,
     ),
-    AccountMeta(address: inputTree, role: AccountRole.writable),
   ];
+  for (final tree in trees) {
+    accounts.add(AccountMeta(address: tree, role: AccountRole.writable));
+  }
   for (final input in data.inputs) {
     accounts.add(
       AccountMeta(
-        address: await nullifierPda(inputTree, input.nullifierHash),
+        address: await nullifierPda(
+          trees[input.treeIndex],
+          input.nullifierHash,
+        ),
         role: AccountRole.writable,
       ),
     );
@@ -97,7 +273,28 @@ Future<Instruction> transactInstruction({
       AccountMeta(address: signer, role: AccountRole.readonlySigner),
     );
   }
-  accounts.addAll(_settlement(withdrawal));
+  if (settlements != null) {
+    for (final settlement in settlements) {
+      accounts.addAll(_settlementAccounts(settlement));
+    }
+  } else {
+    accounts.addAll(_withdrawalAccounts(withdrawal));
+  }
+  if (readCache != null) {
+    accounts.add(AccountMeta(address: readCache, role: AccountRole.readonly));
+  }
+  if (writeCache != null) {
+    accounts
+      ..add(
+        AccountMeta(address: writeCache.cache, role: AccountRole.writable),
+      )
+      ..add(
+        AccountMeta(
+          address: writeCache.writer,
+          role: AccountRole.readonlySigner,
+        ),
+      );
+  }
   return Instruction(
     programAddress: shieldedPoolProgramId,
     accounts: accounts,
@@ -185,21 +382,102 @@ void _checkWithdrawal(
   }
 }
 
-List<AccountMeta> _settlement(WithdrawalTarget? withdrawal) {
+List<AccountMeta> _withdrawalAccounts(WithdrawalTarget? withdrawal) {
   if (withdrawal == null) return const [];
   return switch (withdrawal) {
-    SolWithdrawalTarget(:final recipient) => [
+    SolWithdrawalTarget(:final recipient) => _settlementAccounts(
+      SolWithdrawalSettlement(recipient: recipient, amount: BigInt.zero),
+    ),
+    SplWithdrawalTarget(
+      :final mint,
+      :final recipientTokenAccount,
+      :final tokenProgram,
+      :final splInterface,
+    ) =>
+      _settlementAccounts(
+        SplWithdrawalSettlement(
+          mint: mint,
+          splInterface: splInterface,
+          recipientTokenAccount: recipientTokenAccount,
+          tokenProgram: tokenProgram,
+          amount: BigInt.zero,
+          interfaceBump: 0,
+        ),
+      ),
+  };
+}
+
+void _checkSettlements(
+  TransactInstructionData data,
+  List<PublicSettlement> settlements,
+) {
+  if (settlements.length != data.interfaceTransfers.length) {
+    throw PrivacyRingsException(
+      'settlement accounts do not match the instruction data',
+      code: 'settlement_mismatch',
+    );
+  }
+  for (var i = 0; i < settlements.length; i++) {
+    final settlement = settlements[i];
+    final transfer = data.interfaceTransfers[i];
+    final matches = switch (settlement) {
+      SolDepositSettlement(:final amount) =>
+        transfer is SolDepositTransfer && transfer.amount == amount,
+      SolWithdrawalSettlement(:final amount) =>
+        transfer is SolWithdrawalTransfer && transfer.amount == amount,
+      SplDepositSettlement(:final amount, :final interfaceBump) =>
+        transfer is SplDepositTransfer &&
+            transfer.amount == amount &&
+            transfer.splInterfaceBump == interfaceBump,
+      SplWithdrawalSettlement(:final amount, :final interfaceBump) =>
+        transfer is SplWithdrawalTransfer &&
+            transfer.amount == amount &&
+            transfer.splInterfaceBump == interfaceBump,
+    };
+    if (!matches) {
+      throw PrivacyRingsException(
+        'settlement leg $i does not match the instruction data',
+        code: 'settlement_mismatch',
+      );
+    }
+  }
+}
+
+List<AccountMeta> _settlementAccounts(PublicSettlement settlement) {
+  return switch (settlement) {
+    SolDepositSettlement(:final funder) => [
+      const AccountMeta(
+        address: solInterfaceAddress,
+        role: AccountRole.writable,
+      ),
+      AccountMeta(address: funder, role: AccountRole.writableSigner),
+    ],
+    SolWithdrawalSettlement(:final recipient) => [
       const AccountMeta(
         address: solInterfaceAddress,
         role: AccountRole.writable,
       ),
       AccountMeta(address: recipient, role: AccountRole.writable),
     ],
-    SplWithdrawalTarget(
+    SplDepositSettlement(
       :final mint,
+      :final splInterface,
+      :final tokenAuthority,
+      :final source,
+      :final tokenProgram,
+    ) =>
+      [
+        AccountMeta(address: mint, role: AccountRole.readonly),
+        AccountMeta(address: splInterface, role: AccountRole.writable),
+        AccountMeta(address: tokenAuthority, role: AccountRole.readonlySigner),
+        AccountMeta(address: source, role: AccountRole.writable),
+        AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      ],
+    SplWithdrawalSettlement(
+      :final mint,
+      :final splInterface,
       :final recipientTokenAccount,
       :final tokenProgram,
-      :final splInterface,
     ) =>
       [
         const AccountMeta(

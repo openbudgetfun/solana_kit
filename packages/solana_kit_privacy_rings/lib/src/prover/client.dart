@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:solana_kit_privacy_rings/src/codec/transact.dart';
 import 'package:solana_kit_privacy_rings/src/exception.dart';
 import 'package:solana_kit_privacy_rings/src/prover/proof.dart';
+import 'package:solana_kit_privacy_rings/src/prover/tee_session.dart';
 import 'package:solana_kit_privacy_rings/src/redact.dart';
 
 /// HTTP client for the Helius remote prover.
@@ -16,20 +17,16 @@ import 'package:solana_kit_privacy_rings/src/redact.dart';
 /// `{prover}/prove/{circuit}/status?jobId=`. This is `ProverClient.send`
 /// in `sdk-libs/ts/src/client/prover/client.ts`.
 ///
-/// The request body is the witness JSON the caller already built. This
-/// package does not assemble that witness: the TypeScript and Rust SDKs
-/// build it with Poseidon over the note contents, and inventing those
-/// field elements here would produce a proof the program rejects. Send
-/// the same JSON those SDKs post.
+/// The request body is the witness JSON the caller already built, or the
+/// map returned by `confidentialTransferWitness`. Poseidon commitments
+/// and nullifiers in that map are computed in this package.
 ///
-/// A prover that is not on a loopback host refuses the call unless
-/// [allowUnauthenticatedRemoteProver] is set. The TypeScript client
-/// requires an attested TEE session for every remote prover
-/// (`ProverClient` throws when `tee` is missing and the host is not
-/// loopback) and encrypts the witness to the attested key. That session
-/// is not implemented here. Setting the flag sends the witness as
-/// ordinary JSON, which a local prover accepts and a TEE-only gateway
-/// rejects.
+/// A prover that is not on a loopback host refuses a cleartext call unless
+/// [allowUnauthenticatedRemoteProver] is set or [tee] is set. [tee] is the
+/// attested session: it fetches `/attestation`, checks the image id and
+/// `report_data` binding, and encrypts the witness. The AWS Nitro COSE
+/// certificate chain is checked by the caller before an image id is added
+/// to the [TeePolicy]. Loopback provers accept cleartext JSON.
 class PrivacyProverClient {
   /// Creates a client for [endpoint], for example `http://127.0.0.1:3001`
   /// or `https://mainnet.helius-rpc.com/v1/spr`.
@@ -38,6 +35,8 @@ class PrivacyProverClient {
     http.Client? httpClient,
     String? apiKey,
     this.allowUnauthenticatedRemoteProver = false,
+    this.tee,
+    this.runtimeProvingKeys = false,
     this.pollInterval = const Duration(milliseconds: 25),
     this.maxPollInterval = const Duration(seconds: 1),
     this.maxWait = const Duration(minutes: 20),
@@ -53,6 +52,15 @@ class PrivacyProverClient {
 
   /// Sends the witness in the clear to a non-loopback prover.
   final bool allowUnauthenticatedRemoteProver;
+
+  /// Attested session. When set, prove calls are encrypted to it.
+  final TeeSession? tee;
+
+  /// Refuses the indexed route, which proves against the prover's own keys.
+  ///
+  /// A runtime proving-key set and the indexed route cannot be combined.
+  /// `ProverClient.#indexedAllowed` throws the same refusal.
+  final bool runtimeProvingKeys;
 
   /// First gap between status polls. Later gaps double up to
   /// [maxPollInterval].
@@ -78,6 +86,32 @@ class PrivacyProverClient {
   Future<TransactProof> prove({
     required String circuit,
     required Map<String, Object?> witness,
+  }) {
+    return _prove(circuit, witness, indexed: false);
+  }
+
+  /// Posts [witness] to `POST /prove/{circuit}/indexed`.
+  ///
+  /// The indexed route asks the prover to fill Merkle paths from the
+  /// trees named in the body. A client that pins its own proving keys
+  /// cannot use it: the prover would prove against a different key.
+  Future<TransactProof> proveIndexed({
+    required String circuit,
+    required Map<String, Object?> witness,
+  }) {
+    if (runtimeProvingKeys) {
+      throw PrivacyRingsException(
+        'the indexed prover route is refused when runtime proving keys are set',
+        code: 'indexed_proving_unsupported',
+      );
+    }
+    return _prove(circuit, witness, indexed: true);
+  }
+
+  Future<TransactProof> _prove(
+    String circuit,
+    Map<String, Object?> witness, {
+    required bool indexed,
   }) async {
     _requireTransport();
     final name = circuit.endsWith('.key')
@@ -89,21 +123,16 @@ class PrivacyProverClient {
         code: 'invalid_request',
       );
     }
-    final url = _url('/prove/${Uri.encodeComponent(name)}');
+    final suffix = indexed
+        ? '/prove/${Uri.encodeComponent(name)}/indexed'
+        : '/prove/${Uri.encodeComponent(name)}';
+    final url = _url(suffix);
     final body = jsonEncode(witness);
     var queued = false;
     for (var attempt = 0; attempt < 2; attempt++) {
       final delivery = queued ? 'X-Async' : 'X-Sync';
       final response = await _send(
-        () => _http.post(
-          url,
-          headers: {
-            'accept': 'application/json',
-            'content-type': 'application/json; charset=utf-8',
-            delivery: 'true',
-          },
-          body: body,
-        ),
+        () => _post(url, suffix, body, {delivery: 'true'}),
       );
       if (response.statusCode == 429 && !queued) {
         queued = true;
@@ -141,12 +170,10 @@ class PrivacyProverClient {
         _endpoint.host == '127.0.0.1' ||
         _endpoint.host == 'localhost' ||
         _endpoint.host == '::1';
-    if (!loopback && !allowUnauthenticatedRemoteProver) {
+    if (!loopback && tee == null && !allowUnauthenticatedRemoteProver) {
       throw PrivacyRingsException(
-        'a remote prover requires the attested session the TypeScript SDK '
-        'sends as proverTee; this package does not implement that session. '
-        'Set allowUnauthenticatedRemoteProver to post the witness as JSON, '
-        'which only a prover that accepts cleartext will answer',
+        'a remote prover requires an attested TeeSession, or '
+        'allowUnauthenticatedRemoteProver for a prover that accepts cleartext',
         code: 'prover_tee_required',
       );
     }
@@ -156,6 +183,39 @@ class PrivacyProverClient {
         code: 'invalid_config',
       );
     }
+  }
+
+  Future<http.Response> _post(
+    Uri url,
+    String route,
+    String body,
+    Map<String, String> extraHeaders,
+  ) {
+    final session = tee;
+    if (session == null) {
+      return _http.post(
+        url,
+        headers: {
+          'accept': 'application/json',
+          'content-type': 'application/json; charset=utf-8',
+          ...extraHeaders,
+        },
+        body: body,
+      );
+    }
+    return session.send(
+      client: _http,
+      attestationUrl: _url('/attestation'),
+      url: url,
+      route: route,
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json; charset=utf-8',
+        ...extraHeaders,
+      },
+      body: body,
+    );
   }
 
   Future<Object?> _poll(String circuit, String jobId) async {
@@ -177,14 +237,21 @@ class PrivacyProverClient {
           code: 'prover_timeout',
         );
       }
-      final response = await _send(
-        () => _http.get(
-          url,
-          headers: const {
-            'accept': 'application/json',
-          },
-        ),
-      );
+      final statusRoute = '/prove/${Uri.encodeComponent(circuit)}/status';
+      final response = await _send(() {
+        final session = tee;
+        if (session == null) {
+          return _http.get(url, headers: const {'accept': 'application/json'});
+        }
+        return session.send(
+          client: _http,
+          attestationUrl: _url('/attestation'),
+          url: url,
+          route: statusRoute,
+          method: 'GET',
+          headers: const {'accept': 'application/json'},
+        );
+      });
       if (response.statusCode >= 400 && response.statusCode < 500) {
         throw PrivacyRingsException(
           'prover status HTTP ${response.statusCode} at ${redactUri(url)}',

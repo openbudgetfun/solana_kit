@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_privacy_rings/src/codec/output.dart';
 import 'package:solana_kit_privacy_rings/src/constants.dart';
 import 'package:solana_kit_privacy_rings/src/exception.dart';
@@ -16,6 +17,10 @@ class PrivateNote {
     required this.mint,
     required this.signature,
     this.assetId,
+    this.treeId,
+    this.leafIndex,
+    this.blinding,
+    this.commitment,
   });
 
   /// Amount in base units.
@@ -32,6 +37,18 @@ class PrivateNote {
 
   /// Transaction that created the note.
   final String signature;
+
+  /// Tree id, when the indexer named the leaf.
+  final int? treeId;
+
+  /// Leaf index in [treeId].
+  final BigInt? leafIndex;
+
+  /// Note blinding, when the plaintext carried one.
+  final Uint8List? blinding;
+
+  /// Output commitment, when the indexer named one.
+  final Uint8List? commitment;
 }
 
 /// Sum of [notes] that share a mint or, when the mint is unknown, an
@@ -58,6 +75,27 @@ class PrivateBalance {
   final BigInt? assetId;
 }
 
+/// A leaf the caller already knows is spent.
+class SpentLeaf {
+  /// Creates a spent-leaf key.
+  const SpentLeaf(this.treeId, this.leafIndex);
+
+  /// Tree id.
+  final int treeId;
+
+  /// Leaf index.
+  final BigInt leafIndex;
+
+  @override
+  bool operator ==(Object other) =>
+      other is SpentLeaf &&
+      other.treeId == treeId &&
+      other.leafIndex == leafIndex;
+
+  @override
+  int get hashCode => Object.hash(treeId, leafIndex);
+}
+
 /// Notes opened from indexer history, plus how many slots were left closed.
 class PrivateBalanceReport {
   /// Creates a report.
@@ -67,8 +105,7 @@ class PrivateBalanceReport {
     required this.skipped,
   });
 
-  /// Opened notes. Spent notes are not subtracted: the indexer history
-  /// this report reads does not say which nullifier spent which note.
+  /// Opened notes. A leaf in [notes] is counted once by [balances].
   final List<PrivateNote> notes;
 
   /// [notes] grouped by mint, or by asset id when the mint is unknown.
@@ -95,6 +132,7 @@ Future<PrivateBalanceReport> readConfidentialNotes({
   required ViewingKey viewingKey,
   required List<ShieldedTransaction> transactions,
   Map<BigInt, Address> mints = const {},
+  Set<SpentLeaf> spent = const {},
 }) async {
   final notes = <PrivateNote>[];
   var skipped = 0;
@@ -113,6 +151,7 @@ Future<PrivateBalanceReport> readConfidentialNotes({
       final note = await _confidentialNote(
         viewingKey: viewingKey,
         payload: slot.payload,
+        outputContext: slot.outputContext,
         txViewingPk: viewing,
         salt: salt,
         slotIndex: index,
@@ -128,7 +167,7 @@ Future<PrivateBalanceReport> readConfidentialNotes({
   }
   return PrivateBalanceReport(
     notes: notes,
-    balances: _balances(notes),
+    balances: _balances(notes, spent: spent),
     skipped: skipped,
   );
 }
@@ -139,8 +178,9 @@ Future<PrivateBalanceReport> readConfidentialNotes({
 /// encrypted output. Its cipher slot index is not on this record, so it
 /// is skipped; open those through [readConfidentialNotes].
 Future<PrivateBalanceReport> readProoflessDeposits(
-  List<EncryptedUtxoMatch> matches,
-) async {
+  List<EncryptedUtxoMatch> matches, {
+  Set<SpentLeaf> spent = const {},
+}) async {
   final notes = <PrivateNote>[];
   var skipped = 0;
   for (final match in matches) {
@@ -157,7 +197,7 @@ Future<PrivateBalanceReport> readProoflessDeposits(
   }
   return PrivateBalanceReport(
     notes: notes,
-    balances: _balances(notes),
+    balances: _balances(notes, spent: spent),
     skipped: skipped,
   );
 }
@@ -178,6 +218,7 @@ PrivateBalanceReport combineBalanceReports(
 Future<PrivateNote?> _confidentialNote({
   required ViewingKey viewingKey,
   required Uint8List payload,
+  required OutputContext outputContext,
   required List<int> txViewingPk,
   required List<int> salt,
   required int slotIndex,
@@ -208,6 +249,10 @@ Future<PrivateNote?> _confidentialNote({
     mint: mint,
     assetId: decoded.assetId,
     signature: signature,
+    treeId: outputContext.treeId,
+    leafIndex: outputContext.leafIndex,
+    blinding: decoded.blinding,
+    commitment: getBase58Encoder().encode(outputContext.hash),
   );
 }
 
@@ -221,12 +266,41 @@ PrivateNote? _prooflessNote(EncryptedUtxoMatch match) {
     amount: decoded.amount,
     mint: decoded.asset,
     signature: match.txSignature,
+    treeId: match.outputSlot.outputContext.treeId,
+    leafIndex: match.outputSlot.outputContext.leafIndex,
+    blinding: decoded.blinding,
+    commitment: getBase58Encoder().encode(match.outputSlot.outputContext.hash),
   );
 }
 
-List<PrivateBalance> _balances(List<PrivateNote> notes) {
-  final grouped = <String, PrivateBalance>{};
+List<PrivateBalance> _balances(
+  List<PrivateNote> notes, {
+  Set<SpentLeaf> spent = const {},
+}) {
+  final seen = <String, PrivateNote>{};
+  final kept = <PrivateNote>[];
   for (final note in notes) {
+    final tree = note.treeId;
+    final leaf = note.leafIndex;
+    if (tree != null && leaf != null) {
+      if (spent.contains(SpentLeaf(tree, leaf))) continue;
+      final key = '$tree:$leaf';
+      final existing = seen[key];
+      if (existing != null) {
+        if (!_sameNote(existing, note)) {
+          throw PrivacyRingsException(
+            'leaf $tree:$leaf appears twice with different contents',
+            code: 'conflicting_leaf',
+          );
+        }
+        continue;
+      }
+      seen[key] = note;
+    }
+    kept.add(note);
+  }
+  final grouped = <String, PrivateBalance>{};
+  for (final note in kept) {
     final key = note.mint?.toString() ?? 'asset:${note.assetId}';
     final existing = grouped[key];
     grouped[key] = PrivateBalance(
@@ -237,4 +311,23 @@ List<PrivateBalance> _balances(List<PrivateNote> notes) {
     );
   }
   return grouped.values.toList();
+}
+
+bool _sameNote(PrivateNote left, PrivateNote right) {
+  return left.amount == right.amount &&
+      left.mint == right.mint &&
+      left.assetId == right.assetId &&
+      _bytesEqual(left.blinding, right.blinding) &&
+      _bytesEqual(left.commitment, right.commitment);
+}
+
+bool _bytesEqual(Uint8List? left, Uint8List? right) {
+  if (identical(left, right)) return true;
+  if (left == null || right == null || left.length != right.length) {
+    return false;
+  }
+  for (var i = 0; i < left.length; i++) {
+    if (left[i] != right[i]) return false;
+  }
+  return true;
 }

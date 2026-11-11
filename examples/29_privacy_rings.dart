@@ -3,9 +3,8 @@
 ///
 /// The deposit instruction does not ask the remote prover for a proof. The
 /// owner signs the Solana transaction that carries it. `recipientOwnerHash`
-/// is the Poseidon owner hash from the recipient's shielded address; this
-/// example uses 32 zero bytes so it can run offline. A real deposit uses
-/// the recipient's hash.
+/// is the Poseidon `owner_hash` from `ownerHash`. This example uses 32 zero
+/// bytes so it can run offline. A real deposit uses the recipient's hash.
 ///
 /// Run:
 ///   dart examples/29_privacy_rings.dart

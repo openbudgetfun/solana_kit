@@ -1,10 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_privacy_rings/src/balance.dart';
 import 'package:solana_kit_privacy_rings/src/codec/transact.dart';
 import 'package:solana_kit_privacy_rings/src/endpoints.dart';
 import 'package:solana_kit_privacy_rings/src/exception.dart';
+import 'package:solana_kit_privacy_rings/src/keys/nullifier.dart';
 import 'package:solana_kit_privacy_rings/src/keys/viewing_key.dart';
 import 'package:solana_kit_privacy_rings/src/prover/client.dart';
 import 'package:solana_kit_privacy_rings/src/rpc/client.dart';
@@ -14,8 +16,8 @@ import 'package:solana_kit_privacy_rings/src/rpc/types.dart';
 ///
 /// Solana transaction submission stays on the repo's RPC client. This
 /// type covers the two Privacy Rings services: the indexer that returns
-/// encrypted notes, and the remote prover that returns a Groth16 proof
-/// for a witness the caller built.
+/// encrypted notes, and the remote prover that returns a Groth16 proof.
+/// `confidentialTransferWitness` builds the witness this client posts.
 class PrivacyRings {
   /// Connects using the same URL rules as `createSprClient`.
   ///
@@ -81,6 +83,11 @@ class PrivacyRings {
   /// the matches that have no transaction viewing key. Pages stop when
   /// the indexer returns a null token. If [maxPages] is reached while a
   /// token remains, this throws rather than returning a partial sum.
+  ///
+  /// A leaf in [spentLeaves] is omitted from the totals. The same leaf is
+  /// counted once. When [nullifierKey] is set, a note whose Poseidon
+  /// nullifier appears on a confidential transaction in this history is
+  /// omitted too.
   Future<PrivateBalanceReport> readPrivateBalance({
     required ViewingKey viewingKey,
     required List<String> tags,
@@ -88,6 +95,8 @@ class PrivacyRings {
     Map<BigInt, Address> mints = const {},
     int pageLimit = 1000,
     int maxPages = 50,
+    Set<SpentLeaf> spentLeaves = const {},
+    NullifierKey? nullifierKey,
   }) async {
     if (maxPages < 1) {
       throw PrivacyRingsException(
@@ -107,14 +116,42 @@ class PrivacyRings {
       pageLimit: pageLimit,
       maxPages: maxPages,
     );
-    return combineBalanceReports(
+    final report = combineBalanceReports(
       await readConfidentialNotes(
         viewingKey: viewingKey,
         transactions: confidential,
         mints: mints,
+        spent: spentLeaves,
       ),
-      await readProoflessDeposits(deposits),
+      await readProoflessDeposits(deposits, spent: spentLeaves),
     );
+    if (nullifierKey == null) return report;
+    final spentNullifiers = <String>{};
+    for (final transaction in confidential) {
+      for (final nullifier in transaction.nullifiers) {
+        final bytes = getBase58Encoder().encode(nullifier);
+        spentNullifiers.add(
+          bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join(),
+        );
+      }
+    }
+    final notes = <PrivateNote>[];
+    for (final note in report.notes) {
+      final derived = nullifierKey.nullifier(note.commitment!, note.blinding!);
+      final hex = derived
+          .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+          .join();
+      if (!spentNullifiers.contains(hex)) notes.add(note);
+    }
+    final kept = combineBalanceReports(
+      PrivateBalanceReport(
+        notes: notes,
+        balances: const [],
+        skipped: report.skipped,
+      ),
+      const PrivateBalanceReport(notes: [], balances: [], skipped: 0),
+    );
+    return kept;
   }
 
   /// Posts [witness] to the remote prover and returns a compressed proof
