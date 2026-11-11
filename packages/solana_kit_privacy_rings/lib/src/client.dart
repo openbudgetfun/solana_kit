@@ -1,11 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
-import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_privacy_rings/src/balance.dart';
 import 'package:solana_kit_privacy_rings/src/codec/transact.dart';
 import 'package:solana_kit_privacy_rings/src/endpoints.dart';
-import 'package:solana_kit_privacy_rings/src/exception.dart';
+import 'package:solana_kit_privacy_rings/src/history.dart';
 import 'package:solana_kit_privacy_rings/src/keys/nullifier.dart';
 import 'package:solana_kit_privacy_rings/src/keys/viewing_key.dart';
 import 'package:solana_kit_privacy_rings/src/prover/client.dart';
@@ -98,12 +97,6 @@ class PrivacyRings {
     Set<SpentLeaf> spentLeaves = const {},
     NullifierKey? nullifierKey,
   }) async {
-    if (maxPages < 1) {
-      throw PrivacyRingsException(
-        'maxPages must be at least 1',
-        code: 'invalid_request',
-      );
-    }
     final confidential = await _shieldedPages(
       tags: tags,
       ringProgramId: ringProgramId,
@@ -126,22 +119,20 @@ class PrivacyRings {
       await readProoflessDeposits(deposits, spent: spentLeaves),
     );
     if (nullifierKey == null) return report;
-    final spentNullifiers = <String>{};
-    for (final transaction in confidential) {
-      for (final nullifier in transaction.nullifiers) {
-        final bytes = getBase58Encoder().encode(nullifier);
-        spentNullifiers.add(
-          bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join(),
-        );
-      }
-    }
+    final spent = spentNullifiers(confidential)
+        .map(
+          (bytes) => bytes
+              .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+              .join(),
+        )
+        .toSet();
     final notes = <PrivateNote>[];
     for (final note in report.notes) {
       final derived = nullifierKey.nullifier(note.commitment!, note.blinding!);
       final hex = derived
           .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
           .join();
-      if (!spentNullifiers.contains(hex)) notes.add(note);
+      if (!spent.contains(hex)) notes.add(note);
     }
     final kept = combineBalanceReports(
       PrivateBalanceReport(
@@ -169,24 +160,19 @@ class PrivacyRings {
     required int pageLimit,
     required int maxPages,
   }) async {
-    final transactions = <ShieldedTransaction>[];
-    String? token;
-    for (var page = 0; page < maxPages; page++) {
+    return collectPages((token) async {
       final response = await indexer.getShieldedTransactionsByTags(
         tags: tags,
         ringProgramId: ringProgramId,
         page: PageRequest(paginationToken: token, limit: pageLimit),
       );
-      for (final entry in response.data) {
-        transactions.addAll(entry.entries);
-      }
-      token = response.paginationToken;
-      if (token == null) return transactions;
-    }
-    throw PrivacyRingsException(
-      'shielded history still had a page after $maxPages pages',
-      code: 'history_truncated',
-    );
+      return HistoryPage(
+        items: [
+          for (final entry in response.data) ...entry.entries,
+        ],
+        paginationToken: response.paginationToken,
+      );
+    }, maxPages: maxPages);
   }
 
   Future<List<EncryptedUtxoMatch>> _depositPages({
@@ -195,23 +181,18 @@ class PrivacyRings {
     required int pageLimit,
     required int maxPages,
   }) async {
-    final matches = <EncryptedUtxoMatch>[];
-    String? token;
-    for (var page = 0; page < maxPages; page++) {
+    return collectPages((token) async {
       final response = await indexer.getEncryptedUtxosByTags(
         tags: tags,
         ringProgramId: ringProgramId,
         page: PageRequest(paginationToken: token, limit: pageLimit),
       );
-      for (final entry in response.data) {
-        matches.addAll(entry.entries);
-      }
-      token = response.paginationToken;
-      if (token == null) return matches;
-    }
-    throw PrivacyRingsException(
-      'deposit history still had a page after $maxPages pages',
-      code: 'history_truncated',
-    );
+      return HistoryPage(
+        items: [
+          for (final entry in response.data) ...entry.entries,
+        ],
+        paginationToken: response.paginationToken,
+      );
+    }, maxPages: maxPages);
   }
 }

@@ -133,6 +133,37 @@ class PrivacyIndexerClient {
     );
   }
 
+  /// `getNullifierQueueElements`.
+  ///
+  /// Returns elements with `seq >= startSeq`, at most [limit] of them.
+  /// [limit] is from 1 to 1000. [startSeq] defaults to 0.
+  Future<({IndexerContext context, List<NullifierQueueElement> elements})>
+  getNullifierQueueElements({
+    required Address treeAccount,
+    required int limit,
+    int startSeq = 0,
+  }) async {
+    if (startSeq < 0) {
+      throw PrivacyRingsException(
+        'startSeq is negative',
+        code: 'integer_range',
+      );
+    }
+    if (limit < 1 || limit > 1000) {
+      throw PrivacyRingsException(
+        'limit must be from 1 to 1000',
+        code: 'invalid_limit',
+      );
+    }
+    return decodeNullifierQueueElements(
+      await _call('getNullifierQueueElements', {
+        'treeAccount': treeAccount.toString(),
+        'startSeq': startSeq,
+        'limit': limit,
+      }),
+    );
+  }
+
   /// `getUserRecords`.
   ///
   /// At most [maxUserRecordOwners] owners. A null entry means that owner

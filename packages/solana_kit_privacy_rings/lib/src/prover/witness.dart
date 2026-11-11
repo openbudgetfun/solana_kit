@@ -4,6 +4,7 @@ import 'package:solana_kit_privacy_rings/src/exception.dart';
 import 'package:solana_kit_privacy_rings/src/keys/nullifier.dart';
 import 'package:solana_kit_privacy_rings/src/poseidon/hash.dart';
 import 'package:solana_kit_privacy_rings/src/poseidon/poseidon.dart';
+import 'package:solana_kit_privacy_rings/src/poseidon/public_input.dart';
 
 /// One note field the transfer circuit hashes.
 ///
@@ -167,11 +168,11 @@ class WitnessOutput {
 
 /// JSON body of `POST /prove/transfer_confidential_*`.
 ///
-/// The key set and the `0x` hex encoding match `proverRequest` in
-/// `sdk-libs/ts/src/client/prover/client.ts` for circuit `transfer`.
-/// Commitments, nullifiers, and output blindings are Poseidon hashes.
-/// Merkle paths are included only when the caller supplied them: the
-/// indexer is the source of those siblings.
+/// Built from the input notes, their Merkle paths, and the output notes.
+/// Commitments, nullifiers, output blindings, and `publicInputHash` are
+/// Poseidon hashes. [treeSlots] defaults to five zero slots, which is the
+/// width `transfer_public_input_hash` always folds. Merkle paths are
+/// included only when the caller supplied them.
 Map<String, Object?> confidentialTransferWitness({
   required List<WitnessInput> inputs,
   required List<WitnessOutput> outputs,
@@ -190,6 +191,7 @@ Map<String, Object?> confidentialTransferWitness({
   required List<Uint8List> cacheReadHashes,
   required List<Uint8List> cacheIsCached,
   required List<Uint8List> cacheReadIndex,
+  List<ProofTreeSlot>? treeSlots,
 }) {
   if (inputs.isEmpty) {
     throw PrivacyRingsException(
@@ -197,6 +199,16 @@ Map<String, Object?> confidentialTransferWitness({
       code: 'invalid_length',
     );
   }
+  final slots =
+      treeSlots ??
+      List<ProofTreeSlot>.generate(
+        inputTreeCount,
+        (_) => ProofTreeSlot(
+          id: 0,
+          utxoRoot: Uint8List(32),
+          nullifierRoot: Uint8List(32),
+        ),
+      );
   String hex(Uint8List bytes) => fieldHex(bytes);
   List<String> hexes(List<Uint8List> values) => values.map(fieldHex).toList();
   final key = NullifierKey.fromSecret(inputs.first.nullifierSecret);
@@ -206,17 +218,40 @@ Map<String, Object?> confidentialTransferWitness({
   );
   key.destroy();
   final outputSeed = outputBlindingSeed(firstNullifier, blindingSeed);
+  final inputBodies = [for (final input in inputs) _inputJson(input)];
+  final outputBodies = [
+    for (var i = 0; i < outputs.length; i++)
+      _outputJson(outputs[i], outputSeed, firstNullifier, i),
+  ];
+  final publicHash = transferPublicInputHash(
+    nullifiers: [
+      for (final input in inputBodies)
+        _fieldFromHex(input['nullifier']! as String),
+    ],
+    outputHashes: [
+      for (final output in outputBodies)
+        _fieldFromHex(output['hash']! as String),
+    ],
+    outputTreeId: treeIdFromField(outputTreeId),
+    privateTxHash: privateTxHash,
+    externalDataHash: externalDataHash,
+    publicAssets: publicAssets,
+    publicAmounts: publicAmounts,
+    ringProgramId: ringProgramId,
+    signerPublicKeyHashes: signerPublicKeyHashes,
+    inputFlags: inputFlags,
+    publishedOutputOwnerPublicKeyHashes: publishedOutputOwnerPublicKeyHashes,
+    cacheTreeId: cacheTreeId,
+    cacheReadHashChain: cacheReadHashChain,
+    treeSlots: slots,
+  );
   return {
     'circuitType': 'transfer-confidential',
     'nInputs': inputs.length,
     'nOutputs': outputs.length,
-    'inputs': [
-      for (final input in inputs) _inputJson(input),
-    ],
-    'outputs': [
-      for (var i = 0; i < outputs.length; i++)
-        _outputJson(outputs[i], outputSeed, firstNullifier, i),
-    ],
+    'inputs': inputBodies,
+    'outputs': outputBodies,
+    'treeSlots': [for (final slot in slots) slot.toJson()],
     'outputTreeId': hex(outputTreeId),
     'externalDataHash': hex(externalDataHash),
     'privateTxHash': hex(privateTxHash),
@@ -234,7 +269,20 @@ Map<String, Object?> confidentialTransferWitness({
     'cacheReadHashes': hexes(cacheReadHashes),
     'cacheIsCached': hexes(cacheIsCached),
     'cacheReadIndex': hexes(cacheReadIndex),
+    'publicInputHash': hex(publicHash),
   };
+}
+
+Uint8List _fieldFromHex(String text) {
+  final body = text.startsWith('0x') ? text.substring(2) : text;
+  final value = body.isEmpty ? BigInt.zero : BigInt.parse(body, radix: 16);
+  final out = Uint8List(32);
+  var rest = value;
+  for (var i = 31; i >= 0; i--) {
+    out[i] = (rest & BigInt.from(0xff)).toInt();
+    rest >>= 8;
+  }
+  return out;
 }
 
 Map<String, Object?> _inputJson(WitnessInput input) {

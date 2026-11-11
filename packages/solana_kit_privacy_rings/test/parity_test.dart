@@ -8,6 +8,8 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_privacy_rings/solana_kit_privacy_rings.dart';
 import 'package:test/test.dart';
 
+import 'nitro_quote.dart';
+
 File _fixture(String name) {
   final relative = 'test/fixtures/$name';
   final local = File(relative);
@@ -162,6 +164,11 @@ void main() {
     expect(
       _hexOf(proverReportData(nonce, publicKey)),
       tee['report_data_no_gpu'],
+    );
+    expect(_hexOf(proverGpuNonce(nonce, publicKey)), tee['gpu_nonce']);
+    expect(
+      () => proverGpuNonce(Uint8List(31), publicKey),
+      _code('invalid_length'),
     );
     expect(
       _hexOf(await proverRecipientPublicKey(_hex(tee['ikm']! as String))),
@@ -476,8 +483,7 @@ void main() {
   );
 
   test('an attested session encrypts the witness', () async {
-    final image = Uint8List(32)..[0] = 4;
-    final policy = TeePolicy(platform: 'aws-nitro', imageIds: [image]);
+    final policy = nitroPolicy();
     final session = TeeSession(policy);
     late String nonceHex;
     final client = MockClient((request) async {
@@ -486,13 +492,7 @@ void main() {
         final nonce = _hex(nonceHex);
         final key = await proverRecipientPublicKey(_hex(tee['ikm']! as String));
         return http.Response(
-          jsonEncode({
-            'platform': 'aws-nitro',
-            'hpke_public_key': _hexOf(key),
-            'image_id': _hexOf(image),
-            'gpu': null,
-            'report_data': _hexOf(proverReportData(nonce, key)),
-          }),
+          jsonEncode(nitroAttestation(nonce: nonce, hpke: key)),
           200,
         );
       }
@@ -511,12 +511,20 @@ void main() {
     expect(response.statusCode, 400);
     expect(nonceHex, hasLength(64));
     expect(
-      () => TeePolicy(platform: '', imageIds: [image]),
+      () => TeePolicy(
+        platform: '',
+        imageIds: [nitroPcr0],
+        measurements: [nitroMeasurement()],
+      ),
       _code('invalid_config'),
     );
     expect(
-      () =>
-          TeePolicy(platform: 'aws-nitro', imageIds: const [], gpu: 'required'),
+      () => TeePolicy(
+        platform: 'aws-nitro',
+        imageIds: const [],
+        measurements: [nitroMeasurement()],
+        gpu: 'required',
+      ),
       _code('invalid_config'),
     );
   });
@@ -537,54 +545,13 @@ void main() {
           endpoint.host != '::1') {
         fail('PRIVACY_RINGS_LOCAL_PROVER_URL must be a loopback prover');
       }
-      final note = CircuitNote(
-        domain: fieldU32(1),
-        owner: Uint8List(32),
-        asset: Uint8List(32),
-        amount: fieldU32(1),
-        blinding: Uint8List(32),
-        dataHash: Uint8List(32),
-        ringDataHash: Uint8List(32),
-        ringProgramId: Uint8List(32),
-      );
-      final witness = confidentialTransferWitness(
-        inputs: [
-          WitnessInput(
-            note: note,
-            treeSlot: fieldU32(0),
-            treeId: fieldU32(0),
-            ownerPublicKeyHash: Uint8List(32),
-            nullifierSecret: Uint8List(31)..[0] = 1,
-          ),
-        ],
-        outputs: [
-          WitnessOutput(
-            note: note,
-            treeId: fieldU32(0),
-            ownerPublicKeyHash: Uint8List(32),
-            nullifierPublicKey: Uint8List(32),
-          ),
-        ],
-        outputTreeId: fieldU32(0),
-        externalDataHash: Uint8List(32),
-        privateTxHash: Uint8List(32),
-        blindingSeed: Uint8List(32)..[0] = 1,
-        ringProgramId: Uint8List(32),
-        publicAssets: [Uint8List(32)],
-        publicAmounts: [fieldU32(0)],
-        signerPublicKeyHashes: [Uint8List(32)],
-        inputFlags: fieldU32(0),
-        publishedOutputOwnerPublicKeyHashes: [Uint8List(32)],
-        cacheTreeId: Uint8List(32),
-        cacheReadHashChain: Uint8List(32),
-        cacheReadHashes: [Uint8List(32)],
-        cacheIsCached: [fieldU32(0)],
-        cacheReadIndex: [fieldU32(0)],
+      final witness = Map<String, Object?>.from(
+        jsonDecode(_fixture('transfer-2x2.json').readAsStringSync()) as Map,
       );
       final prover = PrivacyProverClient(endpoint: endpoint);
       try {
         final proof = await prover.prove(
-          circuit: 'transfer_confidential_1_2',
+          circuit: 'transfer_confidential_2_2',
           witness: witness,
         );
         expect(proof.a, hasLength(32));

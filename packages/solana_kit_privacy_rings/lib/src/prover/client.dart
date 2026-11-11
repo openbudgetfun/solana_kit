@@ -23,10 +23,10 @@ import 'package:solana_kit_privacy_rings/src/redact.dart';
 ///
 /// A prover that is not on a loopback host refuses a cleartext call unless
 /// [allowUnauthenticatedRemoteProver] is set or [tee] is set. [tee] is the
-/// attested session: it fetches `/attestation`, checks the image id and
-/// `report_data` binding, and encrypts the witness. The AWS Nitro COSE
-/// certificate chain is checked by the caller before an image id is added
-/// to the [TeePolicy]. Loopback provers accept cleartext JSON.
+/// attested session: it fetches `/attestation`, verifies the AWS Nitro
+/// COSE document against the policy measurements, checks the `report_data`
+/// binding, and encrypts the witness. Loopback provers accept cleartext
+/// JSON.
 class PrivacyProverClient {
   /// Creates a client for [endpoint], for example `http://127.0.0.1:3001`
   /// or `https://mainnet.helius-rpc.com/v1/spr`.

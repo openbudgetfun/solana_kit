@@ -11,6 +11,8 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_privacy_rings/solana_kit_privacy_rings.dart';
 import 'package:test/test.dart';
 
+import 'nitro_quote.dart';
+
 Matcher _code(String code) => throwsA(
   isA<PrivacyRingsException>().having((error) => error.code, 'code', code),
 );
@@ -640,26 +642,17 @@ void main() {
     'an attested session opens an encrypted response and rejects a bad quote',
     () async {
       final ikm = _hex(tee['ikm']! as String);
-      final image = Uint8List(32)..[0] = 4;
       final seed = Uint8List(32)..[0] = 6;
-      final policy = TeePolicy(platform: 'aws-nitro', imageIds: [image]);
+      final policy = nitroPolicy();
       var attestations = 0;
-      Future<http.Response> quote(
-        http.Request request, {
-        Map<String, Object?>? extra,
-      }) async {
+      Future<http.Response> quote(http.Request request) async {
         attestations++;
         final nonce = _hex(request.url.queryParameters['nonce']!);
         final key = await proverRecipientPublicKey(ikm);
-        final body = {
-          'platform': 'aws-nitro',
-          'hpke_public_key': _hexOf(key),
-          'image_id': _hexOf(image),
-          'gpu': null,
-          'report_data': _hexOf(proverReportData(nonce, key)),
-          ...?extra,
-        };
-        return http.Response(jsonEncode(body), 200);
+        return http.Response(
+          jsonEncode(nitroAttestation(nonce: nonce, hpke: key)),
+          200,
+        );
       }
 
       Future<http.Response> sealed(
@@ -825,115 +818,122 @@ void main() {
       );
       await reject('tee_platform', (nonce, key) {
         return {
+          ...nitroAttestation(nonce: nonce, hpke: key),
           'platform': 'other',
-          'hpke_public_key': _hexOf(key),
-          'image_id': _hexOf(image),
-          'report_data': _hexOf(proverReportData(nonce, key)),
         };
       });
-      await reject('tee_image', (nonce, key) {
-        return {
-          'platform': 'aws-nitro',
-          'hpke_public_key': _hexOf(key),
-          'image_id': 'aa',
-          'report_data': _hexOf(proverReportData(nonce, key)),
-        };
-      });
-      await reject('tee_image', (nonce, key) {
-        return {
-          'platform': 'aws-nitro',
-          'hpke_public_key': _hexOf(key),
-          'image_id': _hexOf(Uint8List(32)..[0] = 9),
-          'report_data': _hexOf(proverReportData(nonce, key)),
-        };
-      });
-      await reject('malformed_attestation', (nonce, key) {
-        return {
-          'platform': 'aws-nitro',
-          'hpke_public_key': _hexOf(key),
-          'image_id': _hexOf(image),
-          'gpu': 1,
-          'report_data': _hexOf(proverReportData(nonce, key)),
-        };
-      });
-      await reject('tee_report', (nonce, key) {
-        return {
-          'platform': 'aws-nitro',
-          'hpke_public_key': _hexOf(key),
-          'image_id': _hexOf(image),
-          'report_data': _hexOf(Uint8List(64)),
-        };
-      });
-      await reject('malformed_attestation', (nonce, key) {
-        return {
-          'platform': 'aws-nitro',
-          'hpke_public_key': 'abc',
-          'image_id': _hexOf(image),
-          'report_data': _hexOf(Uint8List(64)),
-        };
-      });
-      await reject('malformed_attestation', (nonce, key) {
-        return {
-          'platform': 'aws-nitro',
-          'hpke_public_key': 'aa',
-          'image_id': _hexOf(image),
-          'report_data': _hexOf(Uint8List(64)),
-        };
+      await reject('measurement', (nonce, key) {
+        return nitroAttestation(
+          nonce: nonce,
+          hpke: key,
+          pcr0: Uint8List(48)..[0] = 9,
+        );
       });
       await expectLater(
         TeeSession(
-          TeePolicy(platform: 'aws-nitro', imageIds: [image], gpu: 'required'),
+          nitroPolicy(imageIds: [Uint8List(48)..[0] = 9]),
         ).attest(
           Uri.parse('http://127.0.0.1:3001/attestation'),
           MockClient((request) async {
             final nonce = _hex(request.url.queryParameters['nonce']!);
             final key = await proverRecipientPublicKey(ikm);
             return http.Response(
-              jsonEncode({
-                'platform': 'aws-nitro',
-                'hpke_public_key': _hexOf(key),
-                'image_id': _hexOf(image),
-                'gpu': null,
-                'report_data': _hexOf(proverReportData(nonce, key)),
-              }),
+              jsonEncode(nitroAttestation(nonce: nonce, hpke: key)),
               200,
             );
           }),
         ),
-        _code('tee_gpu'),
+        _code('tee_image'),
       );
+      await reject('malformed_attestation', (nonce, key) {
+        return {
+          'platform': 'aws-nitro',
+          'hpke_public_key': _hexOf(key),
+          'gpu': 1,
+        };
+      });
+      await reject('tee_report', (nonce, key) {
+        return nitroAttestation(
+          nonce: nonce,
+          hpke: key,
+          userData: Uint8List(64),
+        );
+      });
+      await reject('malformed_attestation', (nonce, key) {
+        return {
+          'platform': 'aws-nitro',
+          'hpke_public_key': 'abc',
+          'gpu': null,
+        };
+      });
+      await reject('malformed_attestation', (nonce, key) {
+        return {
+          'platform': 'aws-nitro',
+          'hpke_public_key': 'aa',
+          'gpu': null,
+        };
+      });
+      expect(() => nitroPolicy(gpu: 'required'), _code('invalid_config'));
+      expect(
+        () => TeePolicy(
+          platform: 'other',
+          imageIds: [nitroPcr0],
+          measurements: [nitroMeasurement()],
+        ),
+        _code('invalid_config'),
+      );
+      expect(
+        () => TeePolicy(
+          platform: 'aws-nitro',
+          imageIds: [nitroPcr0],
+          measurements: const [],
+        ),
+        _code('invalid_config'),
+      );
+      expect(
+        () => TeePolicy(
+          platform: 'aws-nitro',
+          imageIds: [nitroPcr0],
+          measurements: [nitroMeasurement()],
+          anchors: const [],
+        ),
+        _code('invalid_config'),
+      );
+      await reject('malformed_attestation', (nonce, key) {
+        return {
+          'platform': 'aws-nitro',
+          'hpke_public_key': _hexOf(key),
+        };
+      });
+      await reject('malformed_attestation', (nonce, key) {
+        return {
+          'platform': 'aws-nitro',
+          'hpke_public_key': _hexOf(key),
+          'gpu': null,
+        };
+      });
+      await reject('malformed_attestation', (nonce, key) {
+        return nitroAttestation(nonce: nonce, hpke: key, gpu: 'device');
+      });
       final quoted = await TeeSession(policy).attest(
         Uri.parse('http://127.0.0.1:3001/attestation'),
         MockClient((request) async {
           final nonce = _hex(request.url.queryParameters['nonce']!);
           final key = await proverRecipientPublicKey(ikm);
-          const token = 'device';
           return http.Response(
             jsonEncode({
-              'attestation': {
-                'platform': 'aws-nitro',
-                'hpke_public_key': _hexOf(key),
-                'image_id': _hexOf(image),
-                'gpu': token,
-                'report_data': _hexOf(
-                  proverReportData(nonce, key, gpuToken: utf8.encode(token)),
-                ),
-              },
+              'attestation': nitroAttestation(nonce: nonce, hpke: key),
             }),
             200,
           );
         }),
       );
-      expect(quoted.gpuVerified, isTrue);
+      expect(quoted.gpuVerified, isFalse);
       expect(
-        () => TeePolicy(platform: 'aws-nitro', imageIds: [image], gpu: 'maybe'),
+        () => nitroPolicy(gpu: 'maybe'),
         _code('invalid_config'),
       );
-      final expired = TeePolicy(
-        platform: 'aws-nitro',
-        imageIds: [image],
-        maxAge: Duration.zero,
-      );
+      final expired = nitroPolicy(maxAge: Duration.zero);
       var expiredQuotes = 0;
       final expiring = TeeSession(expired, ephemeralSeed: seed);
       final expiringClient = MockClient((request) async {
@@ -967,9 +967,8 @@ void main() {
 
   test('a TeeSession proves against a remote https prover', () async {
     final ikm = _hex(tee['ikm']! as String);
-    final image = Uint8List(32)..[0] = 8;
     final seed = Uint8List(32)..[0] = 3;
-    final policy = TeePolicy(platform: 'aws-nitro', imageIds: [image]);
+    final policy = nitroPolicy();
     final session = TeeSession(policy, ephemeralSeed: seed);
     final pin = provingKeySha256('transfer_confidential_1_2');
     var posts = 0;
@@ -1014,12 +1013,7 @@ void main() {
         final nonce = _hex(request.url.queryParameters['nonce']!);
         final key = await proverRecipientPublicKey(ikm);
         return http.Response(
-          jsonEncode({
-            'platform': 'aws-nitro',
-            'hpke_public_key': _hexOf(key),
-            'image_id': _hexOf(image),
-            'report_data': _hexOf(proverReportData(nonce, key)),
-          }),
+          jsonEncode(nitroAttestation(nonce: nonce, hpke: key)),
           200,
         );
       }

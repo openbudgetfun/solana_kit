@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 import 'package:solana_kit_privacy_rings/src/constants.dart';
+import 'package:solana_kit_privacy_rings/src/exception.dart';
 
 /// A program-derived address and the bump that produced it.
 class DerivedAddress {
@@ -47,6 +48,40 @@ Future<Address> nullifierPda(Address tree, List<int> nullifier) async {
     ],
   );
   return address;
+}
+
+/// State-tree PDA for [treeId].
+///
+/// Seeds: `b"tree" || tree_id.to_le_bytes()`. Tree 0 is [stateMerkleTree].
+Future<DerivedAddress> stateTreePda(int treeId) async {
+  if (treeId < 0 || treeId > 0xffff) {
+    throw PrivacyRingsException(
+      'tree id is outside 0..65535',
+      code: 'integer_range',
+    );
+  }
+  final (address, bump) = await getProgramDerivedAddress(
+    programAddress: shieldedPoolProgramId,
+    seeds: [
+      treeSeed,
+      Uint8List.fromList([treeId & 0xff, (treeId >> 8) & 0xff]),
+    ],
+  );
+  return DerivedAddress(address: address, bump: bump);
+}
+
+/// User-registry record PDA for a Solana [owner].
+///
+/// Seeds: `b"zolana/registry/v0" || owner`.
+Future<DerivedAddress> userRecordPda(Address owner) async {
+  final (address, bump) = await getProgramDerivedAddress(
+    programAddress: userRegistryProgramId,
+    seeds: [
+      userRecordSeed,
+      getAddressEncoder().encode(owner),
+    ],
+  );
+  return DerivedAddress(address: address, bump: bump);
 }
 
 /// Derives the native SOL interface and checks it against the pinned address.

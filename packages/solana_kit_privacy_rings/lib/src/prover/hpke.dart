@@ -82,6 +82,32 @@ String proverRequestAad(String method, String requestUri) {
   return kept.isEmpty ? '$method $route' : '$method $route?${kept.join('&')}';
 }
 
+/// Lowercase hex, two characters per byte.
+String hexEncode(List<int> bytes) {
+  final buffer = StringBuffer();
+  for (final byte in bytes) {
+    buffer.write(byte.toRadixString(16).padLeft(2, '0'));
+  }
+  return buffer.toString();
+}
+
+/// SHA-256 nonce a GPU quote binds to the same session.
+///
+/// `SHA-256("zolana/prover-tee/v1/gpu" || nonce || hpke_public_key)`.
+/// Both inputs are 32 bytes.
+Uint8List proverGpuNonce(Uint8List nonce, Uint8List hpkePublicKey) {
+  if (nonce.length != 32 || hpkePublicKey.length != 32) {
+    throw PrivacyRingsException(
+      'a GPU nonce takes 32-byte inputs',
+      code: 'invalid_length',
+    );
+  }
+  final prefix = utf8.encode('zolana/prover-tee/v1/gpu');
+  return Uint8List.fromList(
+    sha256.convert([...prefix, ...nonce, ...hpkePublicKey]).bytes,
+  );
+}
+
 /// SHA-512 report binding the Go prover computes.
 ///
 /// `reportData` in `sdk-libs/ts/src/client/prover/tee/verify.ts`.

@@ -6,22 +6,31 @@ import 'package:http/http.dart' as http;
 
 import 'package:solana_kit_privacy_rings/src/exception.dart';
 import 'package:solana_kit_privacy_rings/src/prover/hpke.dart';
+import 'package:solana_kit_privacy_rings/src/prover/nitro.dart';
 
 /// Policy an attested prover session binds.
 ///
-/// [imageIds] are the digests the caller already authenticated. This
-/// session checks that the attestation names one of them and that
-/// `report_data` is the SHA-512 binding [proverReportData] computes.
-/// It does not parse an AWS Nitro COSE certificate chain; that check
-/// belongs to the caller before an image id is placed in [imageIds].
+/// An `aws-nitro` policy verifies the COSE_Sign1 document in the
+/// attestation. [measurements] are the PCR sets the document must match,
+/// and [imageIds] are the PCR0 values the session accepts after that
+/// check. `report_data` must be the SHA-512 binding [proverReportData]
+/// computes. Nitro hosts no GPU, so [gpu] cannot be `required` and a
+/// quote that carries a GPU token is refused.
 class TeePolicy {
   /// Creates a policy.
   TeePolicy({
     required this.platform,
     required List<Uint8List> imageIds,
+    required List<NitroMeasurement> measurements,
+    List<Uint8List>? anchors,
+    this.nowSecs,
     this.gpu = 'optional',
     this.maxAge = const Duration(minutes: 10),
-  }) : imageIds = List<Uint8List>.unmodifiable(imageIds) {
+  }) : imageIds = List<Uint8List>.unmodifiable(imageIds),
+       measurements = List<NitroMeasurement>.unmodifiable(measurements),
+       anchors = anchors == null
+           ? null
+           : List<Uint8List>.unmodifiable(anchors) {
     if (platform.isEmpty) {
       throw PrivacyRingsException(
         'TEE platform is empty',
@@ -40,15 +49,50 @@ class TeePolicy {
         code: 'invalid_config',
       );
     }
+    if (platform != 'aws-nitro') {
+      throw PrivacyRingsException(
+        'TEE platform $platform is not aws-nitro',
+        code: 'invalid_config',
+      );
+    }
+    if (gpu == 'required') {
+      throw PrivacyRingsException(
+        'aws-nitro hosts no GPU',
+        code: 'invalid_config',
+      );
+    }
+    if (this.measurements.isEmpty) {
+      throw PrivacyRingsException(
+        'TEE policy has no Nitro measurement',
+        code: 'invalid_config',
+      );
+    }
+    if (this.anchors != null && this.anchors!.isEmpty) {
+      throw PrivacyRingsException(
+        'TEE policy has no Nitro anchor',
+        code: 'invalid_config',
+      );
+    }
   }
 
   /// Platform name, for example `aws-nitro`.
   final String platform;
 
-  /// Image digests the caller accepts.
+  /// PCR0 values the session accepts.
   final List<Uint8List> imageIds;
 
-  /// `optional` or `required`.
+  /// PCR sets the Nitro document must match.
+  final List<NitroMeasurement> measurements;
+
+  /// Certificate anchors. Null uses [awsNitroRoot].
+  final List<Uint8List>? anchors;
+
+  /// Unix time the certificate chain is checked at.
+  ///
+  /// Null uses the current time.
+  final int? nowSecs;
+
+  /// `optional`. Nitro refuses `required`.
   final String gpu;
 
   /// How long a cached attestation key may be reused.
@@ -112,7 +156,7 @@ class TeeSession {
     final url = attestationUrl.replace(
       queryParameters: {
         ...attestationUrl.queryParameters,
-        'nonce': _hex(nonce),
+        'nonce': hexEncode(nonce),
       },
     );
     final response = await client.get(url);
@@ -162,9 +206,9 @@ class TeeSession {
       final request = http.Request(method, url)
         ..headers.addAll(headers)
         ..headers['Spr-Tee'] = 'v1'
-        ..headers['Spr-Tee-Enc'] = _hex(encrypted.enc);
+        ..headers['Spr-Tee-Enc'] = hexEncode(encrypted.enc);
       if (method == 'GET') {
-        request.headers['Spr-Tee-Ciphertext'] = _hex(encrypted.body);
+        request.headers['Spr-Tee-Ciphertext'] = hexEncode(encrypted.body);
       } else {
         request.bodyBytes = encrypted.body;
       }
@@ -235,12 +279,10 @@ class TeeSession {
       );
     }
     final key = _decodeHex(attestation['hpke_public_key'], 32, 'hpke key');
-    final image = _decodeHex(attestation['image_id'], null, 'image id');
-    final allowed = policy.imageIds.any(_same(image));
-    if (!allowed) {
+    if (!attestation.containsKey('gpu')) {
       throw PrivacyRingsException(
-        'prover image id is not in the policy',
-        code: 'tee_image',
+        'prover attestation has no gpu field',
+        code: 'malformed_attestation',
       );
     }
     final gpu = attestation['gpu'];
@@ -250,29 +292,46 @@ class TeeSession {
         code: 'malformed_attestation',
       );
     }
-    if (policy.gpu == 'required' && gpu == null) {
+    if (gpu != null) {
       throw PrivacyRingsException(
-        'prover attestation has no gpu token',
-        code: 'tee_gpu',
+        'aws-nitro hosts no GPU, gpu must be null',
+        code: 'malformed_attestation',
       );
     }
-    final report = _decodeHex(attestation['report_data'], 64, 'report data');
-    final expected = proverReportData(
-      nonce,
-      key,
-      gpuToken: gpu == null ? null : utf8.encode(gpu as String),
+    final evidence = attestation['evidence'];
+    if (evidence is! Map) {
+      throw PrivacyRingsException(
+        'prover attestation has no Nitro document',
+        code: 'malformed_attestation',
+      );
+    }
+    final document = _decodeHex(evidence['document'], null, 'document');
+    final verdict = verifyNitroAttestation(
+      document: document,
+      measurements: policy.measurements,
+      nonce: nonce,
+      hpkePublicKey: key,
+      nowSecs: policy.nowSecs ?? DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      anchors: policy.anchors,
     );
-    if (!_same(report)(expected)) {
+    final expected = proverReportData(nonce, key);
+    if (!_same(verdict.reportData)(expected)) {
       throw PrivacyRingsException(
         'prover report_data does not bind this nonce and key',
         code: 'tee_report',
       );
     }
+    if (!policy.imageIds.any(_same(verdict.imageId))) {
+      throw PrivacyRingsException(
+        'prover image id is not in the policy',
+        code: 'tee_image',
+      );
+    }
     return AttestedProver(
       platform: policy.platform,
       hpkePublicKey: key,
-      imageId: image,
-      gpuVerified: gpu != null,
+      imageId: Uint8List.fromList(verdict.imageId),
+      gpuVerified: false,
     );
   }
 }
@@ -280,14 +339,6 @@ class TeeSession {
 Uint8List _nonce() {
   final random = Random.secure();
   return Uint8List.fromList(List<int>.generate(32, (_) => random.nextInt(256)));
-}
-
-String _hex(List<int> bytes) {
-  final buffer = StringBuffer();
-  for (final byte in bytes) {
-    buffer.write(byte.toRadixString(16).padLeft(2, '0'));
-  }
-  return buffer.toString();
 }
 
 Uint8List _decodeHex(Object? value, int? length, String name) {

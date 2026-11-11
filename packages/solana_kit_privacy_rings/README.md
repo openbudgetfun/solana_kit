@@ -10,20 +10,19 @@ Helius publishes TypeScript (`@heliuslabs/spr`) and Rust (`spr-client`) SDKs. Th
 
 - **Deposit** — a `deposit` instruction (tag 15) for native SOL and SPL or Token-2022, including the SOL interface account and per-mint SPL interface PDAs.
 - **Confidential transfer and withdraw** — a `transact` instruction (tag 16) for one or two input trees and up to 32 public settlement legs. Tag 16 accepts a confidential signer or confidential EdDSA selector, including the cached forms, and appends the cache account tail. Ring selectors are rejected.
-- **Poseidon witness** — circom x5 Poseidon over the BN254 scalar field, `owner_hash`, nullifier derivation, output blinding, UTXO commitments, and the confidential-transfer witness JSON. The vectors match `poseidon-parity-v1` and the Helius `owner_hash` fixture.
+- **Poseidon witness** — circom x5 Poseidon over the BN254 scalar field, `owner_hash`, nullifier derivation, output blinding, UTXO commitments, the transfer public-input hash, and `confidentialTransferWitness`, which builds the gnark witness from notes and Merkle paths. The rebuilt `transfer-2x2` witness matches the published fixture.
 - **Viewing-key decryption** — X25519, HKDF-SHA256, and AES-256-CTR with the `TSPP/hpke/TSPP/tx` info string. The same bytes are checked against `@noble`, which the TypeScript SDK uses.
 - **Private balance read** — pages `getShieldedTransactionsByTags` and `getEncryptedUtxosByTags`, decrypts confidential slots by their output index, and reads proofless deposit amounts in the clear. A leaf is counted once. `subtractNullifiedNotes` drops a leaf whose derived nullifier is already in history, and `retainNonInclusion` keeps a leaf whose nullifier has a non-inclusion proof.
-- **Indexer RPC** — typed calls for all seven privacy methods: `getEncryptedUtxosByTags`, `getShieldedTransactionsByTags`, `getShieldedTransactionsByNullifiers`, `getShieldedTransactionsBySignature`, `getMerkleProofs`, `getNonInclusionProofs`, and `getUserRecords`.
+- **Indexer RPC** — typed calls for the privacy methods: `getEncryptedUtxosByTags`, `getShieldedTransactionsByTags`, `getShieldedTransactionsByNullifiers`, `getShieldedTransactionsBySignature`, `getMerkleProofs`, `getNonInclusionProofs`, `getUserRecords`, and `getNullifierQueueElements`. `collectPages` walks those pages and refuses a history that still has a token after the page limit. `spentNullifiers` returns the sorted unique nullifiers. `PrivacyRingsCluster` and `localIndexerUrl` build the method URL and refuse a name that is not alphanumeric. `decodeBase64` reads a standard-base64 indexer field.
 - **Remote prover** — `POST /prove/{circuit}` with `X-Sync: true`, a `429` fallback to `X-Async`, and status polling. `proveIndexed` posts `POST /prove/{circuit}/indexed`. The returned gnark proof is compressed into the `TransactProof` the instruction carries, and the reported proving-key SHA-256 must match the pin copied from the TypeScript SDK.
-- **Attested prover session** — HPKE (DHKEM(X25519, HKDF-SHA256), AES-256-GCM) with the `Spr-Tee: v1` headers. The session checks the platform, the image id, the GPU requirement, and the SHA-512 `report_data` binding.
+- **Attested prover session** — HPKE (DHKEM(X25519, HKDF-SHA256), AES-256-GCM) with the `Spr-Tee: v1` headers. For `aws-nitro`, the session verifies the COSE_Sign1 document, the certificate chain, the PCR measurement, and the SHA-512 `report_data` binding. Nitro hosts no GPU, so a policy cannot require one and a quote that carries a GPU token is refused.
+- **Shielded seed expansion** — `expandShieldedSeed` derives the nullifier and viewing secrets from a 64-byte ed25519 seed. `ownerHash` and `NullifierKey` consume those secrets. `stateTreePda` and `userRecordPda` derive the state-tree and user-registry accounts. `hexEncode` is the lowercase hex the attested session puts on its headers.
 
-## What this package does not compute
+## Boundaries
 
-Shielded seed expansion stays with the caller. `ownerHash` hashes an owner proof input hash with a nullifier public key, and `NullifierKey` derives a public key and note nullifiers from a 31-byte secret. This package does not expand a seed into those secrets.
+`TeePolicy` accepts `aws-nitro` only. The session verifies that platform's COSE document against `awsNitroRoot`, or against anchors a test supplies. dstack quotes are not verified here.
 
-`TeeSession` does not parse an AWS Nitro COSE certificate chain. Put only image ids you have already authenticated into `TeePolicy`. The session then checks that the attestation names one of them and that `report_data` binds the nonce and HPKE key.
-
-`getNullifierQueueElements` is not implemented. The published indexer schema does not include it.
+Wallet sync, merge, split, and ring-transfer assembly from the TypeScript SDK are not in this package, and the Rust crate does not export them either. The public API does not stand in for them.
 
 A prover that is not on a loopback address refuses a cleartext call unless `allowUnauthenticatedRemoteProver` is set or a `TeeSession` is attached. A local prover on `127.0.0.1` accepts the JSON body directly. The live Helius prover is not called unless you opt in.
 
@@ -122,6 +121,6 @@ Future<void> readBalance(List<int> viewingSecret, String viewTag) async {
 }
 ```
 
-`viewTag` for the permissionless ring is the recipient wallet address as 32 bytes. `recipientOwnerHash` is the Poseidon owner hash from the shielded address; pass it in from a client that computes it.
+`viewTag` for the permissionless ring is the recipient wallet address as 32 bytes. `recipientOwnerHash` is `ownerHash` of the shielded address. `expandShieldedSeed` derives the nullifier and viewing secrets that hash uses.
 
 A live indexer call needs a Helius API key. Tests in this package skip that call unless `HELIUS_PRIVACY_RINGS_LIVE=1` and `HELIUS_API_KEY` are both set, and no key is stored in the repository.

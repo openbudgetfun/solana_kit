@@ -89,6 +89,12 @@ const splInterfaceSeed = 'spl_asset_vault';
 /// PDA seed `b"nullifier"`.
 const nullifierSeed = 'nullifier';
 
+/// PDA seed `b"tree"`.
+const treeSeed = 'tree';
+
+/// PDA seed `b"zolana/registry/v0"`.
+const userRecordSeed = 'zolana/registry/v0';
+
 /// Owners one `getUserRecords` request may name.
 ///
 /// `MAX_USER_RECORD_OWNERS` in

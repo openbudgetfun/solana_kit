@@ -335,6 +335,18 @@ class NonInclusionProof {
   final int rootIndex;
 }
 
+/// One queued nullifier, in on-chain input-queue order.
+class NullifierQueueElement {
+  /// Creates a queue element.
+  const NullifierQueueElement({required this.seq, required this.value});
+
+  /// Input-queue sequence.
+  final BigInt seq;
+
+  /// Nullifier, base58.
+  final String value;
+}
+
 /// A public user-registry record.
 class UserRecord {
   /// Creates a user record.
@@ -505,6 +517,21 @@ String _signature(Object? value, String path) {
     );
   }
   return text;
+}
+
+/// Decodes a standard-base64 indexer field.
+///
+/// Leading and trailing whitespace is ignored. A value outside the
+/// standard alphabet is refused.
+Uint8List decodeBase64(String text) {
+  try {
+    return Uint8List.fromList(base64.decode(text.trim()));
+  } on FormatException {
+    throw PrivacyRingsException(
+      'value is not base64',
+      code: 'base64',
+    );
+  }
 }
 
 Uint8List _base64(Object? value, String path) {
@@ -789,6 +816,30 @@ decodeNonInclusionProofs(Object? value) {
       for (final (index, item) in _list(record['proofs'], r'$.proofs').indexed)
         _nonInclusion(item, '\$.proofs[$index]'),
     ],
+  );
+}
+
+/// Decodes `getNullifierQueueElements`.
+({IndexerContext context, List<NullifierQueueElement> elements})
+decodeNullifierQueueElements(Object? value) {
+  final record = _map(value, r'$');
+  return (
+    context: _context(record['context']),
+    elements: [
+      for (final (index, item) in _list(
+        record['elements'],
+        r'$.elements',
+      ).indexed)
+        _queueElement(item, '\$.elements[$index]'),
+    ],
+  );
+}
+
+NullifierQueueElement _queueElement(Object? value, String path) {
+  final record = _map(value, path);
+  return NullifierQueueElement(
+    seq: _u64(record['seq'], '$path.seq'),
+    value: _hash(record['value'], '$path.value'),
   );
 }
 
