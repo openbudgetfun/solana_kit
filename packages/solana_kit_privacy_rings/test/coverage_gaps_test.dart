@@ -546,6 +546,53 @@ void main() {
     expect(report.balances.single.amount, BigInt.from(4));
   });
 
+  test('nullifier maps and non-inclusion proofs filter the same leaves', () {
+    final spentLeaf = PrivateNote(
+      amount: BigInt.one,
+      mint: solMint,
+      signature: 'sig',
+      treeId: 1,
+      leafIndex: BigInt.two,
+    );
+    final open = PrivateNote(
+      amount: BigInt.one,
+      mint: solMint,
+      signature: 'sig',
+      treeId: 1,
+      leafIndex: BigInt.from(3),
+    );
+    final unnamed = PrivateNote(
+      amount: BigInt.one,
+      mint: solMint,
+      signature: 'sig',
+    );
+    final nine = Uint8List(32)..[0] = 9;
+    final eight = Uint8List(32)..[0] = 8;
+    final derived = {
+      SpentLeaf(1, BigInt.two): nine,
+      SpentLeaf(1, BigInt.from(3)): eight,
+    };
+    final dropped = subtractNullifiedNotes(
+      [spentLeaf, open, unnamed],
+      {SpentLeaf(1, BigInt.two): nine},
+      [nine],
+    );
+    expect(dropped, hasLength(2));
+    final kept = retainNonInclusion([spentLeaf, open], derived, [nine]);
+    expect(kept, hasLength(1));
+    expect(kept.single.leafIndex, BigInt.two);
+    expect(
+      retainNonInclusion(
+        [spentLeaf, unnamed],
+        {
+          SpentLeaf(1, BigInt.two): nine,
+        },
+        [nine],
+      ),
+      hasLength(2),
+    );
+  });
+
   test('HPKE rejects a short or unauthenticated ciphertext', () async {
     final ikm = _hex(tee['ikm']! as String);
     await expectLater(

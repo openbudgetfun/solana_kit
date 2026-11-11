@@ -21,4 +21,4 @@ final deposit = await depositInstruction(
 );
 ```
 
-The package starts at version 0.0.0 and is not published. It hashes confidential-transfer witnesses with Poseidon, opens an attested prover session, and posts that witness to the remote prover. Attach the compressed proof with `TransactInstructionData.withProof`.
+The package starts at version 0.0.0 and is not published. It hashes confidential-transfer witnesses with Poseidon, opens an attested prover session, and posts that witness to the remote prover. Attach the compressed proof with `TransactInstructionData.withProof`. `subtractNullifiedNotes` drops a leaf whose caller-derived nullifier is already spent, and `retainNonInclusion` keeps a leaf whose nullifier has a non-inclusion proof.

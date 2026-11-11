@@ -313,6 +313,56 @@ List<PrivateBalance> _balances(
   return grouped.values.toList();
 }
 
+/// Drops notes whose derived nullifier is in [spent].
+///
+/// [nullifierOf] maps a leaf to the nullifier the caller derived. A note
+/// with no entry is kept: this function does not guess which nullifier
+/// spent it. Matches `subtract_nullified` in the Rust client.
+List<PrivateNote> subtractNullifiedNotes(
+  List<PrivateNote> notes,
+  Map<SpentLeaf, List<int>> nullifierOf,
+  Iterable<List<int>> spent,
+) {
+  return [
+    for (final note in notes)
+      if (_keepNote(note, nullifierOf, spent, dropWhenNamed: true)) note,
+  ];
+}
+
+/// Keeps notes whose nullifier has a non-inclusion proof.
+///
+/// A note whose nullifier is known and absent from [unspent] is removed.
+/// A note with no derived nullifier is kept, because the proof cannot
+/// name it. Matches `retain_non_inclusion` in the Rust client.
+List<PrivateNote> retainNonInclusion(
+  List<PrivateNote> notes,
+  Map<SpentLeaf, List<int>> nullifierOf,
+  Iterable<List<int>> unspent,
+) {
+  return [
+    for (final note in notes)
+      if (_keepNote(note, nullifierOf, unspent, dropWhenNamed: false)) note,
+  ];
+}
+
+bool _keepNote(
+  PrivateNote note,
+  Map<SpentLeaf, List<int>> nullifierOf,
+  Iterable<List<int>> set, {
+  required bool dropWhenNamed,
+}) {
+  final tree = note.treeId;
+  final leaf = note.leafIndex;
+  if (tree == null || leaf == null) return true;
+  final derived = nullifierOf[SpentLeaf(tree, leaf)];
+  if (derived == null) return true;
+  final named = set.any(
+    (item) =>
+        _bytesEqual(Uint8List.fromList(item), Uint8List.fromList(derived)),
+  );
+  return dropWhenNamed ? !named : named;
+}
+
 bool _sameNote(PrivateNote left, PrivateNote right) {
   return left.amount == right.amount &&
       left.mint == right.mint &&
