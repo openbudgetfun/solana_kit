@@ -1,0 +1,18 @@
+name: solana_kit_privacy_rings
+description: Dart client for Helius Solana Privacy Rings — shielded deposits, confidential transfers, withdrawals, viewing-key decryption, and the privacy indexer and prover.
+version: 0.0.0
+repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_privacy_rings
+homepage: https://openbudgetfun.github.io/solana_kit/
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+dependencies:
+  crypto: ^3.0.6
+  cryptography: ^2.7.0
+  http: ^1.4.0
+  solana_kit_addresses: ^0.11.1
+  solana_kit_codecs_strings: ^0.11.1
+  solana_kit_instructions: ^0.11.1
+dev_dependencies:
+  solana_kit_lints: ^0.11.1
+  test: ^1.25.0

@@ -1,0 +1,180 @@
+import 'package:http/http.dart' as http;
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+
+import 'package:solana_kit_privacy_rings/src/balance.dart';
+import 'package:solana_kit_privacy_rings/src/codec/transact.dart';
+import 'package:solana_kit_privacy_rings/src/endpoints.dart';
+import 'package:solana_kit_privacy_rings/src/exception.dart';
+import 'package:solana_kit_privacy_rings/src/keys/viewing_key.dart';
+import 'package:solana_kit_privacy_rings/src/prover/client.dart';
+import 'package:solana_kit_privacy_rings/src/rpc/client.dart';
+import 'package:solana_kit_privacy_rings/src/rpc/types.dart';
+
+/// Indexer and prover access for one Privacy Rings deployment.
+///
+/// Solana transaction submission stays on the repo's RPC client. This
+/// type covers the two Privacy Rings services: the indexer that returns
+/// encrypted notes, and the remote prover that returns a Groth16 proof
+/// for a witness the caller built.
+class PrivacyRings {
+  /// Connects using the same URL rules as `createSprClient`.
+  ///
+  /// Pass a Helius RPC root as [solanaRpcUrl] and the indexer and prover
+  /// inherit `https://<host>/v1/spr`, query included. Omit every URL to
+  /// use the local stack (`:8899`, `:8784`, `:3001`).
+  PrivacyRings({
+    Uri? solanaRpcUrl,
+    Uri? indexerUrl,
+    Uri? proverUrl,
+    String? apiKey,
+    http.Client? httpClient,
+    bool allowUnauthenticatedRemoteProver = false,
+  }) : endpoints = resolvePrivacyRingsEndpoints(
+         solanaRpcUrl: solanaRpcUrl,
+         indexerUrl: indexerUrl,
+         proverUrl: proverUrl,
+       ),
+       indexer = PrivacyIndexerClient(
+         endpoint: resolvePrivacyRingsEndpoints(
+           solanaRpcUrl: solanaRpcUrl,
+           indexerUrl: indexerUrl,
+           proverUrl: proverUrl,
+         ).indexer,
+         httpClient: httpClient,
+         apiKey: apiKey,
+       ),
+       prover = PrivacyProverClient(
+         endpoint: resolvePrivacyRingsEndpoints(
+           solanaRpcUrl: solanaRpcUrl,
+           indexerUrl: indexerUrl,
+           proverUrl: proverUrl,
+         ).prover,
+         httpClient: httpClient,
+         apiKey: apiKey,
+         allowUnauthenticatedRemoteProver: allowUnauthenticatedRemoteProver,
+       );
+
+  /// The URLs this client calls.
+  final PrivacyRingsEndpoints endpoints;
+
+  /// Indexer JSON-RPC.
+  final PrivacyIndexerClient indexer;
+
+  /// Remote prover.
+  final PrivacyProverClient prover;
+
+  /// Closes the HTTP client when this object created it.
+  ///
+  /// The indexer and the prover share that decision: both close only a
+  /// client they constructed. Pass one [http.Client] to both and close
+  /// it yourself.
+  void close() {
+    indexer.close();
+    prover.close();
+  }
+
+  /// Reads notes for [tags] and decrypts the confidential ones with
+  /// [viewingKey].
+  ///
+  /// Confidential history comes from `getShieldedTransactionsByTags`.
+  /// Proofless deposits come from `getEncryptedUtxosByTags`, and only
+  /// the matches that have no transaction viewing key. Pages stop when
+  /// the indexer returns a null token. If [maxPages] is reached while a
+  /// token remains, this throws rather than returning a partial sum.
+  Future<PrivateBalanceReport> readPrivateBalance({
+    required ViewingKey viewingKey,
+    required List<String> tags,
+    Address? ringProgramId,
+    Map<BigInt, Address> mints = const {},
+    int pageLimit = 1000,
+    int maxPages = 50,
+  }) async {
+    if (maxPages < 1) {
+      throw PrivacyRingsException(
+        'maxPages must be at least 1',
+        code: 'invalid_request',
+      );
+    }
+    final confidential = await _shieldedPages(
+      tags: tags,
+      ringProgramId: ringProgramId,
+      pageLimit: pageLimit,
+      maxPages: maxPages,
+    );
+    final deposits = await _depositPages(
+      tags: tags,
+      ringProgramId: ringProgramId,
+      pageLimit: pageLimit,
+      maxPages: maxPages,
+    );
+    return combineBalanceReports(
+      await readConfidentialNotes(
+        viewingKey: viewingKey,
+        transactions: confidential,
+        mints: mints,
+      ),
+      await readProoflessDeposits(deposits),
+    );
+  }
+
+  /// Posts [witness] to the remote prover and returns a compressed proof
+  /// ready for [TransactInstructionData.withProof].
+  Future<TransactProof> prove({
+    required String circuit,
+    required Map<String, Object?> witness,
+  }) {
+    return prover.prove(circuit: circuit, witness: witness);
+  }
+
+  Future<List<ShieldedTransaction>> _shieldedPages({
+    required List<String> tags,
+    required Address? ringProgramId,
+    required int pageLimit,
+    required int maxPages,
+  }) async {
+    final transactions = <ShieldedTransaction>[];
+    String? token;
+    for (var page = 0; page < maxPages; page++) {
+      final response = await indexer.getShieldedTransactionsByTags(
+        tags: tags,
+        ringProgramId: ringProgramId,
+        page: PageRequest(paginationToken: token, limit: pageLimit),
+      );
+      for (final entry in response.data) {
+        transactions.addAll(entry.entries);
+      }
+      token = response.paginationToken;
+      if (token == null) return transactions;
+    }
+    throw PrivacyRingsException(
+      'shielded history still had a page after $maxPages pages',
+      code: 'history_truncated',
+    );
+  }
+
+  Future<List<EncryptedUtxoMatch>> _depositPages({
+    required List<String> tags,
+    required Address? ringProgramId,
+    required int pageLimit,
+    required int maxPages,
+  }) async {
+    final matches = <EncryptedUtxoMatch>[];
+    String? token;
+    for (var page = 0; page < maxPages; page++) {
+      final response = await indexer.getEncryptedUtxosByTags(
+        tags: tags,
+        ringProgramId: ringProgramId,
+        page: PageRequest(paginationToken: token, limit: pageLimit),
+      );
+      for (final entry in response.data) {
+        matches.addAll(entry.entries);
+      }
+      token = response.paginationToken;
+      if (token == null) return matches;
+    }
+    throw PrivacyRingsException(
+      'deposit history still had a page after $maxPages pages',
+      code: 'history_truncated',
+    );
+  }
+}

@@ -40,6 +40,7 @@
   "solana_kit_offchain_messages": "0.7.1",
   "solana_kit_options": "0.11.1",
   "solana_kit_program_client_core": "0.11.1",
+  "solana_kit_privacy_rings": "0.0.0",
   "solana_kit_programs": "0.11.1",
   "solana_kit_pyth": "0.11.1",
   "solana_kit_rpc": "0.11.1",
