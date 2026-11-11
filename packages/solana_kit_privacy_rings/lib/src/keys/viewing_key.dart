@@ -129,10 +129,12 @@ Future<Uint8List> _publicCoordinate(Uint8List secret) async {
   final pair = await X25519().newKeyPairFromSeed(secret);
   final publicKey = await pair.extractPublicKey();
   if (publicKey.bytes.length != 32) {
+    // coverage:ignore-start
     throw PrivacyRingsException(
       'X25519 public key was ${publicKey.bytes.length} bytes',
       code: 'invalid_public_key',
     );
+    // coverage:ignore-end
   }
   return Uint8List.fromList(publicKey.bytes);
 }
@@ -179,10 +181,12 @@ Future<Uint8List> _applyCipher({
   );
   final okm = Uint8List.fromList(await expanded.extractBytes());
   if (okm.length != 44) {
+    // coverage:ignore-start
     throw PrivacyRingsException(
       'HKDF returned ${okm.length} bytes',
       code: 'hkdf',
     );
+    // coverage:ignore-end
   }
   final key = Uint8List.sublistView(okm, 0, 32);
   final counter = Uint8List(16)..setRange(0, 12, okm.sublist(32));

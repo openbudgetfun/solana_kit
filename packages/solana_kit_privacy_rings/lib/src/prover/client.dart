@@ -126,10 +126,14 @@ class PrivacyProverClient {
       }
       return parseProverProof(value, circuit: name);
     }
+    // Each attempt returns or throws. A 429 is retried once, then a
+    // second non-success status throws above.
+    // coverage:ignore-start
     throw PrivacyRingsException(
       'prover did not accept a synchronous or queued proof for $name',
       code: 'prover_http',
     );
+    // coverage:ignore-end
   }
 
   void _requireTransport() {

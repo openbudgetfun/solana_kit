@@ -84,10 +84,13 @@ class _DepositLayout {
       (group) => group.asset.mint == spl.mint,
     );
     if (found < 0) {
+      // The layout is built from the same deposits, so a miss is a bug.
+      // coverage:ignore-start
       throw PrivacyRingsException(
         'deposit asset is missing from the settlement layout',
         code: 'serialization',
       );
+      // coverage:ignore-end
     }
     return (hasSol ? 1 : 0) + found;
   }

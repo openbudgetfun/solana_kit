@@ -6,6 +6,10 @@ import 'package:http/testing.dart';
 import 'package:solana_kit_privacy_rings/solana_kit_privacy_rings.dart';
 import 'package:test/test.dart';
 
+Matcher _code(String code) => throwsA(
+  isA<PrivacyRingsException>().having((error) => error.code, 'code', code),
+);
+
 Map<String, Object?> _proof({required String pin, List<String>? ar}) {
   return {
     'ar': ar ?? ['0x0', '0x0'],
@@ -129,4 +133,244 @@ void main() {
     );
     expect(called, isFalse);
   });
+
+  test(
+    'prover transport, status, and proof parsing cover the failure paths',
+    () async {
+      expect(
+        () => parseProverProof(null, circuit: 'missing-circuit'),
+        _code('unknown_circuit'),
+      );
+      expect(
+        () => parseProverProof(null, circuit: circuit),
+        _code('prover_server'),
+      );
+      expect(
+        () => parseProverProof({
+          'proof': _proof(pin: pin)..['provingKeySha256'] = 'ZZ',
+        }, circuit: circuit),
+        _code('invalid_response'),
+      );
+      expect(
+        () =>
+            parseProverProof(_proof(pin: pin)..['ar'] = null, circuit: circuit),
+        _code('proof_parse'),
+      );
+      final committed = _proof(pin: pin, ar: ['0x1', '0x2'])
+        ..['proofCommitment'] = ['0x1', '0x2']
+        ..['proofCommitmentPok'] = ['0X1', '0x2'];
+      expect(parseProverProof(committed, circuit: circuit).a[31], 1);
+      expect(
+        () => parseProverProof(
+          _proof(pin: pin)..['krs'] = ['0x1', '0x1'],
+          circuit: circuit,
+        ),
+        _code('proof_point'),
+      );
+      expect(
+        () => parseProverProof(
+          _proof(pin: pin)..['bs'] = ['0x1'],
+          circuit: circuit,
+        ),
+        _code('proof_parse'),
+      );
+      expect(
+        () => parseProverProof(
+          _proof(pin: pin)..['ar'] = ['0x', '0x1'],
+          circuit: circuit,
+        ),
+        _code('proof_parse'),
+      );
+      expect(
+        () => parseProverProof(
+          _proof(pin: pin)
+            ..['ar'] = [
+              '0x${List.filled(64, 'f').join()}',
+              '0x1',
+            ],
+          circuit: circuit,
+        ),
+        _code('proof_parse'),
+      );
+      expect(
+        () => parseProverProof(
+          _proof(pin: pin, ar: ['0x1', '0x2'])..['krs'] = ['0x1', '0x1'],
+          circuit: circuit,
+        ),
+        _code('proof_point'),
+      );
+
+      expect(
+        () => PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001/?api-key=a'),
+          apiKey: 'b',
+        ),
+        _code('invalid_config'),
+      );
+      expect(
+        () => PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001'),
+          apiKey: '',
+        ),
+        _code('invalid_config'),
+      );
+      PrivacyProverClient(endpoint: Uri.parse('http://127.0.0.1:3001')).close();
+
+      final direct = PrivacyProverClient(
+        endpoint: Uri.parse('http://localhost:3001/?api-key=secret-key'),
+        httpClient: MockClient((request) async {
+          expect(request.url.queryParameters['api-key'], 'secret-key');
+          return http.Response(jsonEncode(_proof(pin: pin)), 200);
+        }),
+      );
+      expect(
+        (await direct.prove(circuit: '$circuit.key', witness: const {})).c[31],
+        1,
+      );
+
+      Future<void> reject(String name) {
+        return PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001'),
+          httpClient: MockClient((request) async => http.Response('{}', 200)),
+        ).prove(circuit: name, witness: const {});
+      }
+
+      expect(reject(''), _code('invalid_request'));
+      expect(reject('a/b'), _code('invalid_request'));
+      expect(reject('..'), _code('invalid_request'));
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001'),
+          httpClient: MockClient((request) async => http.Response('nope', 500)),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('prover_http'),
+      );
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001'),
+          httpClient: MockClient((request) async => http.Response('nope', 200)),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('invalid_response'),
+      );
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001'),
+          httpClient: MockClient((request) async => throw StateError('down')),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('prover_transport'),
+      );
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('http://example.test/prove'),
+          allowUnauthenticatedRemoteProver: true,
+          httpClient: MockClient((request) async => http.Response('{}', 200)),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('invalid_config'),
+      );
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('https://example.test/prove'),
+          allowUnauthenticatedRemoteProver: true,
+          httpClient: MockClient((request) async {
+            return http.Response(jsonEncode(_proof(pin: pin)), 200);
+          }),
+        ).prove(circuit: circuit, witness: const {}),
+        completion(isA<TransactProof>()),
+      );
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('http://[::1]:3001'),
+          httpClient: MockClient((request) async {
+            return http.Response(jsonEncode({'jobId': 'bad id'}), 200);
+          }),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('prover_job'),
+      );
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001'),
+          maxWait: Duration.zero,
+          httpClient: MockClient((request) async {
+            return http.Response(jsonEncode({'jobId': 'job_1'}), 200);
+          }),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('prover_timeout'),
+      );
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001'),
+          maxWait: const Duration(milliseconds: 20),
+          httpClient: MockClient((request) async {
+            if (request.method == 'POST') {
+              return http.Response(jsonEncode({'jobId': 'job_1'}), 200);
+            }
+            await Future<void>.delayed(const Duration(milliseconds: 40));
+            return http.Response('{"status":"queued"}', 500);
+          }),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('prover_timeout'),
+      );
+      expect(
+        PrivacyProverClient(
+          endpoint: Uri.parse('http://127.0.0.1:3001'),
+          pollInterval: const Duration(milliseconds: 1),
+          maxPollInterval: const Duration(milliseconds: 4),
+          httpClient: MockClient((request) async {
+            if (request.method == 'POST') {
+              return http.Response(jsonEncode({'jobId': 'job_1'}), 200);
+            }
+            return http.Response('{"status":"queued"}', 404);
+          }),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('prover_http'),
+      );
+      PrivacyProverClient polling(MockClient httpClient) => PrivacyProverClient(
+        endpoint: Uri.parse('http://127.0.0.1:3001'),
+        pollInterval: const Duration(milliseconds: 1),
+        maxPollInterval: const Duration(milliseconds: 4),
+        httpClient: httpClient,
+      );
+      http.Response job(http.Request request) {
+        if (request.method == 'POST') {
+          return http.Response(jsonEncode({'jobId': 'job_1'}), 200);
+        }
+        throw StateError('status handler missing');
+      }
+
+      expect(
+        polling(
+          MockClient((request) async {
+            if (request.method == 'POST') return job(request);
+            return http.Response('[]', 200);
+          }),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('invalid_response'),
+      );
+      expect(
+        polling(
+          MockClient((request) async {
+            if (request.method == 'POST') return job(request);
+            return http.Response(jsonEncode({'status': 'failed'}), 200);
+          }),
+        ).prove(circuit: circuit, witness: const {}),
+        _code('prover_server'),
+      );
+      var polls = 0;
+      final recovered = await polling(
+        MockClient((request) async {
+          if (request.method == 'POST') return job(request);
+          polls++;
+          if (polls == 1) {
+            return http.Response(jsonEncode({'status': 'queued'}), 200);
+          }
+          return http.Response(
+            jsonEncode({'status': 'completed', 'proof': _proof(pin: pin)}),
+            200,
+          );
+        }),
+      ).prove(circuit: circuit, witness: const {});
+      expect(recovered.a, hasLength(32));
+      expect(polls, 2);
+    },
+  );
 }
