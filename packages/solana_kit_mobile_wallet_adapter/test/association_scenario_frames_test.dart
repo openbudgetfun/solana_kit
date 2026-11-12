@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 import 'package:solana_kit_mobile_wallet_adapter/src/local_association_scenario.dart';
 import 'package:solana_kit_mobile_wallet_adapter/src/remote_association_scenario.dart';
@@ -107,5 +108,58 @@ void main() {
       );
       local.close();
     });
+  });
+
+  group('closed-scenario lifecycle (upstream protocol-kit@3.0.2 #1788)', () {
+    test(
+      'start() on a closed scenario throws instead of launching the wallet',
+      () async {
+        final local = LocalAssociationScenario(
+          launchIntent: (_) async {},
+          connectionDeadline: const Duration(milliseconds: 500),
+        );
+        await local.close();
+
+        await expectLater(
+          local.start(),
+          throwsA(
+            isA<SolanaError>().having(
+              (error) => error.code,
+              'code',
+              SolanaErrorCode.mwaSessionClosed,
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'closing a scenario while it is connecting stops the wait early',
+      () async {
+        final local = LocalAssociationScenario(
+          launchIntent: (_) async {},
+          connectionDeadline: const Duration(seconds: 30),
+        );
+
+        final started = local.start();
+        // Let start() reach the connect-retry loop before closing; the next
+        // loop iteration must surface the close instead of waiting out the
+        // retry schedule and the connection deadline.
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        final closed = local.close();
+
+        await expectLater(
+          started,
+          throwsA(
+            isA<SolanaError>().having(
+              (error) => error.code,
+              'code',
+              SolanaErrorCode.mwaSessionClosed,
+            ),
+          ),
+        );
+        await closed;
+      },
+    );
   });
 }
