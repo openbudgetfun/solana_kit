@@ -70,6 +70,15 @@ class LocalAssociationScenario {
   /// WebSocket, performs the HELLO handshake, and creates the encrypted
   /// session.
   Future<MobileWallet> start() async {
+    // A scenario torn down before (or while) starting refuses to start, so a
+    // caller cancelling an association never waits out the full connection
+    // deadline (mirrors upstream clientlib #1788).
+    if (_closed) {
+      throw SolanaError(SolanaErrorCode.mwaSessionClosed, {
+        'reason': 'Scenario closed before it was started',
+      });
+    }
+
     // Step 1: Generate keypairs.
     _associationKeyPair = generateAssociationKeypair();
 
@@ -418,6 +427,14 @@ class LocalAssociationScenario {
     var attempt = 0;
 
     while (DateTime.now().isBefore(deadline)) {
+      // Stop connecting as soon as the scenario is closed; the caller that
+      // closed it must not wait out the retry schedule (upstream #1788).
+      if (_closed) {
+        throw SolanaError(SolanaErrorCode.mwaSessionClosed, {
+          'reason': 'Scenario closed while connecting',
+        });
+      }
+
       try {
         final channel = WebSocketChannel.connect(
           uri,
