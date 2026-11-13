@@ -1,13 +1,16 @@
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_all_program_accounts.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_all_token_accounts_by_owner.dart';
+import 'package:solana_kit_helius/src/rpc_v2/get_historical_account_info.dart';
+import 'package:solana_kit_helius/src/rpc_v2/get_historical_token_accounts_by_owner.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_program_accounts_v2.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_token_accounts_by_owner_v2.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_transactions_for_address.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_transfers_by_address.dart';
 import 'package:solana_kit_helius/src/types/rpc_v2_types.dart';
 
-/// Client for Helius RPC V2 API methods with cursor-based pagination.
+/// Client for Helius RPC V2 API methods with cursor-based pagination, plus
+/// the historical account state reads (beta).
 class RpcV2Client {
   /// Creates an RpcV2Client backed by the given JSON-RPC client.
   const RpcV2Client({required this._rpcClient});
@@ -45,4 +48,23 @@ class RpcV2Client {
   Future<GetTransfersByAddressResponse> getTransfersByAddress(
     GetTransfersByAddressRequest request,
   ) => rpcV2GetTransfersByAddress(_rpcClient, request);
+
+  /// Returns an account as it was at a past slot or transaction, or null when
+  /// it did not exist at that position.
+  ///
+  /// Beta: mainnet only, Business plans and above, from slot 444959999
+  /// onward.
+  Future<GetHistoricalAccountInfoResponse> getHistoricalAccountInfo(
+    GetHistoricalAccountInfoRequest request,
+  ) => rpcV2GetHistoricalAccountInfo(_rpcClient, request);
+
+  /// Returns one page of the token accounts a wallet owned at a past slot or
+  /// transaction, with a cursor for the next page.
+  ///
+  /// Beta: mainnet only, Business plans and above, from slot 444959999
+  /// onward.
+  Future<GetHistoricalTokenAccountsByOwnerResponse>
+  getHistoricalTokenAccountsByOwner(
+    GetHistoricalTokenAccountsByOwnerRequest request,
+  ) => rpcV2GetHistoricalTokenAccountsByOwner(_rpcClient, request);
 }

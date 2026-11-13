@@ -331,6 +331,159 @@ void main() {
       client.close();
       await done.future.timeout(const Duration(seconds: 1));
     });
+
+    test('reports the first drop of an outage through onDisconnect', () async {
+      final channels = <_FakeChannel>[];
+      final disconnect = Completer<ParsedStreamsReconnectInfo>();
+      final client = ParsedStreamsClient(
+        apiKey: 'test-key',
+        channelFactory: (uri) {
+          final channel = _FakeChannel();
+          channels.add(channel);
+          return channel;
+        },
+        onDisconnect: disconnect.complete,
+      );
+
+      final pending = client.parsedTransactionSubscribe(
+        const ParsedTransactionFilter(programs: ['program-1']),
+      );
+      final first = await _waitForChannel(channels, 0);
+      await _flush();
+      first.incoming.add(jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 1}));
+      await pending;
+
+      first.incoming.add(
+        jsonEncode({
+          'jsonrpc': '2.0',
+          'method': 'parsedTransactionNotification',
+          'params': {
+            'subscription': 1,
+            'result': {
+              'context': {'slot': 12},
+              'value': _fullValue('sig-1', 12),
+            },
+          },
+        }),
+      );
+
+      // Let the notification settle so the delivered slot is recorded.
+      await _flush();
+
+      await first.incoming.close();
+      final info = await disconnect.future.timeout(const Duration(seconds: 5));
+      expect(info.closeCode, 1006);
+      expect(info.lastSlot, 12);
+      client.close();
+    });
+
+    test('does not re-fire onDisconnect within one outage', () async {
+      final channels = <_FakeChannel>[];
+      final disconnects = <ParsedStreamsReconnectInfo>[];
+      final client = ParsedStreamsClient(
+        apiKey: 'test-key',
+        channelFactory: (uri) {
+          final channel = _FakeChannel();
+          channels.add(channel);
+          return channel;
+        },
+        onDisconnect: disconnects.add,
+        maxReconnectAttempts: 3,
+      );
+
+      final pending = client.parsedTransactionSubscribe(
+        const ParsedTransactionFilter(programs: ['program-1']),
+      );
+      final first = await _waitForChannel(channels, 0);
+      await _flush();
+      first.incoming.add(jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 1}));
+      await pending;
+
+      // First drop opens the outage and fires the callback.
+      await first.incoming.close();
+      final second = await _waitForChannel(channels, 1);
+      await _flush();
+      // A drop before the resubscription completes stays inside the same
+      // outage and must not fire again.
+      await second.incoming.close();
+
+      await _flush();
+      expect(disconnects, hasLength(1));
+      client.close();
+    });
+
+    test('close() does not fire onDisconnect', () async {
+      final channel = _FakeChannel();
+      var disconnects = 0;
+      final client = ParsedStreamsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => channel,
+        onDisconnect: (_) => disconnects++,
+      );
+
+      final pending = client.parsedTransactionSubscribe(
+        const ParsedTransactionFilter(programs: ['program-1']),
+      );
+      await _flush();
+      channel.incoming.add(
+        jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 1}),
+      );
+      await pending;
+
+      client.close();
+      await _flush();
+      expect(disconnects, 0);
+    });
+
+    test('onDisconnect fires even when reconnect is disabled', () async {
+      final channel = _FakeChannel();
+      final disconnect = Completer<ParsedStreamsReconnectInfo>();
+      final client = ParsedStreamsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => channel,
+        reconnect: false,
+        onDisconnect: disconnect.complete,
+      );
+
+      final pending = client.parsedTransactionSubscribe(
+        const ParsedTransactionFilter(programs: ['program-1']),
+      );
+      await _flush();
+      channel.incoming.add(
+        jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 1}),
+      );
+      await pending;
+
+      await channel.incoming.close();
+      final info = await disconnect.future.timeout(const Duration(seconds: 5));
+      expect(info.closeCode, 1006);
+      client.close();
+    });
+
+    test('a throwing onDisconnect does not break the stream', () async {
+      final channel = _FakeChannel();
+      final client = ParsedStreamsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => channel,
+        reconnect: false,
+        onDisconnect: (_) => throw StateError('callback blew up'),
+      );
+
+      final pending = client.parsedTransactionSubscribe(
+        const ParsedTransactionFilter(programs: ['program-1']),
+      );
+      await _flush();
+      channel.incoming.add(
+        jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 1}),
+      );
+      final subscription = await pending;
+
+      await channel.incoming.close();
+      final done = Completer<void>();
+      subscription.notifications.listen((_) {}, onDone: done.complete);
+      await done.future.timeout(const Duration(seconds: 1));
+      client.close();
+    });
   });
 }
 

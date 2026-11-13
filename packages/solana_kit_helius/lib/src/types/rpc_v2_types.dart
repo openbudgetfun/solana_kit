@@ -987,3 +987,432 @@ class AddressTransfer {
     'innerInstructionIdx': innerInstructionIdx,
   };
 }
+
+/// Position in history for the historical account methods (upstream beta,
+/// mainnet only from slot 444959999 onward).
+///
+/// An absent query reads the latest indexed slot, a [slot]-only query reads
+/// the end of that slot, and a [slot] plus [transactionIndex] query reads
+/// the state right after that transaction within the slot.
+class HistoricalAccountQuery {
+  /// Creates a historical account query.
+  const HistoricalAccountQuery({this.slot, this.transactionIndex});
+
+  /// Builds a query from a JSON map.
+  factory HistoricalAccountQuery.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return HistoricalAccountQuery(
+      slot: r.optInt('slot'),
+      transactionIndex: r.optInt('transactionIndex'),
+    );
+  }
+
+  /// The slot to read, or the latest indexed slot when absent.
+  final int? slot;
+
+  /// The transaction within [slot] whose immediate aftermath is read.
+  final int? transactionIndex;
+
+  /// Serializes this query to a JSON map.
+  Map<String, Object?> toJson() => {
+    if (slot != null) 'slot': slot,
+    if (transactionIndex != null) 'transactionIndex': transactionIndex,
+  };
+}
+
+/// Configuration for [GetHistoricalAccountInfoRequest] and
+/// [GetHistoricalTokenAccountsByOwnerRequest].
+class GetHistoricalAccountInfoConfig {
+  /// Creates a historical account config.
+  const GetHistoricalAccountInfoConfig({
+    this.encoding,
+    this.dataSliceOffset,
+    this.dataSliceLength,
+    this.commitment,
+    this.minContextSlot,
+  });
+
+  /// Builds a config from a JSON map.
+  factory GetHistoricalAccountInfoConfig.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    final dataSlice = r.optMap('dataSlice');
+    return GetHistoricalAccountInfoConfig(
+      encoding: r.optString('encoding'),
+      dataSliceOffset: dataSlice?['offset'] as int?,
+      dataSliceLength: dataSlice?['length'] as int?,
+      commitment: r.optString('commitment'),
+      minContextSlot: r.optInt('minContextSlot'),
+    );
+  }
+
+  /// Encoding for the returned account data: `base64` (default),
+  /// `base64+zstd`, or `jsonParsed`. `base58` and `processed` are not
+  /// supported.
+  final String? encoding;
+
+  /// Offset of the requested data slice.
+  final int? dataSliceOffset;
+
+  /// Length of the requested data slice.
+  ///
+  /// A slice is rejected alongside `jsonParsed`, matching the account data
+  /// contract the slice belongs to.
+  final int? dataSliceLength;
+
+  /// Commitment for the read: `finalized` or `confirmed`.
+  final String? commitment;
+
+  /// Minimum ledger slot the read may be served from.
+  final int? minContextSlot;
+
+  /// Serializes this config to a JSON map.
+  Map<String, Object?> toJson() => {
+    if (encoding != null) 'encoding': encoding,
+    if (dataSliceOffset != null || dataSliceLength != null)
+      'dataSlice': {
+        if (dataSliceOffset != null) 'offset': dataSliceOffset,
+        if (dataSliceLength != null) 'length': dataSliceLength,
+      },
+    if (commitment != null) 'commitment': commitment,
+    if (minContextSlot != null) 'minContextSlot': minContextSlot,
+  };
+}
+
+/// An account as it was at the requested historical position.
+///
+/// With `jsonParsed`, accounts that cannot be parsed fall back to the encoded
+/// `[data, 'base64']` form, so [data] can be either a two-element list or a
+/// parsed object; it is kept raw, mirroring upstream's open `parsed` shape.
+class HistoricalAccount {
+  /// Creates a historical account.
+  const HistoricalAccount({
+    required this.lamports,
+    required this.owner,
+    required this.data,
+    required this.executable,
+    required this.rentEpoch,
+    required this.space,
+    required this.lastUpdatedSlot,
+    required this.lastUpdatedTransactionIndex,
+  });
+
+  /// Builds a historical account from a JSON map.
+  factory HistoricalAccount.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    final lastUpdated = JsonReader(r.requireMap('lastUpdatedAt'));
+    return HistoricalAccount(
+      lamports: r.optInt('lamports') ?? 0,
+      owner: r.requireString('owner'),
+      data: switch (json['data']) {
+        final Map<String, Object?> parsed => parsed,
+        final List<Object?> encoded => encoded,
+        final other => throw FormatException(
+          'Historical account data must be a parsed object or an encoded '
+          '[data, encoding] pair, got ${other.runtimeType}',
+        ),
+      },
+      executable: r.optBool('executable') ?? false,
+      rentEpoch: r.optInt('rentEpoch') ?? 0,
+      space: r.optInt('space') ?? 0,
+      lastUpdatedSlot: lastUpdated.requireInt('slot'),
+      lastUpdatedTransactionIndex: lastUpdated.optInt('transactionIndex'),
+    );
+  }
+
+  /// The account's lamport balance.
+  final int lamports;
+
+  /// The program that owns the account.
+  final String owner;
+
+  /// The raw account data: a parsed object, or an encoded `[data, encoding]`
+  /// pair.
+  final Object? data;
+
+  /// Whether the account holds executable program code.
+  final bool executable;
+
+  /// The rent epoch of the account.
+  final int rentEpoch;
+
+  /// The account's data size.
+  final int space;
+
+  /// The slot of the write that produced this state.
+  final int lastUpdatedSlot;
+
+  /// The transaction index of the write that produced this state; null for
+  /// writes outside a transaction, such as epoch rewards.
+  final int? lastUpdatedTransactionIndex;
+
+  /// Serializes this account to a JSON map.
+  Map<String, Object?> toJson() => {
+    'lamports': lamports,
+    'owner': owner,
+    'data': data,
+    'executable': executable,
+    'rentEpoch': rentEpoch,
+    'space': space,
+    'lastUpdatedAt': {
+      'slot': lastUpdatedSlot,
+      'transactionIndex': lastUpdatedTransactionIndex,
+    },
+  };
+}
+
+/// A token account entry in a `getHistoricalTokenAccountsByOwner` page.
+class HistoricalKeyedAccount {
+  /// Creates a historical keyed account entry.
+  const HistoricalKeyedAccount({required this.pubkey, required this.account});
+
+  /// Builds an entry from a JSON map.
+  factory HistoricalKeyedAccount.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return HistoricalKeyedAccount(
+      pubkey: r.requireString('pubkey'),
+      account: HistoricalAccount.fromJson(r.requireMap('account')),
+    );
+  }
+
+  /// The public key of the token account.
+  final String pubkey;
+
+  /// The account as it was at the requested position.
+  final HistoricalAccount account;
+
+  /// Serializes this entry to a JSON map.
+  Map<String, Object?> toJson() => {
+    'pubkey': pubkey,
+    'account': account.toJson(),
+  };
+}
+
+/// Request for `getHistoricalAccountInfo`.
+class GetHistoricalAccountInfoRequest {
+  /// Creates a historical account info request.
+  const GetHistoricalAccountInfoRequest({
+    required this.address,
+    this.query,
+    this.config,
+  });
+
+  /// Builds a request from a JSON map.
+  factory GetHistoricalAccountInfoRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return GetHistoricalAccountInfoRequest(
+      address: r.requireString('address'),
+      query: r.optDecoded(
+        'query',
+        HistoricalAccountQuery.fromJson,
+      ),
+      config: r.optDecoded(
+        'config',
+        GetHistoricalAccountInfoConfig.fromJson,
+      ),
+    );
+  }
+
+  /// The account address to read.
+  final String address;
+
+  /// The historical position to read; absent reads the latest indexed slot.
+  final HistoricalAccountQuery? query;
+
+  /// Encoding, slice, and commitment options.
+  final GetHistoricalAccountInfoConfig? config;
+
+  /// Serializes this request to the JSON-RPC params array.
+  ///
+  /// An omitted query or config is sent as `{}`: the server rejects a `null`
+  /// slot, so the empty object stands for "latest indexed slot".
+  List<Object?> toJson() => [
+    address,
+    query?.toJson() ?? const <String, Object?>{},
+    config?.toJson() ?? const <String, Object?>{},
+  ];
+}
+
+/// Response for `getHistoricalAccountInfo`.
+class GetHistoricalAccountInfoResponse {
+  /// Creates a historical account info response.
+  const GetHistoricalAccountInfoResponse({required this.slot, this.value});
+
+  /// Builds a response from a JSON map.
+  factory GetHistoricalAccountInfoResponse.fromJson(
+    Map<String, Object?> json,
+  ) {
+    final r = JsonReader(json);
+    final context = JsonReader(r.requireMap('context'));
+    final value = r.optMap('value');
+    return GetHistoricalAccountInfoResponse(
+      slot: context.requireInt('slot'),
+      value: value == null ? null : HistoricalAccount.fromJson(value),
+    );
+  }
+
+  /// The latest slot Helius had indexed when the read was served — not the
+  /// slot that was queried.
+  final int slot;
+
+  /// The account at the requested position, or null when it did not exist
+  /// there (not created yet, or closed). Absence is not an error.
+  final HistoricalAccount? value;
+
+  /// Serializes this response to a JSON map.
+  Map<String, Object?> toJson() => {
+    'context': {'slot': slot},
+    'value': value?.toJson(),
+  };
+}
+
+/// Request for `getHistoricalTokenAccountsByOwner`.
+class GetHistoricalTokenAccountsByOwnerRequest {
+  /// Creates a historical token accounts by owner request.
+  const GetHistoricalTokenAccountsByOwnerRequest({
+    required this.ownerAddress,
+    this.query,
+    this.mint,
+    this.programId,
+    this.encoding,
+    this.dataSliceOffset,
+    this.dataSliceLength,
+    this.commitment,
+    this.minContextSlot,
+    this.limit,
+    this.paginationKey,
+  });
+
+  /// Builds a request from a JSON map.
+  factory GetHistoricalTokenAccountsByOwnerRequest.fromJson(
+    Map<String, Object?> json,
+  ) {
+    final r = JsonReader(json);
+    final query = r.optDecoded('query', HistoricalAccountQuery.fromJson);
+    final config = r.optMap('config');
+    final dataSlice = config?['dataSlice'] as Map<String, Object?>?;
+    return GetHistoricalTokenAccountsByOwnerRequest(
+      ownerAddress: r.requireString('ownerAddress'),
+      query: query,
+      mint: config?['mint'] as String?,
+      programId: config?['programId'] as String?,
+      encoding: config?['encoding'] as String?,
+      dataSliceOffset: dataSlice?['offset'] as int?,
+      dataSliceLength: dataSlice?['length'] as int?,
+      commitment: config?['commitment'] as String?,
+      minContextSlot: config?['minContextSlot'] as int?,
+      limit: config?['limit'] as int?,
+      paginationKey: config?['paginationKey'] as String?,
+    );
+  }
+
+  /// The owner address whose token accounts are being queried.
+  final String ownerAddress;
+
+  /// The historical position to read; absent reads the latest indexed slot.
+  final HistoricalAccountQuery? query;
+
+  /// Optional mint address to filter token accounts. At most one of [mint]
+  /// and [programId] may be set.
+  final String? mint;
+
+  /// Optional token program id to filter token accounts. At most one of
+  /// [mint] and [programId] may be set.
+  final String? programId;
+
+  /// Optional encoding for the returned account data.
+  final String? encoding;
+
+  /// Offset of the requested data slice.
+  final int? dataSliceOffset;
+
+  /// Length of the requested data slice.
+  final int? dataSliceLength;
+
+  /// Commitment for the read: `finalized` or `confirmed`.
+  final String? commitment;
+
+  /// Minimum ledger slot the read may be served from.
+  final int? minContextSlot;
+
+  /// Page size, 1–25,000; the server defaults to 25,000.
+  final int? limit;
+
+  /// Cursor used to fetch the next page of results.
+  final String? paginationKey;
+
+  /// Serializes this request to the JSON-RPC params array.
+  ///
+  /// An omitted query or config is sent as `{}`: the server rejects a `null`
+  /// slot, so the empty object stands for "latest indexed slot".
+  List<Object?> toJson() => [
+    ownerAddress,
+    query?.toJson() ?? const <String, Object?>{},
+    {
+      if (mint != null) 'mint': mint,
+      if (programId != null) 'programId': programId,
+      if (encoding != null) 'encoding': encoding,
+      if (dataSliceOffset != null || dataSliceLength != null)
+        'dataSlice': {
+          if (dataSliceOffset != null) 'offset': dataSliceOffset,
+          if (dataSliceLength != null) 'length': dataSliceLength,
+        },
+      if (commitment != null) 'commitment': commitment,
+      if (minContextSlot != null) 'minContextSlot': minContextSlot,
+      if (limit != null) 'limit': limit,
+      if (paginationKey != null) 'paginationKey': paginationKey,
+    },
+  ];
+}
+
+/// Response for `getHistoricalTokenAccountsByOwner`.
+class GetHistoricalTokenAccountsByOwnerResponse {
+  /// Creates a historical token accounts by owner response.
+  const GetHistoricalTokenAccountsByOwnerResponse({
+    required this.slot,
+    required this.accounts,
+    this.paginationKey,
+  });
+
+  /// Builds a response from a JSON map.
+  factory GetHistoricalTokenAccountsByOwnerResponse.fromJson(
+    Map<String, Object?> json,
+  ) {
+    final r = JsonReader(json);
+    final context = JsonReader(r.requireMap('context'));
+    final value = JsonReader(r.requireMap('value'));
+    return GetHistoricalTokenAccountsByOwnerResponse(
+      slot: context.requireInt('slot'),
+      accounts:
+          value.optMappedList(
+            'accounts',
+            (entry) =>
+                HistoricalKeyedAccount.fromJson(entry! as Map<String, Object?>),
+          ) ??
+          const <HistoricalKeyedAccount>[],
+      paginationKey: value.optString('paginationKey'),
+    );
+  }
+
+  /// The latest slot Helius had indexed when the read was served — not the
+  /// slot that was queried.
+  final int slot;
+
+  /// The token accounts on this page.
+  final List<HistoricalKeyedAccount> accounts;
+
+  /// Cursor for the next page; null when the scan reached the end.
+  ///
+  /// A short or empty page can still carry a cursor — each call scans at most
+  /// 25,000 accounts — so stop only when this is null, and pin the query's
+  /// slot across pages so every page reads the same state.
+  final String? paginationKey;
+
+  /// Serializes this response to a JSON map.
+  Map<String, Object?> toJson() => {
+    'context': {'slot': slot},
+    'value': {
+      'accounts': accounts.map((e) => e.toJson()).toList(),
+      'paginationKey': paginationKey,
+    },
+  };
+}

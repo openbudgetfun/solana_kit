@@ -502,7 +502,8 @@ class ProgramDescription {
 }
 
 /// Passed to `onReconnect` once subscriptions are restored on a new
-/// connection.
+/// connection. `onDisconnect` receives the same fields when the connection
+/// drops.
 class ParsedStreamsReconnectInfo {
   /// Creates reconnect information.
   const ParsedStreamsReconnectInfo({
@@ -510,7 +511,7 @@ class ParsedStreamsReconnectInfo {
     required this.lastSlot,
   });
 
-  /// WebSocket close code that caused the reconnect.
+  /// WebSocket close code that started the outage.
   final int closeCode;
 
   /// Highest `context.slot` delivered before the disconnect.

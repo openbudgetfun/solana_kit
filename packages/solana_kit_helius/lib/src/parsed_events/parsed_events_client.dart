@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/parsed_events_types.dart';
 
@@ -12,17 +14,23 @@ class ParsedEventsClient {
   /// [isMainnet] guards every method: Parsed Events has no devnet deployment,
   /// so a devnet client fails loudly instead of silently reading mainnet
   /// history.
+  ///
+  /// [defaultTimeout] time-limits every request when set; it comes from the
+  /// config's `parsedEventsTimeoutMs` knob.
   const ParsedEventsClient({
     required RestClient restClient,
     required String apiKey,
     required bool isMainnet,
+    Duration? defaultTimeout,
   }) : _restClient = restClient, // ignore: prefer_initializing_formals
        _apiKey = apiKey, // ignore: prefer_initializing_formals
-       _isMainnet = isMainnet; // ignore: prefer_initializing_formals
+       _isMainnet = isMainnet, // ignore: prefer_initializing_formals
+       _defaultTimeout = defaultTimeout; // ignore: prefer_initializing_formals
 
   final RestClient _restClient;
   final String _apiKey;
   final bool _isMainnet;
+  final Duration? _defaultTimeout;
 
   /// Parses transaction signatures into decoded instructions, transfers, and
   /// summaries.
@@ -32,10 +40,11 @@ class ParsedEventsClient {
   /// the request; its item has [ParsedTransactionResult.parserStatus] set to
   /// [ParsedTransactionStatus.error].
   Future<List<ParsedTransactionResult>> parseTransactions(
-    ParseTransactionsRequest request,
-  ) async {
+    ParseTransactionsRequest request, {
+    Duration? timeout,
+  }) async {
     _requireMainnet();
-    final result = await _post('transactions', request.toJson());
+    final result = await _post('transactions', request.toJson(), timeout);
     final list = result! as List<Object?>;
 
     return list
@@ -58,10 +67,15 @@ class ParsedEventsClient {
   /// Pagination is manual: pass the returned `paginationToken` back to fetch
   /// the next page.
   Future<GetParsedTransactionHistoryResponse> getTransactionHistory(
-    GetParsedTransactionHistoryRequest request,
-  ) async {
+    GetParsedTransactionHistoryRequest request, {
+    Duration? timeout,
+  }) async {
     _requireMainnet();
-    final result = await _post('transaction-history', request.toJson());
+    final result = await _post(
+      'transaction-history',
+      request.toJson(),
+      timeout,
+    );
 
     return GetParsedTransactionHistoryResponse.fromJson(
       result! as Map<String, Object?>,
@@ -74,17 +88,43 @@ class ParsedEventsClient {
   /// Pagination is manual: a request that stops early still succeeds, possibly
   /// with empty [ScanResponse.data], so keep calling with the returned
   /// `paginationToken` until it is absent.
-  Future<ScanResponse> scan(ScanParsedTransactionHistoryRequest request) async {
+  Future<ScanResponse> scan(
+    ScanParsedTransactionHistoryRequest request, {
+    Duration? timeout,
+  }) async {
     _requireMainnet();
-    final result = await _post('scan', request.toJson());
+    final result = await _post('scan', request.toJson(), timeout);
 
     return ScanResponse.fromJson(result! as Map<String, Object?>);
   }
 
-  Future<Object?> _post(String path, Map<String, Object?> body) {
-    return _restClient.post(
+  /// POSTs to a Parsed Events endpoint, applying the effective time limit.
+  ///
+  /// The per-call [timeout] wins over the client default; zero or negative
+  /// durations disable the limit. A request that runs over throws
+  /// [TimeoutException], matching upstream's `TimeoutError`.
+  Future<Object?> _post(
+    String path,
+    Map<String, Object?> body,
+    Duration? timeout,
+  ) {
+    final effective = timeout ?? _defaultTimeout;
+    final future = _restClient.post(
       '$path?api-key=${Uri.encodeQueryComponent(_apiKey)}',
       body: _withoutNulls(body),
+    );
+
+    if (effective == null || effective <= Duration.zero) {
+      return future;
+    }
+
+    return future.timeout(
+      effective,
+      onTimeout: () => throw TimeoutException(
+        'Parsed Events request timed out after '
+        '${effective.inMilliseconds}ms',
+        effective,
+      ),
     );
   }
 

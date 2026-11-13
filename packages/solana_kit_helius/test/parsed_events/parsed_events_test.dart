@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -233,6 +234,99 @@ void main() {
           ),
         ),
       );
+    });
+
+    test('a per-call timeout rejects with TimeoutException', () async {
+      final client = MockClient((request) async {
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        return http.Response(jsonEncode([_parsedResult('sig-ok')]), 200);
+      });
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key'),
+        client: client,
+      );
+
+      await expectLater(
+        helius.parsedEvents.parseTransactions(
+          const ParseTransactionsRequest(transactions: ['sig']),
+          timeout: const Duration(milliseconds: 10),
+        ),
+        throwsA(isA<TimeoutException>()),
+      );
+    });
+
+    test('the config timeout applies without a per-call override', () async {
+      final client = MockClient((request) async {
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        return http.Response(jsonEncode([_parsedResult('sig-ok')]), 200);
+      });
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key', parsedEventsTimeoutMs: 10),
+        client: client,
+      );
+
+      await expectLater(
+        helius.parsedEvents.getTransactionHistory(
+          const GetParsedTransactionHistoryRequest(address: 'addr-1'),
+        ),
+        throwsA(isA<TimeoutException>()),
+      );
+    });
+
+    test('a per-call timeout wins over the config default', () async {
+      final client = MockClient((request) async {
+        // Longer than the config limit but shorter than the per-call one.
+        await Future<void>.delayed(const Duration(milliseconds: 60));
+        return http.Response(jsonEncode([_parsedResult('sig-ok')]), 200);
+      });
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key', parsedEventsTimeoutMs: 10),
+        client: client,
+      );
+
+      final results = await helius.parsedEvents.parseTransactions(
+        const ParseTransactionsRequest(transactions: ['sig']),
+        timeout: const Duration(seconds: 5),
+      );
+      expect(results.single.signature, 'sig-ok');
+    });
+
+    test('a custom parsedEventsUrl host replaces the default', () async {
+      late Uri capturedUrl;
+      final client = MockClient((request) async {
+        capturedUrl = request.url;
+        return http.Response(
+          jsonEncode(<String, Object?>{
+            'data': <Object?>[],
+            'paginationToken': null,
+            'scan': _scanSummary(),
+          }),
+          200,
+        );
+      });
+      final helius = createHelius(
+        HeliusConfig(
+          apiKey: 'test-key',
+          parsedEventsUrl:
+              'https://proxy.example.com/v1/parsed-events'
+              '?tenant=one',
+        ),
+        client: client,
+      );
+
+      await helius.parsedEvents.scan(
+        const ScanParsedTransactionHistoryRequest(
+          address: 'addr-1',
+          match: ScanMatch(),
+          returnShape: ScanReturnShape.signatures,
+        ),
+      );
+
+      expect(capturedUrl.host, 'proxy.example.com');
+      expect(capturedUrl.path, '/v1/parsed-events/scan');
+      // A proxy's own query string survives next to the api key.
+      expect(capturedUrl.queryParameters['tenant'], 'one');
+      expect(capturedUrl.queryParameters['api-key'], 'test-key');
     });
   });
 }
