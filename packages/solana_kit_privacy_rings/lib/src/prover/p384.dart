@@ -55,7 +55,9 @@ bool p384Verify(
   return sum.$1 % _n == pair.$1;
 }
 
-/// Uncompressed P-384 public key for a 48-byte scalar [secret].
+/// Uncompressed P-384 public key for generating test certificates.
+///
+/// Internal variable-time arithmetic; not exported as a signing API.
 Uint8List p384PublicKey(List<int> secret) {
   if (secret.length != 48) {
     throw PrivacyRingsException(
@@ -78,7 +80,9 @@ Uint8List p384PublicKey(List<int> secret) {
   ]);
 }
 
-/// Signs [message] with a 48-byte scalar [secret].
+/// Signs [message] with a 48-byte scalar [secret] for test attestations.
+///
+/// Internal variable-time arithmetic; not exported as a signing API.
 ///
 /// The result is compact `r || s`. [nonce] fixes `k` so a test can
 /// reproduce a signature. A zero `r` or `s` draws another nonce.

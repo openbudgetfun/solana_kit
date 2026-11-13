@@ -37,6 +37,7 @@ void main() {
       late Uri url;
       late Map<String, Object?> body;
       final httpClient = MockClient((request) async {
+        expect(request.headers['x-api-key'], 'secret-key');
         url = request.url;
         body = jsonDecode(request.body) as Map<String, Object?>;
         return http.Response(
@@ -58,7 +59,7 @@ void main() {
       );
       final page = await indexer.getUserRecords([systemProgramAddress]);
       expect(url.path, '/v1/spr/getUserRecords');
-      expect(url.queryParameters['api-key'], 'secret-key');
+      expect(url.queryParameters.containsKey('api-key'), isFalse);
       expect(body['method'], 'getUserRecords');
       expect(body['jsonrpc'], '2.0');
       expect(page.records, [null]);
@@ -194,6 +195,8 @@ void main() {
       );
       expect(
         rings.readPrivateBalance(
+          expectedOwner: Uint8List(32),
+          verifyConfidentialNote: (note, context) => false,
           viewingKey: ViewingKey.fromBytes(Uint8List(32)..[0] = 1),
           tags: [hash],
           maxPages: 1,

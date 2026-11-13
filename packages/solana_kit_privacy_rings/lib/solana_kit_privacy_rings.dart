@@ -36,7 +36,7 @@ export 'package:solana_kit_privacy_rings/src/poseidon/public_input.dart';
 export 'package:solana_kit_privacy_rings/src/prover/client.dart';
 export 'package:solana_kit_privacy_rings/src/prover/hpke.dart';
 export 'package:solana_kit_privacy_rings/src/prover/nitro.dart';
-export 'package:solana_kit_privacy_rings/src/prover/p384.dart';
+export 'package:solana_kit_privacy_rings/src/prover/p384.dart' show p384Verify;
 export 'package:solana_kit_privacy_rings/src/prover/proof.dart';
 export 'package:solana_kit_privacy_rings/src/prover/proving_keys.dart';
 export 'package:solana_kit_privacy_rings/src/prover/tee_session.dart';

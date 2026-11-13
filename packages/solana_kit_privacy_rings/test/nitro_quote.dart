@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_privacy_rings/solana_kit_privacy_rings.dart';
+import 'package:solana_kit_privacy_rings/src/prover/p384.dart' show p384Sign;
 
 /// Root the session tests trust instead of the AWS Nitro root.
 final Uint8List nitroTestRoot = _hex(

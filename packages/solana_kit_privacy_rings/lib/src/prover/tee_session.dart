@@ -26,11 +26,19 @@ class TeePolicy {
     this.nowSecs,
     this.gpu = 'optional',
     this.maxAge = const Duration(minutes: 10),
-  }) : imageIds = List<Uint8List>.unmodifiable(imageIds),
+  }) : imageIds = List<Uint8List>.unmodifiable(
+         imageIds.map(
+           (bytes) => Uint8List.fromList(bytes).asUnmodifiableView(),
+         ),
+       ),
        measurements = List<NitroMeasurement>.unmodifiable(measurements),
        anchors = anchors == null
            ? null
-           : List<Uint8List>.unmodifiable(anchors) {
+           : List<Uint8List>.unmodifiable(
+               anchors.map(
+                 (bytes) => Uint8List.fromList(bytes).asUnmodifiableView(),
+               ),
+             ) {
     if (platform.isEmpty) {
       throw PrivacyRingsException(
         'TEE platform is empty',
@@ -151,7 +159,11 @@ class TeeSession {
   DateTime? _attestedAt;
 
   /// Fetches and checks an attestation.
-  Future<AttestedProver> attest(Uri attestationUrl, http.Client client) async {
+  Future<AttestedProver> attest(
+    Uri attestationUrl,
+    http.Client client, {
+    Map<String, String> headers = const {},
+  }) async {
     final nonce = _nonce();
     final url = attestationUrl.replace(
       queryParameters: {
@@ -159,7 +171,7 @@ class TeeSession {
         'nonce': hexEncode(nonce),
       },
     );
-    final response = await client.get(url);
+    final response = await client.get(url, headers: headers);
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw PrivacyRingsException(
         'prover attestation HTTP ${response.statusCode}',
@@ -191,11 +203,12 @@ class TeeSession {
     required String route,
     required String method,
     required Map<String, String> headers,
+    Map<String, String> attestationHeaders = const {},
     String? body,
   }) async {
     var retried = false;
     while (true) {
-      final key = await _key(client, attestationUrl);
+      final key = await _key(client, attestationUrl, attestationHeaders);
       final encrypted = await encryptProverRequest(
         hpkePublicKey: key,
         method: method,
@@ -247,7 +260,11 @@ class TeeSession {
     }
   }
 
-  Future<Uint8List> _key(http.Client client, Uri attestationUrl) async {
+  Future<Uint8List> _key(
+    http.Client client,
+    Uri attestationUrl,
+    Map<String, String> headers,
+  ) async {
     final cached = _attested;
     final at = _attestedAt;
     if (cached != null &&
@@ -255,7 +272,11 @@ class TeeSession {
         DateTime.now().difference(at) < policy.maxAge) {
       return cached.hpkePublicKey;
     }
-    return (await attest(attestationUrl, client)).hpkePublicKey;
+    return (await attest(
+      attestationUrl,
+      client,
+      headers: headers,
+    )).hpkePublicKey;
   }
 
   AttestedProver _accept(Object? body, Uint8List nonce) {
@@ -329,8 +350,8 @@ class TeeSession {
     }
     return AttestedProver(
       platform: policy.platform,
-      hpkePublicKey: key,
-      imageId: Uint8List.fromList(verdict.imageId),
+      hpkePublicKey: key.asUnmodifiableView(),
+      imageId: Uint8List.fromList(verdict.imageId).asUnmodifiableView(),
       gpuVerified: false,
     );
   }

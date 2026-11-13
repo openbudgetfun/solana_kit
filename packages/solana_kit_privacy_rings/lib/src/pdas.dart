@@ -84,7 +84,7 @@ Future<DerivedAddress> userRecordPda(Address owner) async {
   return DerivedAddress(address: address, bump: bump);
 }
 
-/// Derives the native SOL interface and checks it against the pinned address.
+/// Derives the native SOL interface PDA.
 Future<DerivedAddress> deriveSolInterface() async {
   final (address, bump) = await getProgramDerivedAddress(
     programAddress: shieldedPoolProgramId,

@@ -465,7 +465,7 @@ void main() {
       ],
       spent: {SpentLeaf(1, BigInt.one)},
     );
-    expect(kept.notes, hasLength(3));
+    expect(kept.notes, hasLength(2));
     expect(kept.balances.single.amount, BigInt.from(4));
     expect(kept.balances.single.notes, 1);
 
@@ -539,6 +539,8 @@ void main() {
       }),
     );
     final report = await rings.readPrivateBalance(
+      expectedOwner: Uint8List(32),
+      verifyConfidentialNote: (note, context) => false,
       viewingKey: ViewingKey.fromBytes(Uint8List(32)..[0] = 1),
       tags: [_b58(Uint8List(32)..[0] = 9)],
       nullifierKey: key,
@@ -1009,6 +1011,8 @@ void main() {
       'provingKeySha256': pin,
     });
     final client = MockClient((request) async {
+      expect(request.headers['x-api-key'], 'test-only-key');
+      expect(request.url.queryParameters.containsKey('api-key'), isFalse);
       if (request.url.path.endsWith('/attestation')) {
         final nonce = _hex(request.url.queryParameters['nonce']!);
         final key = await proverRecipientPublicKey(ikm);
@@ -1032,6 +1036,7 @@ void main() {
     final prover = PrivacyProverClient(
       endpoint: Uri.parse('https://prover.example/v1/spr'),
       httpClient: client,
+      apiKey: 'test-only-key',
       tee: session,
       pollInterval: Duration.zero,
       maxPollInterval: Duration.zero,

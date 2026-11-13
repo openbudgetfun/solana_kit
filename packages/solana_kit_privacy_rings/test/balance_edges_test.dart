@@ -234,6 +234,8 @@ void main() {
     );
     expect(
       rings.readPrivateBalance(
+        expectedOwner: Uint8List(32),
+        verifyConfidentialNote: (note, context) => false,
         viewingKey: ViewingKey.fromBytes(Uint8List(32)..[0] = 1),
         tags: [hash],
         maxPages: 0,
@@ -241,6 +243,8 @@ void main() {
       _code('invalid_request'),
     );
     final report = await rings.readPrivateBalance(
+      expectedOwner: Uint8List(32),
+      verifyConfidentialNote: (note, context) => false,
       viewingKey: ViewingKey.fromBytes(Uint8List(32)..[0] = 1),
       tags: [hash],
     );
@@ -273,6 +277,8 @@ void main() {
     );
     expect(
       truncating.readPrivateBalance(
+        expectedOwner: Uint8List(32),
+        verifyConfidentialNote: (note, context) => false,
         viewingKey: ViewingKey.fromBytes(Uint8List(32)..[0] = 1),
         tags: [hash],
         maxPages: 1,

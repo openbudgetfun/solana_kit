@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -8,6 +9,16 @@ import 'package:solana_kit_privacy_rings/src/constants.dart';
 import 'package:solana_kit_privacy_rings/src/exception.dart';
 import 'package:solana_kit_privacy_rings/src/keys/viewing_key.dart';
 import 'package:solana_kit_privacy_rings/src/rpc/types.dart';
+
+/// Checks a decrypted note against a trusted commitment and recipient identity.
+///
+/// AES-CTR has no authentication. Return true only after reconstructing the
+/// Poseidon commitment with the expected owner, mint, domain, and record hashes
+/// and checking it against a commitment from a trusted source.
+typedef ConfidentialNoteVerifier = FutureOr<bool> Function(
+  ConfidentialPlaintext note,
+  OutputContext context,
+);
 
 /// One note recovered from the indexer.
 class PrivateNote {
@@ -128,10 +139,15 @@ class PrivateBalanceReport {
 /// `proofless` is skipped so a deposit is not counted twice when the
 /// caller also reads the encrypted-UTXO endpoint, matching the split in
 /// `sdk-libs/ts/src/wallet/sync.ts`.
+///
+/// Without [verifyNote], this is raw decryption, not authentication: verify the
+/// Poseidon commitment before treating the result as a balance. Spent leaves
+/// are excluded from both notes and totals.
 Future<PrivateBalanceReport> readConfidentialNotes({
   required ViewingKey viewingKey,
   required List<ShieldedTransaction> transactions,
   Map<BigInt, Address> mints = const {},
+  ConfidentialNoteVerifier? verifyNote,
   Set<SpentLeaf> spent = const {},
 }) async {
   final notes = <PrivateNote>[];
@@ -157,10 +173,11 @@ Future<PrivateBalanceReport> readConfidentialNotes({
         slotIndex: index,
         signature: transaction.txSignature,
         mints: mints,
+        verifyNote: verifyNote,
       );
       if (note == null) {
         skipped++;
-      } else {
+      } else if (!_isSpent(note, spent)) {
         notes.add(note);
       }
     }
@@ -176,22 +193,31 @@ Future<PrivateBalanceReport> readConfidentialNotes({
 ///
 /// A match that carries a transaction viewing key or a salt is an
 /// encrypted output. Its cipher slot index is not on this record, so it
-/// is skipped; open those through [readConfidentialNotes].
+/// is skipped; open those through [readConfidentialNotes]. With [expectedOwner],
+/// deposits for other owners are excluded. Tags alone do not establish ownership.
+/// Without it, callers must verify ownership before using the amounts.
 Future<PrivateBalanceReport> readProoflessDeposits(
   List<EncryptedUtxoMatch> matches, {
+  Uint8List? expectedOwner,
   Set<SpentLeaf> spent = const {},
 }) async {
   final notes = <PrivateNote>[];
   var skipped = 0;
+  if (expectedOwner != null && expectedOwner.length != 32) {
+    throw PrivacyRingsException(
+      'owner must be 32 bytes',
+      code: 'invalid_length',
+    );
+  }
   for (final match in matches) {
     if (match.txViewingPk != null || match.salt != null) {
       skipped++;
       continue;
     }
-    final note = _prooflessNote(match);
+    final note = _prooflessNote(match, expectedOwner);
     if (note == null) {
       skipped++;
-    } else {
+    } else if (!_isSpent(note, spent)) {
       notes.add(note);
     }
   }
@@ -224,6 +250,7 @@ Future<PrivateNote?> _confidentialNote({
   required int slotIndex,
   required String signature,
   required Map<BigInt, Address> mints,
+  required ConfidentialNoteVerifier? verifyNote,
 }) async {
   final frame = readOutputFrame(payload);
   final confidential =
@@ -243,6 +270,9 @@ Future<PrivateNote?> _confidentialNote({
   } on PrivacyRingsException {
     return null;
   }
+  if (verifyNote != null && !await verifyNote(decoded, outputContext)) {
+    return null;
+  }
   final mint = decoded.knownMint ?? mints[decoded.assetId];
   return PrivateNote(
     amount: decoded.amount,
@@ -256,12 +286,18 @@ Future<PrivateNote?> _confidentialNote({
   );
 }
 
-PrivateNote? _prooflessNote(EncryptedUtxoMatch match) {
+PrivateNote? _prooflessNote(
+  EncryptedUtxoMatch match,
+  Uint8List? expectedOwner,
+) {
   final frame = readOutputFrame(match.outputSlot.payload);
   if (frame.encoding != plaintextEncoding || frame.scheme != prooflessScheme) {
     return null;
   }
   final decoded = decodeProoflessPlaintext(frame.body);
+  if (expectedOwner != null && !_bytesEqual(decoded.owner, expectedOwner)) {
+    return null;
+  }
   return PrivateNote(
     amount: decoded.amount,
     mint: decoded.asset,
@@ -381,3 +417,8 @@ bool _bytesEqual(Uint8List? left, Uint8List? right) {
   }
   return true;
 }
+
+bool _isSpent(PrivateNote note, Set<SpentLeaf> spent) =>
+    note.treeId != null &&
+    note.leafIndex != null &&
+    spent.contains(SpentLeaf(note.treeId!, note.leafIndex!));

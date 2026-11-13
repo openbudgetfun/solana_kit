@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 
 import 'package:solana_kit_privacy_rings/src/balance.dart';
 import 'package:solana_kit_privacy_rings/src/codec/transact.dart';
@@ -8,6 +11,8 @@ import 'package:solana_kit_privacy_rings/src/history.dart';
 import 'package:solana_kit_privacy_rings/src/keys/nullifier.dart';
 import 'package:solana_kit_privacy_rings/src/keys/viewing_key.dart';
 import 'package:solana_kit_privacy_rings/src/prover/client.dart';
+import 'package:solana_kit_privacy_rings/src/prover/hpke.dart';
+import 'package:solana_kit_privacy_rings/src/prover/tee_session.dart';
 import 'package:solana_kit_privacy_rings/src/rpc/client.dart';
 import 'package:solana_kit_privacy_rings/src/rpc/types.dart';
 
@@ -28,6 +33,7 @@ class PrivacyRings {
     Uri? indexerUrl,
     Uri? proverUrl,
     String? apiKey,
+    TeeSession? tee,
     http.Client? httpClient,
     bool allowUnauthenticatedRemoteProver = false,
   }) : endpoints = resolvePrivacyRingsEndpoints(
@@ -53,6 +59,7 @@ class PrivacyRings {
          httpClient: httpClient,
          apiKey: apiKey,
          allowUnauthenticatedRemoteProver: allowUnauthenticatedRemoteProver,
+         tee: tee,
        );
 
   /// The URLs this client calls.
@@ -86,9 +93,18 @@ class PrivacyRings {
   /// A leaf in [spentLeaves] is omitted from the totals. The same leaf is
   /// counted once. When [nullifierKey] is set, a note whose Poseidon
   /// nullifier appears on a confidential transaction in this history is
-  /// omitted too.
+  /// omitted too. Nullifier history is queried directly, because a spend need
+  /// not publish any of the received-note tags.
+  ///
+  /// [expectedOwner] filters cleartext deposits. [verifyConfidentialNote] must
+  /// check each decrypted preimage against a trusted commitment before it is
+  /// counted; successful AES-CTR decoding alone does not authenticate a note.
+  /// Without [nullifierKey], totals only exclude [spentLeaves] and may include
+  /// other spent notes.
   Future<PrivateBalanceReport> readPrivateBalance({
     required ViewingKey viewingKey,
+    required Uint8List expectedOwner,
+    required ConfidentialNoteVerifier verifyConfidentialNote,
     required List<String> tags,
     Address? ringProgramId,
     Map<BigInt, Address> mints = const {},
@@ -114,24 +130,52 @@ class PrivacyRings {
         viewingKey: viewingKey,
         transactions: confidential,
         mints: mints,
+        verifyNote: verifyConfidentialNote,
         spent: spentLeaves,
       ),
-      await readProoflessDeposits(deposits, spent: spentLeaves),
+      await readProoflessDeposits(
+        deposits,
+        expectedOwner: expectedOwner,
+        spent: spentLeaves,
+      ),
     );
     if (nullifierKey == null) return report;
-    final spent = spentNullifiers(confidential)
-        .map(
-          (bytes) => bytes
-              .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-              .join(),
-        )
+    final derivedNullifiers = {
+      for (final note in report.notes)
+        SpentLeaf(note.treeId!, note.leafIndex!): nullifierKey.nullifier(
+          note.commitment!,
+          note.blinding!,
+        ),
+    };
+    final nullifiers = derivedNullifiers.values
+        .map((bytes) => getBase58Decoder().decode(bytes))
+        .toSet()
+        .toList();
+    final spendEvents = <ShieldedTransaction>[];
+    // The indexer limits a nullifier lookup to 1000 values per request.
+    for (var offset = 0; offset < nullifiers.length; offset += 1000) {
+      final end = (offset + 1000).clamp(0, nullifiers.length);
+      spendEvents.addAll(
+        await collectPages((token) async {
+          final page = await indexer.getShieldedTransactionsByNullifiers(
+            nullifiers: nullifiers.sublist(offset, end),
+            page: PageRequest(paginationToken: token, limit: pageLimit),
+          );
+          return HistoryPage(
+            items: [for (final entry in page.data) ...entry.entries],
+            paginationToken: page.paginationToken,
+          );
+        }, maxPages: maxPages),
+      );
+    }
+    final spent = spentNullifiers([...confidential, ...spendEvents])
+        .map(hexEncode)
         .toSet();
     final notes = <PrivateNote>[];
     for (final note in report.notes) {
-      final derived = nullifierKey.nullifier(note.commitment!, note.blinding!);
-      final hex = derived
-          .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-          .join();
+      final derived =
+          derivedNullifiers[SpentLeaf(note.treeId!, note.leafIndex!)]!;
+      final hex = hexEncode(derived);
       if (!spent.contains(hex)) notes.add(note);
     }
     final kept = combineBalanceReports(

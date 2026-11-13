@@ -177,7 +177,9 @@ Uint8List? _offchainPayload(List<int> message) {
   final afterDomain = rest.sublist(1 + 32);
   if (afterDomain.length < 2) return null;
   final signerCount = afterDomain[1];
-  final afterSigners = afterDomain.sublist(2 + 32 * signerCount);
+  final payloadOffset = 2 + 32 * signerCount;
+  if (afterDomain.length < payloadOffset + 2) return null;
+  final afterSigners = afterDomain.sublist(payloadOffset);
   if (afterSigners.length < 2) return null;
   final declared = afterSigners[0] | (afterSigners[1] << 8);
   final payload = afterSigners.sublist(2);

@@ -150,7 +150,8 @@ class WitnessOutput {
     this.isDummy = false,
   });
 
-  /// Note preimage. Its blinding is the value the circuit checks.
+  /// Note preimage. The witness replaces its blinding with the protocol-derived
+  /// output blinding from the first nullifier, blinding seed, and output index.
   final CircuitNote note;
 
   /// Output tree id field.
@@ -286,6 +287,23 @@ Uint8List _fieldFromHex(String text) {
 }
 
 Map<String, Object?> _inputJson(WitnessInput input) {
+  final hasStatePath = input.statePathElements.isNotEmpty;
+  final hasNullifierPath =
+      input.nullifierLowValue != null ||
+      input.nullifierNextValue != null ||
+      input.nullifierLowPathIndex != null ||
+      input.nullifierLowPathElements.isNotEmpty;
+  if (hasStatePath != (input.statePathIndex != null) ||
+      (hasNullifierPath &&
+          (input.nullifierLowValue == null ||
+              input.nullifierNextValue == null ||
+              input.nullifierLowPathIndex == null ||
+              input.nullifierLowPathElements.isEmpty))) {
+    throw PrivacyRingsException(
+      'incomplete witness Merkle path',
+      code: 'invalid_shape',
+    );
+  }
   final key = NullifierKey.fromSecret(input.nullifierSecret);
   final hash = input.note.commitment(input.treeId);
   final body = <String, Object?>{
@@ -354,7 +372,8 @@ Map<String, Object?> indexedProofRequest({
   required List<Uint8List> publicInputs,
   BigInt? minContextSlot,
 }) {
-  if (minContextSlot != null && minContextSlot.bitLength > 53) {
+  if (minContextSlot != null &&
+      (minContextSlot.isNegative || minContextSlot.bitLength > 53)) {
     throw PrivacyRingsException(
       'minContextSlot does not fit in a JSON number',
       code: 'integer_range',

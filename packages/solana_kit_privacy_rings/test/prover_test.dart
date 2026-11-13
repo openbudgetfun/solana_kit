@@ -219,7 +219,8 @@ void main() {
       final direct = PrivacyProverClient(
         endpoint: Uri.parse('http://localhost:3001/?api-key=secret-key'),
         httpClient: MockClient((request) async {
-          expect(request.url.queryParameters['api-key'], 'secret-key');
+          expect(request.url.queryParameters.containsKey('api-key'), isFalse);
+          expect(request.headers['x-api-key'], 'secret-key');
           return http.Response(jsonEncode(_proof(pin: pin)), 200);
         }),
       );

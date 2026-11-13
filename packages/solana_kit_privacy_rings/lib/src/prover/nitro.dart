@@ -54,7 +54,7 @@ final Uint8List awsNitroRoot = Uint8List.fromList([
   0xde, 0x8f, 0xe0, 0x06, 0x1d, 0x6a, 0x53, 0x19, 0x7f, 0x9c, 0xda, 0xf5,
   0xd9, 0x43, 0xbc, 0x61, 0xfc, 0x2b, 0xeb, 0x03, 0xcb, 0x6f, 0xee, 0x8d,
   0x23, 0x02, 0xf3, 0xdf, 0xf6,
-]);
+]).asUnmodifiableView();
 
 const _coseSign1 = 18;
 const _es384 = -35;
@@ -725,7 +725,9 @@ class _Cbor {
     if (_offset + width > bytes.length) _refuse('malformed_attestation');
     var value = 0;
     for (var i = 0; i < width; i++) {
-      value = (value << 8) | bytes[_offset++];
+      final next = bytes[_offset++];
+      if (value > (_safe - next) ~/ 256) _refuse('malformed_attestation');
+      value = value * 256 + next;
     }
     return value;
   }
@@ -813,7 +815,7 @@ Uint8List _pcr(List<int> bytes, String name) {
       code: 'invalid_length',
     );
   }
-  return Uint8List.fromList(bytes);
+  return Uint8List.fromList(bytes).asUnmodifiableView();
 }
 
 bool _equal(List<int> left, List<int> right) {

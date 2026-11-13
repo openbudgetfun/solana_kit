@@ -254,7 +254,14 @@ Future<Uint8List> _sharedSecret(KeyPair pair, Uint8List remote) async {
     keyPair: pair,
     remotePublicKey: SimplePublicKey(remote, type: KeyPairType.x25519),
   );
-  return Uint8List.fromList(await secret.extractBytes());
+  final bytes = Uint8List.fromList(await secret.extractBytes());
+  if (bytes.every((byte) => byte == 0)) {
+    throw PrivacyRingsException(
+      'HPKE peer has a non-contributory key',
+      code: 'non_contributory_key',
+    );
+  }
+  return bytes;
 }
 
 Future<_Context> _context(

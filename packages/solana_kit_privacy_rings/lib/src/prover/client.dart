@@ -69,7 +69,7 @@ class PrivacyProverClient {
   /// Ceiling for the gap between status polls.
   final Duration maxPollInterval;
 
-  /// Wall-clock bound for a queued proof.
+  /// Wall-clock bound for proof submission, attestation, and status polling.
   final Duration maxWait;
 
   /// Releases the HTTP client when this object created it.
@@ -114,6 +114,15 @@ class PrivacyProverClient {
     required bool indexed,
   }) async {
     _requireTransport();
+    if (maxWait < Duration.zero ||
+        pollInterval < Duration.zero ||
+        maxPollInterval < pollInterval) {
+      throw PrivacyRingsException(
+        'invalid prover timeout or polling interval',
+        code: 'invalid_config',
+      );
+    }
+    final deadline = DateTime.now().add(maxWait);
     final name = circuit.endsWith('.key')
         ? circuit.substring(0, circuit.length - 4)
         : circuit;
@@ -133,6 +142,7 @@ class PrivacyProverClient {
       final delivery = queued ? 'X-Async' : 'X-Sync';
       final response = await _send(
         () => _post(url, suffix, body, {delivery: 'true'}),
+        deadline,
       );
       if (response.statusCode == 429 && !queued) {
         queued = true;
@@ -149,7 +159,7 @@ class PrivacyProverClient {
           value['jobId'] is String &&
           !value.containsKey('proof')) {
         return parseProverProof(
-          await _poll(name, value['jobId'] as String),
+          await _poll(name, value['jobId'] as String, deadline),
           circuit: name,
         );
       }
@@ -197,6 +207,7 @@ class PrivacyProverClient {
         url,
         headers: {
           'accept': 'application/json',
+          'x-api-key': ?_apiKey,
           'content-type': 'application/json; charset=utf-8',
           ...extraHeaders,
         },
@@ -206,11 +217,13 @@ class PrivacyProverClient {
     return session.send(
       client: _http,
       attestationUrl: _url('/attestation'),
+      attestationHeaders: {'x-api-key': ?_apiKey},
       url: url,
       route: route,
       method: 'POST',
       headers: {
         'accept': 'application/json',
+        'x-api-key': ?_apiKey,
         'content-type': 'application/json; charset=utf-8',
         ...extraHeaders,
       },
@@ -218,7 +231,7 @@ class PrivacyProverClient {
     );
   }
 
-  Future<Object?> _poll(String circuit, String jobId) async {
+  Future<Object?> _poll(String circuit, String jobId, DateTime deadline) async {
     if (!RegExp(r'^[A-Za-z0-9_-]{1,256}$').hasMatch(jobId)) {
       throw PrivacyRingsException(
         'prover job id is not a safe token',
@@ -228,30 +241,33 @@ class PrivacyProverClient {
     final url = _url('/prove/${Uri.encodeComponent(circuit)}/status', {
       'jobId': jobId,
     });
-    final deadline = DateTime.now().add(maxWait);
     var interval = pollInterval;
     while (true) {
-      if (!DateTime.now().isBefore(deadline)) {
-        throw PrivacyRingsException(
-          'prover job $jobId did not finish within ${maxWait.inMilliseconds} ms',
-          code: 'prover_timeout',
-        );
-      }
       final statusRoute = '/prove/${Uri.encodeComponent(circuit)}/status';
       final response = await _send(() {
         final session = tee;
         if (session == null) {
-          return _http.get(url, headers: const {'accept': 'application/json'});
+          return _http.get(
+            url,
+            headers: {
+              'accept': 'application/json',
+              'x-api-key': ?_apiKey,
+            },
+          );
         }
         return session.send(
           client: _http,
           attestationUrl: _url('/attestation'),
+          attestationHeaders: {'x-api-key': ?_apiKey},
           url: url,
           route: statusRoute,
           method: 'GET',
-          headers: const {'accept': 'application/json'},
+          headers: {
+            'accept': 'application/json',
+            'x-api-key': ?_apiKey,
+          },
         );
-      });
+      }, deadline);
       if (response.statusCode >= 400 && response.statusCode < 500) {
         throw PrivacyRingsException(
           'prover status HTTP ${response.statusCode} at ${redactUri(url)}',
@@ -285,24 +301,31 @@ class PrivacyProverClient {
 
   Future<Duration> _wait(Duration interval, DateTime deadline) async {
     final remaining = deadline.difference(DateTime.now());
-    if (remaining <= Duration.zero) {
-      throw PrivacyRingsException(
-        'prover job did not finish within ${maxWait.inMilliseconds} ms',
-        code: 'prover_timeout',
-      );
-    }
-    final pause = interval < remaining ? interval : remaining;
+    final bounded = remaining < Duration.zero ? Duration.zero : remaining;
+    final pause = interval < bounded ? interval : bounded;
     await Future<void>.delayed(pause);
     final doubled = interval * 2;
     return doubled < maxPollInterval ? doubled : maxPollInterval;
   }
 
-  Future<http.Response> _send(Future<http.Response> Function() request) async {
+  Future<http.Response> _send(
+    Future<http.Response> Function() request,
+    DateTime deadline,
+  ) async {
     try {
-      return await request();
+      final remaining = deadline.difference(DateTime.now());
+      if (remaining <= Duration.zero) throw TimeoutException('prover deadline');
+      return await request().timeout(remaining);
+    } on TimeoutException {
+      throw PrivacyRingsException(
+        'prover request exceeded maxWait',
+        code: 'prover_timeout',
+      );
+    } on PrivacyRingsException {
+      rethrow;
     } on Object catch (error) {
       throw PrivacyRingsException(
-        'prover request failed: ${redactSecrets(error.toString())}',
+        'prover request failed: ${redactSecrets(error.toString(), apiKey: _apiKey)}',
         code: 'prover_transport',
       );
     }
@@ -323,11 +346,9 @@ class PrivacyProverClient {
     final basePath = _endpoint.path.replaceAll(RegExp(r'/+$'), '');
     final query = Map<String, String>.from(_endpoint.queryParameters)
       ..addAll(extraQuery);
-    final key = _apiKey;
-    if (key != null) query['api-key'] = key;
     return _endpoint.replace(
       path: '$basePath$suffix',
-      queryParameters: query.isEmpty ? null : query,
+      queryParameters: query,
     );
   }
 }
@@ -351,5 +372,5 @@ Uri _withoutApiKey(Uri endpoint) {
   if (!endpoint.queryParameters.containsKey('api-key')) return endpoint;
   final query = Map<String, String>.from(endpoint.queryParameters)
     ..remove('api-key');
-  return endpoint.replace(queryParameters: query.isEmpty ? null : query);
+  return endpoint.replace(queryParameters: query);
 }

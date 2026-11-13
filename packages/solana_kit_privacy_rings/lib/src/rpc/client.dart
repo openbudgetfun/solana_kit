@@ -197,15 +197,16 @@ class PrivacyIndexerClient {
     try {
       response = await _http.post(
         url,
-        headers: const {
+        headers: {
           'accept': 'application/json',
+          'x-api-key': ?_apiKey,
           'content-type': 'application/json; charset=utf-8',
         },
         body: body,
       );
     } catch (error) {
       throw PrivacyRingsException(
-        'indexer request failed: ${redactSecrets(error.toString())}',
+        'indexer request failed: ${redactSecrets(error.toString(), apiKey: _apiKey)}',
         code: 'indexer_transport',
       );
     }
@@ -231,11 +232,9 @@ class PrivacyIndexerClient {
     final basePath = _endpoint.path.replaceAll(RegExp(r'/+$'), '');
     final path = basePath.isEmpty ? '/$method' : '$basePath/$method';
     final query = Map<String, String>.from(_endpoint.queryParameters);
-    final key = _apiKey;
-    if (key != null) query['api-key'] = key;
     return _endpoint.replace(
       path: path,
-      queryParameters: query.isEmpty ? null : query,
+      queryParameters: query,
     );
   }
 
@@ -275,7 +274,7 @@ class PrivacyIndexerClient {
       throw PrivacyRingsException(
         'indexer $method failed'
         '${code is num ? ' ($code)' : ''}'
-        '${message is String ? ': ${redactSecrets(message)}' : ''}',
+        '${message is String ? ': ${redactSecrets(message, apiKey: _apiKey)}' : ''}',
         code: 'indexer_error',
       );
     }
@@ -378,5 +377,5 @@ Uri _withoutApiKey(Uri endpoint) {
   if (!endpoint.queryParameters.containsKey('api-key')) return endpoint;
   final query = Map<String, String>.from(endpoint.queryParameters)
     ..remove('api-key');
-  return endpoint.replace(queryParameters: query.isEmpty ? null : query);
+  return endpoint.replace(queryParameters: query);
 }

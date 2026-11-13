@@ -6,7 +6,7 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **71 packages** under `packages/`: **69 publishable** and **2 internal** (`solana_kit_integration_tests`, `solana_kit_test_matchers`).
+This monorepo contains **71 packages** under `packages/`: **68 publishable** and **3 internal** (`solana_kit_integration_tests`, `solana_kit_privacy_rings`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 

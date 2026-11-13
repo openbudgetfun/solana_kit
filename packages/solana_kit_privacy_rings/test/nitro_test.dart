@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:solana_kit_privacy_rings/solana_kit_privacy_rings.dart';
+import 'package:solana_kit_privacy_rings/src/prover/p384.dart'
+    show p384PublicKey, p384Sign;
 import 'package:test/test.dart';
 
 import 'nitro_quote.dart';

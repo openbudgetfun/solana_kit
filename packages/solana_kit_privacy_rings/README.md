@@ -39,26 +39,20 @@ Mainnet and devnet use the same addresses ([source](https://www.helius.dev/docs/
 | State Merkle tree | `777pvSGe5LaBd9nCczvE2FXEauiwtfGJ5XRpjKyniGor` |
 | SOL interface     | `CiNmas621VuyofiDSrEPfTXHKrdZuB6jMKECyNiMpLXE` |
 
-<!-- {=packageInstallSection:"solana_kit_privacy_rings"} -->
-
 ## Installation
 
-Install the package directly:
+This package is unpublished at version `0.0.0`, has `publish_to: none`, and is not re-exported by `solana_kit`. In this workspace it is available through Dart workspace resolution. Outside the workspace, use a Git dependency pinned to a reviewed commit:
 
 ```yaml
 dependencies:
-  "solana_kit_privacy_rings": ^0.0.0
+  solana_kit_privacy_rings:
+    git:
+      url: https://github.com/openbudgetfun/solana_kit.git
+      path: packages/solana_kit_privacy_rings
+      ref: YOUR_REVIEWED_COMMIT
 ```
 
-If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
-
-```bash
-dart pub add solana_kit
-```
-
-Inside this monorepo, Dart workspace resolution uses the local package automatically.
-
-<!-- {/packageInstallSection} -->
+The workspace's generated package-version inventory records `0.0.0`; this does not imply a pub.dev release.
 
 <!-- {=packageDocumentationSection:"solana_kit_privacy_rings"} -->
 
@@ -77,6 +71,8 @@ For architecture notes, getting-started guides, and cross-package examples, star
 ## Usage
 
 ```dart
+import 'dart:typed_data';
+
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_privacy_rings/solana_kit_privacy_rings.dart';
 
@@ -101,7 +97,12 @@ Future<void> shieldSol({
   print(deposit.programAddress);
 }
 
-Future<void> readBalance(List<int> viewingSecret, String viewTag) async {
+Future<void> readBalance({
+  required List<int> viewingSecret,
+  required String viewTag,
+  required Uint8List expectedOwner,
+  required ConfidentialNoteVerifier verifyNote,
+}) async {
   final rings = PrivacyRings(
     solanaRpcUrl: Uri.parse(
       'https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY',
@@ -111,6 +112,8 @@ Future<void> readBalance(List<int> viewingSecret, String viewTag) async {
     final report = await rings.readPrivateBalance(
       viewingKey: ViewingKey.fromBytes(viewingSecret),
       tags: [viewTag],
+      expectedOwner: expectedOwner,
+      verifyConfidentialNote: verifyNote,
     );
     for (final balance in report.balances) {
       print('${balance.mint ?? balance.assetId}: ${balance.amount}');
@@ -122,5 +125,11 @@ Future<void> readBalance(List<int> viewingSecret, String viewTag) async {
 ```
 
 `viewTag` for the permissionless ring is the recipient wallet address as 32 bytes. `recipientOwnerHash` is `ownerHash` of the shielded address. `expandShieldedSeed` derives the nullifier and viewing secrets that hash uses.
+
+Balance reads require the expected 32-byte owner hash and a `ConfidentialNoteVerifier`. The verifier must reconstruct the Poseidon commitment using the expected owner, domain, mint, tree, and application/ring record hashes, then compare it with a commitment from a trusted source. Confidential payloads use unauthenticated AES-CTR: a parseable plaintext alone is not evidence of ownership or integrity. The lower-level `readConfidentialNotes` without a verifier and `readProoflessDeposits` without `expectedOwner` return unverified data; only use their totals after validating it yourself. View tags are discovery hints, not ownership checks.
+
+Pass a `NullifierKey` to `readPrivateBalance` to query spend history directly by derived nullifier; spending transactions need not carry the receipt tags. Without it, only caller-supplied `spentLeaves` are excluded. Indexer responses still require a trusted endpoint and suitable finality; this client does not independently verify the chain or establish an atomic snapshot across pages.
+
+API keys supplied through `apiKey` or a legacy `api-key` endpoint query are sent as `x-api-key` headers, including attestation and status requests. They are removed from request URLs. Attach `tee: TeeSession(policy)` to the facade or prover client to use attestation. The prover's `maxWait` bounds HTTP submission, attestation, and polling, including an HTTP request that stalls.
 
 A live indexer call needs a Helius API key. Tests in this package skip that call unless `HELIUS_PRIVACY_RINGS_LIVE=1` and `HELIUS_API_KEY` are both set, and no key is stored in the repository.

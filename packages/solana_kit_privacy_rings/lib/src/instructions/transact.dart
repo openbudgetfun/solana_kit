@@ -350,9 +350,9 @@ void _checkWithdrawal(
         transfer is SolWithdrawalTransfer || transfer is SplWithdrawalTransfer,
   );
   if (withdrawal == null) {
-    if (withdrawals.isNotEmpty) {
+    if (data.interfaceTransfers.isNotEmpty) {
       throw PrivacyRingsException(
-        'instruction data withdraws, but no withdrawal target was given',
+        'interface transfers require matching settlements or a withdrawal target',
         code: 'withdrawal_mismatch',
       );
     }
