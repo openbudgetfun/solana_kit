@@ -112,12 +112,14 @@
       "evidence": [
         "packages/solana_kit_dapp_publisher_cli/test",
         "packages/solana_kit_helius/test",
-        "packages/solana_kit_jupiter/test"
+        "packages/solana_kit_jupiter/test",
+        "packages/solana_kit_privacy_rings/test"
       ],
       "packages": [
         "solana_kit_dapp_publisher_cli",
         "solana_kit_helius",
-        "solana_kit_jupiter"
+        "solana_kit_jupiter",
+        "solana_kit_privacy_rings"
       ]
     },
     {

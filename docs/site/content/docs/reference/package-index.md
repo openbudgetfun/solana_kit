@@ -98,6 +98,7 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_pyth`](https://pub.dev/packages/solana_kit_pyth)
 - [`solana_kit_sns`](https://pub.dev/packages/solana_kit_sns)
 - [`solana_kit_helius`](https://pub.dev/packages/solana_kit_helius)
+- [`solana_kit_privacy_rings`](https://pub.dev/packages/solana_kit_privacy_rings)
 - [`solana_kit_surfpool`](https://pub.dev/packages/solana_kit_surfpool)
 
 ## Utilities

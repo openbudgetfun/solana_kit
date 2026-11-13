@@ -27,6 +27,7 @@ dependencies:
   solana_kit_mpl_bubblegum: ^0.7.1
   solana_kit_offchain_messages: ^0.7.1
   solana_kit_options: ^0.11.1
+  solana_kit_privacy_rings: ^0.0.0
   solana_kit_rpc: ^0.11.1
   solana_kit_rpc_api: ^0.11.1
   solana_kit_rpc_subscriptions: ^0.11.1

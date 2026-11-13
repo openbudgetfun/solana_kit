@@ -408,6 +408,13 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: adds Helius-specific API ergonomics and models.
 - Use it when: your infra depends on Helius endpoints and features.
 
+### solana_kit_privacy_rings
+
+- Pub.dev: [solana_kit_privacy_rings](https://pub.dev/packages/solana_kit_privacy_rings)
+- Why it exists: Helius ships Privacy Rings SDKs for TypeScript and Rust, and Dart and Flutter apps need the same deposit, transfer, withdraw, and encrypted-balance flow on Solana Kit primitives.
+- What it does: builds shielded-pool instructions, decrypts confidential notes with a viewing key, and calls the privacy indexer and remote prover.
+- Use it when: shielding SOL or SPL tokens, reading a private balance, or submitting a confidential transfer or withdrawal.
+
 ### solana_kit_surfpool
 
 - Pub.dev: [solana_kit_surfpool](https://pub.dev/packages/solana_kit_surfpool)
