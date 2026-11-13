@@ -310,6 +310,51 @@ void main() {
       client.close();
     });
 
+    test(
+      'exhausting reconnect attempts fails the stream with the reason',
+      () async {
+        final channels = <_FakeChannel>[];
+        final client = ParsedStreamsClient(
+          apiKey: 'test-key',
+          channelFactory: (uri) {
+            final channel = _FakeChannel();
+            channels.add(channel);
+            return channel;
+          },
+          maxReconnectAttempts: 1,
+        );
+
+        final pending = client.parsedTransactionSubscribe(
+          const ParsedTransactionFilter(programs: ['program-1']),
+        );
+        final first = await _waitForChannel(channels, 0);
+        await _flush();
+        first.incoming.add(
+          jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 1}),
+        );
+        final subscription = await pending;
+        final failure = Completer<Object>();
+        subscription.notifications.listen((_) {}, onError: failure.complete);
+
+        // First drop schedules a reconnect; the second channel drops before it
+        // can resubscribe, exhausting the single allowed attempt.
+        await first.incoming.close();
+        final second = await _waitForChannel(channels, 1);
+        await second.incoming.close();
+
+        final error = await failure.future.timeout(
+          const Duration(seconds: 5),
+          onTimeout: () => throw TimeoutException('stream never failed'),
+        );
+        expect(error, isA<ParsedStreamsError>());
+        expect(
+          (error as ParsedStreamsError).message,
+          contains('gave up after 1 reconnect attempts'),
+        );
+        client.close();
+      },
+    );
+
     test('close ends live subscriptions', () async {
       final channel = _FakeChannel();
       final client = ParsedStreamsClient(
