@@ -160,7 +160,7 @@ jobs:
           cat "$RUNNER_TEMP/publish-target-packages"
 
       - name: setup Dart publishing authentication
-        uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
+        uses: dart-lang/setup-dart@2286a0c042b44434fe26d292bbce8d34f7ec662b # v1.8.2
 
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
       # Keep registry-url unset so setup-node does not inject NODE_AUTH_TOKEN;
