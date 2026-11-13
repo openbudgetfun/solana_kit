@@ -605,6 +605,210 @@ void main() {
 
       expect(result.version, equals(0));
     });
+
+    test(
+      'promotes accounts owned by supplied signers to signer roles',
+      () async {
+        final harness = _client((method) {
+          switch (method) {
+            case 'simulateTransaction':
+              return _simulation(10000);
+            case 'getPriorityFeeEstimate':
+              return _rpcResult({'priorityFeeEstimate': 1000});
+            default:
+              return _rpcResult({
+                'context': {'slot': 1},
+                'value': {'blockhash': 'bh', 'lastValidBlockHeight': 1},
+              });
+          }
+        });
+
+        final result = await harness.helius.transactions.createSmartTransaction(
+          CreateSmartTransactionInput(
+            instructions: <Object?>[
+              Instruction(
+                programAddress: const Address(
+                  'Program1111111111111111111111111111111111',
+                ),
+                accounts: const <AccountMeta>[
+                  // Both roles must gain the signer bit while keeping writability.
+                  AccountMeta(
+                    address: Address('WritableA'),
+                    role: AccountRole.writable,
+                  ),
+                  AccountMeta(
+                    address: Address('ReadonlyB'),
+                    role: AccountRole.readonly,
+                  ),
+                ],
+                data: Uint8List(0),
+              ),
+            ],
+            signers: const <String>['WritableA', 'ReadonlyB'],
+          ),
+        );
+
+        final instruction = result.instructions.single! as Instruction;
+        expect(
+          instruction.accounts![0].role,
+          equals(AccountRole.writableSigner),
+        );
+        expect(
+          instruction.accounts![1].role,
+          equals(AccountRole.readonlySigner),
+        );
+      },
+    );
+
+    test('keeps already-marked signers and never appends accounts', () async {
+      final harness = _client((method) {
+        switch (method) {
+          case 'simulateTransaction':
+            return _simulation(10000);
+          case 'getPriorityFeeEstimate':
+            return _rpcResult({'priorityFeeEstimate': 1000});
+          default:
+            return _rpcResult({
+              'context': {'slot': 1},
+              'value': {'blockhash': 'bh', 'lastValidBlockHeight': 1},
+            });
+        }
+      });
+
+      final listed = Instruction(
+        programAddress: const Address(
+          'Program1111111111111111111111111111111111',
+        ),
+        accounts: const <AccountMeta>[
+          AccountMeta(
+            address: Address('SignerA'),
+            role: AccountRole.readonlySigner,
+          ),
+          AccountMeta(
+            address: Address('Unrelated'),
+            role: AccountRole.writable,
+          ),
+        ],
+        data: Uint8List(0),
+      );
+      final referenced = Instruction(
+        programAddress: const Address(
+          'OtherProgram11111111111111111111111111111111',
+        ),
+        accounts: const <AccountMeta>[],
+        data: Uint8List(0),
+      );
+
+      final result = await harness.helius.transactions.createSmartTransaction(
+        CreateSmartTransactionInput(
+          instructions: <Object?>[listed, referenced],
+          signers: const <String>[
+            'FeePayer1111111111111111111111111111111111',
+            'SignerA',
+            'UnreferencedZ',
+          ],
+        ),
+      );
+
+      final first = result.instructions[0]! as Instruction;
+      // Identical to the input: the signer was already marked, and the
+      // unreferenced signer was not appended to any account list.
+      expect(first.accounts![0].role, equals(AccountRole.readonlySigner));
+      expect(
+        first.accounts![1].role,
+        equals(AccountRole.writable),
+        reason: 'Unrelated is owned by no supplied signer and stays writable',
+      );
+      final second = result.instructions[1]! as Instruction;
+      expect(second.accounts, isEmpty);
+      // `listed` is passed through unchanged when nothing was promoted, so the
+      // instruction object the caller supplied is preserved.
+      expect(identical(first, listed), isTrue);
+    });
+
+    test('deduplicates the fee payer and signer list by address', () async {
+      final harness = _client((method) {
+        switch (method) {
+          case 'simulateTransaction':
+            return _simulation(10000);
+          case 'getPriorityFeeEstimate':
+            return _rpcResult({'priorityFeeEstimate': 1000});
+          default:
+            return _rpcResult({
+              'context': {'slot': 1},
+              'value': {'blockhash': 'bh', 'lastValidBlockHeight': 1},
+            });
+        }
+      });
+
+      final result = await harness.helius.transactions.createSmartTransaction(
+        CreateSmartTransactionInput(
+          instructions: <Object?>[
+            Instruction(
+              programAddress: const Address(
+                'Program1111111111111111111111111111111111',
+              ),
+              accounts: const <AccountMeta>[
+                AccountMeta(
+                  address: Address(
+                    'FeePayer1111111111111111111111111111111111',
+                  ),
+                  role: AccountRole.writable,
+                ),
+              ],
+              data: Uint8List(0),
+            ),
+          ],
+          // The fee payer is repeated in `signers`; the writable account it
+          // owns must still end up writableSigner, promoted exactly once.
+          feePayer: 'FeePayer1111111111111111111111111111111111',
+          signers: const <String>['FeePayer1111111111111111111111111111111111'],
+        ),
+      );
+
+      final instruction = result.instructions.single! as Instruction;
+      expect(
+        instruction.accounts!.single.role,
+        equals(AccountRole.writableSigner),
+      );
+    });
+
+    test('leaves map-shaped instructions untouched', () async {
+      final harness = _client((method) {
+        switch (method) {
+          case 'simulateTransaction':
+            return _simulation(10000);
+          case 'getPriorityFeeEstimate':
+            return _rpcResult({'priorityFeeEstimate': 1000});
+          default:
+            return _rpcResult({
+              'context': {'slot': 1},
+              'value': {'blockhash': 'bh', 'lastValidBlockHeight': 1},
+            });
+        }
+      });
+
+      final mapInstruction = <String, Object?>{
+        'programAddress': 'Program1111111111111111111111111111111111',
+        'accounts': <Object?>[
+          <String, Object?>{
+            'address': 'WritableA',
+            'role': AccountRole.writable.value,
+          },
+        ],
+      };
+
+      final result = await harness.helius.transactions.createSmartTransaction(
+        CreateSmartTransactionInput(
+          instructions: <Object?>[mapInstruction],
+          signers: const <String>['WritableA'],
+        ),
+      );
+
+      // The map dialect models draft instructions for simulation and carries
+      // no role objects to upgrade; the map is returned as supplied.
+      expect(identical(result.instructions.single, mapInstruction), isTrue);
+    });
   });
 
   group('bufferComputeUnits', () {
