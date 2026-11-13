@@ -395,8 +395,13 @@ class AssetWithProof {
 
 /// Gets an asset and its Merkle proof from the DAS API.
 ///
-/// Fetches both the asset data and proof in parallel, then processes
+/// Fetches both the asset data and proof concurrently, then processes
 /// the proof to extract the fields needed for Bubblegum instructions.
+///
+/// A failure from either request is thrown directly. Callers can match
+/// [FormatException] or the client's own exception. The two requests are not
+/// joined with a record `wait`, which would wrap that failure in
+/// `ParallelWaitError` and hide the DAS parse or transport error.
 ///
 /// [dasClient] - The DAS API client to use.
 /// [assetId] - The compressed NFT address.
@@ -404,10 +409,10 @@ Future<AssetWithProof> getAssetWithProof({
   required DasApiClient dasClient,
   required String assetId,
 }) async {
-  final (asset, proof) = await (
+  final (asset, proof) = await _awaitBoth(
     dasClient.getAsset(assetId),
     dasClient.getAssetProof(assetId),
-  ).wait;
+  );
 
   final rootBytes = _base58ToBytes(proof.root);
 
@@ -481,6 +486,61 @@ Future<AssetWithProof> getAssetWithProof({
     creatorsRaw: creatorsRaw,
     inherited: inherited,
   );
+}
+
+/// Awaits [first] and [second] together and rethrows their original errors.
+///
+/// Listeners are attached before either future is awaited, so a failure in
+/// one request is not reported as an unhandled async error while the other
+/// request is still running. When both fail, [first]'s error is thrown.
+Future<(T1, T2)> _awaitBoth<T1 extends Object, T2 extends Object>(
+  Future<T1> first,
+  Future<T2> second,
+) async {
+  Object? firstError;
+  StackTrace? firstStack;
+  Object? secondError;
+  StackTrace? secondStack;
+
+  final firstResult = first.then<T1?>(
+    (value) => value,
+    onError: (Object error, StackTrace stackTrace) {
+      firstError = error;
+      firstStack = stackTrace;
+      return null;
+    },
+  );
+  final secondResult = second.then<T2?>(
+    (value) => value,
+    onError: (Object error, StackTrace stackTrace) {
+      secondError = error;
+      secondStack = stackTrace;
+      return null;
+    },
+  );
+
+  final left = await firstResult;
+  final right = await secondResult;
+  // Copies so the analyzer can promote them. The originals are assigned
+  // inside closures, which blocks promotion.
+  final capturedFirstError = firstError;
+  final capturedSecondError = secondError;
+  if (capturedFirstError != null) {
+    Error.throwWithStackTrace(
+      capturedFirstError,
+      firstStack ?? StackTrace.current,
+    );
+  }
+  if (capturedSecondError != null) {
+    Error.throwWithStackTrace(
+      capturedSecondError,
+      secondStack ?? StackTrace.current,
+    );
+  }
+  if (left == null || right == null) {
+    throw StateError('DAS request completed without a value or an error.');
+  }
+  return (left, right);
 }
 
 /// Converts a DAS creator record into the on-chain [Creator] shape.

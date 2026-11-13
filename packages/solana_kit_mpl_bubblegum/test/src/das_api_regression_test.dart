@@ -226,9 +226,7 @@ void main() {
       Map<String, Object?> proofJson,
       Future<T> Function(HeliusDasClient client) body,
     ) => http.runWithClient(
-      () => body(
-        const HeliusDasClient(rpcUrl: 'https://example.com'),
-      ),
+      () => body(const HeliusDasClient(rpcUrl: 'https://example.com')),
       () => MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         final result = body['method'] == 'getAsset' ? assetJson : proofJson;
@@ -238,11 +236,7 @@ void main() {
 
     final assetJson = <String, Object?>{
       'id': _hash,
-      'ownership': {
-        'owner': _owner,
-        'delegate': null,
-        'frozen': false,
-      },
+      'ownership': {'owner': _owner, 'delegate': null, 'frozen': false},
       'compression': <String, Object?>{
         'compressed': true,
         'data_hash': _hash,
@@ -346,4 +340,106 @@ void main() {
       );
     });
   });
+
+  group('getAssetWithProof fetch failures', () {
+    Future<AssetWithProof> fetch({
+      int assetStatus = 200,
+      int proofStatus = 200,
+      Map<String, Object?>? assetJson,
+      Map<String, Object?>? proofJson,
+    }) {
+      final assetBody = assetJson ?? _assetJson;
+      final proofBody = proofJson ?? _proofJson;
+      return http.runWithClient(
+        () => getAssetWithProof(
+          dasClient: const HeliusDasClient(rpcUrl: 'https://example.com'),
+          assetId: _hash,
+        ),
+        () => MockClient((request) async {
+          final body = jsonDecode(request.body) as Map<String, Object?>;
+          final isAsset = body['method'] == 'getAsset';
+          final status = isAsset ? assetStatus : proofStatus;
+          if (status != 200) {
+            return http.Response('unavailable', status);
+          }
+          return http.Response(
+            jsonEncode({'result': isAsset ? assetBody : proofBody}),
+            200,
+          );
+        }),
+      );
+    }
+
+    test('throws the asset transport error', () async {
+      await expectLater(
+        fetch(assetStatus: 500),
+        throwsA(
+          isA<HeliusDasException>().having(
+            (error) => error.statusCode,
+            'statusCode',
+            500,
+          ),
+        ),
+      );
+    });
+
+    test('throws the proof transport error', () async {
+      await expectLater(
+        fetch(proofStatus: 502),
+        throwsA(
+          isA<HeliusDasException>().having(
+            (error) => error.statusCode,
+            'statusCode',
+            502,
+          ),
+        ),
+      );
+    });
+
+    test('throws the asset error when both requests fail', () async {
+      await expectLater(
+        fetch(assetStatus: 500, proofStatus: 503),
+        throwsA(
+          isA<HeliusDasException>().having(
+            (error) => error.statusCode,
+            'statusCode',
+            500,
+          ),
+        ),
+      );
+    });
+
+    test('throws a parse error from the asset response', () async {
+      final malformed = {
+        ..._assetJson,
+        'compression': {
+          ..._assetJson['compression']! as Map<String, Object?>,
+          'leaf_id': null,
+        },
+      };
+      await expectLater(fetch(assetJson: malformed), throwsFormatException);
+    });
+  });
 }
+
+const _assetJson = <String, Object?>{
+  'id': _hash,
+  'ownership': {'owner': _owner, 'delegate': null, 'frozen': false},
+  'compression': <String, Object?>{
+    'compressed': true,
+    'data_hash': _hash,
+    'creator_hash': _hash,
+    'asset_hash': _hash,
+    'tree': _hash,
+    'seq': 6,
+    'leaf_id': 5,
+  },
+};
+
+const _proofJson = <String, Object?>{
+  'root': _hash,
+  'proof': [_hash, _hash, _hash],
+  'node_index': 13,
+  'leaf': _hash,
+  'tree_id': _hash,
+};
