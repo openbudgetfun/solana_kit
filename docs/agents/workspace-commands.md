@@ -8,6 +8,12 @@ If you are not already inside a `devenv` shell, run commands as:
 devenv shell -- bash -lc '<command>'
 ```
 
+## Cursor cloud agents
+
+`.cursor/install.sh` is the cloud-agent bootstrap. It installs multi-user Nix with flakes and `nix-command`, installs devenv from the devenv binary cache, links `nix` and `devenv` onto `/usr/local/bin` (so login and non-login shells can see them), warms the shell with `devenv shell -- true`, then installs the Flutter SDK pinned in `.fvmrc` and workspace Dart packages (`install:all`). `.cursor/start.sh` starts the Nix daemon on each boot; the daemon does not survive the environment snapshot. There is no separate compile-all step: `lint:all` includes `dart analyze`, and `test:all` is the Dart test suite.
+
+Android plugin compilation needs an Android SDK and stays in the `android-plugin-compile` CI job. iOS builds cannot run on the Linux agent VM. `test:integration` starts Surfpool from the devenv shell and is separate from `test:all`.
+
 ## Common workspace commands
 
 | Command            | Purpose                                                                                          |

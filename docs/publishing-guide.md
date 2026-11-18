@@ -6,7 +6,7 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **70 packages** under `packages/`: **68 publishable** and **2 internal** (`solana_kit_integration_tests`, `solana_kit_test_matchers`).
+This monorepo contains **71 packages** under `packages/`: **68 publishable** and **3 internal** (`solana_kit_integration_tests`, `solana_kit_privacy_rings`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 
@@ -120,6 +120,7 @@ solana_kit_mpl_core -> solana_kit_accounts, solana_kit_addresses, solana_kit_cod
 solana_kit_mpl_token_metadata -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_keys
 solana_kit_offchain_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_keys
 solana_kit_options -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_privacy_rings -> solana_kit_addresses, solana_kit_codecs_strings, solana_kit_instructions
 solana_kit_program_client_core -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_errors, solana_kit_instructions, solana_kit_rpc_spec, solana_kit_rpc_types, solana_kit_signers
 solana_kit_programs -> solana_kit_addresses, solana_kit_errors
 solana_kit_pyth -> solana_kit_addresses, solana_kit_codecs, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_keys

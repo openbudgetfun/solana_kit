@@ -227,6 +227,11 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
+          # The job resolves the workspace's pub dependencies, so it must use
+          # the Flutter version the workspace pins (.fvmrc), not the latest
+          # stable: 3.50.0's Dart 3.14 forces build_web_compilers >=4.8.11,
+          # whose analyzer 13.x constraint conflicts with jaspr_cli.
+          flutter-version: 3.47.4
           channel: stable
           cache: true
       - name: install Dart dependencies

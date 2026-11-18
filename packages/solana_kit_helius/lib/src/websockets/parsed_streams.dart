@@ -11,8 +11,9 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// (program, instruction name, account, account role), already decoded through
 /// Helius's IDL catalog. Delivery is at most once: the server does not replay
 /// what confirmed while a connection was down. This client reconnects and
-/// resubscribes automatically when the server closes the connection and reports
-/// the last delivered slot through `onReconnect`.
+/// resubscribes automatically when the server closes the connection; it reports
+/// the last delivered slot through `onDisconnect` as soon as the connection
+/// drops and through `onReconnect` again once the subscriptions are back.
 class ParsedStreamsClient {
   /// Creates a Parsed Streams client for the given API key.
   ParsedStreamsClient({
@@ -21,6 +22,7 @@ class ParsedStreamsClient {
     String? discoveryUrl,
     bool reconnect = true,
     int maxReconnectAttempts = 10,
+    void Function(ParsedStreamsReconnectInfo)? onDisconnect,
     void Function(ParsedStreamsReconnectInfo)? onReconnect,
     WebSocketChannel Function(Uri)? channelFactory,
   }) : _url = url ?? parsedStreamsUrl(apiKey),
@@ -28,6 +30,7 @@ class ParsedStreamsClient {
        _reconnect = reconnect, // ignore: prefer_initializing_formals
        _maxReconnectAttempts = // ignore: prefer_initializing_formals
            maxReconnectAttempts,
+       _onDisconnect = onDisconnect, // ignore: prefer_initializing_formals
        _onReconnect = onReconnect, // ignore: prefer_initializing_formals
        _channelFactory = channelFactory ?? WebSocketChannel.connect;
 
@@ -35,6 +38,7 @@ class ParsedStreamsClient {
   final String _discoveryUrl;
   final bool _reconnect;
   final int _maxReconnectAttempts;
+  final void Function(ParsedStreamsReconnectInfo)? _onDisconnect;
   final void Function(ParsedStreamsReconnectInfo)? _onReconnect;
   final WebSocketChannel Function(Uri) _channelFactory;
 
@@ -277,6 +281,12 @@ class ParsedStreamsClient {
 
     if (_subs.isEmpty) return;
 
+    // The first close of an outage marks where the gap starts. `onDisconnect`
+    // reports it after the state above has settled, so a callback that closes
+    // or (un)subscribes sees settled state (upstream #398).
+    final freshOutage = _outage == null;
+    final info = _outage ??= (closeCode: code, lastSlot: _lastSlot);
+
     if (code == _slowConsumerCode) {
       unawaited(
         _failAll(
@@ -289,38 +299,45 @@ class ParsedStreamsClient {
           ),
         ),
       );
-      return;
-    }
-
-    if (!_reconnect) {
+    } else if (!_reconnect) {
       unawaited(_failAll(error));
-      return;
-    }
+    } else {
+      _attempts++;
 
-    _outage ??= (closeCode: code, lastSlot: _lastSlot);
-    _attempts++;
-
-    if (_attempts > _maxReconnectAttempts) {
-      unawaited(
-        _failAll(
-          ParsedStreamsError(
-            null,
-            'Parsed Streams gave up after $_maxReconnectAttempts reconnect '
-            'attempts (last close code $code)',
+      if (_attempts > _maxReconnectAttempts) {
+        unawaited(
+          _failAll(
+            ParsedStreamsError(
+              null,
+              'Parsed Streams gave up after $_maxReconnectAttempts reconnect '
+              'attempts (last close code $code)',
+            ),
           ),
-        ),
-      );
-      return;
+        );
+      } else {
+        final delay = math.min(
+          _backoffBaseMs * (1 << (_attempts - 1)),
+          _backoffMaxMs,
+        );
+        _reconnectTimer = Timer(Duration(milliseconds: delay), () {
+          _reconnectTimer = null;
+          unawaited(_restore());
+        });
+      }
     }
 
-    final delay = math.min(
-      _backoffBaseMs * (1 << (_attempts - 1)),
-      _backoffMaxMs,
-    );
-    _reconnectTimer = Timer(Duration(milliseconds: delay), () {
-      _reconnectTimer = null;
-      unawaited(_restore());
-    });
+    if (freshOutage) {
+      try {
+        _onDisconnect?.call(
+          ParsedStreamsReconnectInfo(
+            closeCode: info.closeCode,
+            lastSlot: info.lastSlot,
+          ),
+        );
+      } on Object {
+        // A throwing callback must not break the stream.
+      }
+    }
   }
 
   Future<WebSocketChannel> _connect() async {

@@ -44,11 +44,14 @@ HeliusClient createHelius(HeliusConfig config, {http.Client? client}) {
     enhanced: EnhancedClient(restClient: restClient, apiKey: config.apiKey),
     parsedEvents: ParsedEventsClient(
       restClient: RestClient(
-        baseUrl: config.parsedEventsBaseUrl,
+        baseUrl: config.parsedEventsUrl ?? config.parsedEventsBaseUrl,
         client: effectiveClient,
       ),
       apiKey: config.apiKey,
       isMainnet: config.cluster == HeliusCluster.mainnet,
+      defaultTimeout: config.parsedEventsTimeoutMs == null
+          ? null
+          : Duration(milliseconds: config.parsedEventsTimeoutMs!),
     ),
     webhooks: WebhooksClient(restClient: restClient, apiKey: config.apiKey),
     zk: ZkClient(rpcClient: rpcClient),

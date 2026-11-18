@@ -38,6 +38,7 @@ workspace:
   - packages/solana_kit_options
   - packages/solana_kit_program_client_core
   - packages/solana_kit_programs
+  - packages/solana_kit_privacy_rings
   - packages/solana_kit_rpc
   - packages/solana_kit_rpc_api
   - packages/solana_kit_rpc_parsed_types
