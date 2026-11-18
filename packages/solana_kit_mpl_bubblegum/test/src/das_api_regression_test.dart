@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -419,8 +420,117 @@ void main() {
       };
       await expectLater(fetch(assetJson: malformed), throwsFormatException);
     });
+
+    test('throws a parse error from the proof response', () async {
+      await expectLater(
+        fetch(proofJson: {..._proofJson, 'proof': null}),
+        throwsFormatException,
+      );
+    });
+
+    test('rethrows the asset error with its original stack trace', () async {
+      final error = StateError('asset failed');
+      final stackTrace = StackTrace.current;
+      try {
+        await getAssetWithProof(
+          dasClient: _ScriptedDasClient(
+            asset: Future<DasAsset>.error(error, stackTrace),
+            proof: Future<DasAssetProof>.error(
+              StateError('proof failed'),
+              StackTrace.current,
+            ),
+          ),
+          assetId: _hash,
+        );
+        fail('expected the asset error');
+      } on Object catch (caught, caughtStackTrace) {
+        expect(caught, same(error));
+        expect(caughtStackTrace.toString(), stackTrace.toString());
+      }
+    });
+
+    test('rethrows the proof error with its original stack trace', () async {
+      const error = FormatException('proof failed');
+      final stackTrace = StackTrace.current;
+      try {
+        await getAssetWithProof(
+          dasClient: _ScriptedDasClient(
+            asset: Future<DasAsset>.value(_sampleAsset),
+            proof: Future<DasAssetProof>.error(error, stackTrace),
+          ),
+          assetId: _hash,
+        );
+        fail('expected the proof error');
+      } on FormatException catch (caught, caughtStackTrace) {
+        expect(caught, same(error));
+        expect(caughtStackTrace.toString(), stackTrace.toString());
+      }
+    });
+
+    test(
+      'does not surface the sibling failure as an unhandled error',
+      () async {
+        final assetError = StateError('asset failed');
+        final proofError = StateError('proof failed');
+        final unhandled = <Object>[];
+        Object? thrown;
+        await runZonedGuarded(() async {
+          try {
+            await getAssetWithProof(
+              dasClient: _ScriptedDasClient(
+                asset: Future<DasAsset>.error(assetError, StackTrace.current),
+                proof: Future<DasAssetProof>.error(
+                  proofError,
+                  StackTrace.current,
+                ),
+              ),
+              assetId: _hash,
+            );
+          } on Object catch (error) {
+            thrown = error;
+          }
+          await Future<void>.delayed(Duration.zero);
+        }, (error, _) => unhandled.add(error));
+        expect(thrown, same(assetError));
+        expect(unhandled, isEmpty);
+      },
+    );
   });
 }
+
+final class _ScriptedDasClient implements DasApiClient {
+  const _ScriptedDasClient({required this.asset, required this.proof});
+
+  final Future<DasAsset> asset;
+  final Future<DasAssetProof> proof;
+
+  @override
+  Future<DasAsset> getAsset(String assetId) => asset;
+
+  @override
+  Future<DasAssetProof> getAssetProof(String assetId) => proof;
+}
+
+const _sampleAsset = DasAsset(
+  id: _hash,
+  ownership: DasAssetOwnership(
+    owner: _owner,
+    frozen: false,
+    nonTransferable: false,
+  ),
+  compression: DasAssetCompression(
+    compressed: true,
+    dataHash: _hash,
+    creatorHash: _hash,
+    assetHash: _hash,
+    tree: _hash,
+    seq: 6,
+    leafId: 5,
+  ),
+  content: null,
+  creators: [],
+  grouping: [],
+);
 
 const _assetJson = <String, Object?>{
   'id': _hash,
