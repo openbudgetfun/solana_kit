@@ -56,7 +56,7 @@ The error-code enum defines 360 codes; 61 are never constructed anywhere in `pac
 - [ ] **ROB-01: `pollCheckoutCompletion` cannot distinguish timeout from still-confirming**
   - `checkout.dart:489-495` converts a polling timeout into a synthetic `CheckoutStatusResponse(status: 'pending', phase: 'confirming', message: 'Polling timed out')`. Callers must string-match `message`. Return a richer outcome (or throw `TimeoutException`) so UI code does not keep showing "confirming" forever.
 
-- [ ] **ROB-02: `getAssetWithProof` wraps fetch failures in `ParallelWaitError`**
+- [x] **ROB-02: `getAssetWithProof` wraps fetch failures in `ParallelWaitError`**
   - `das_api.dart:407-410` awaits the asset and proof futures with record-`.wait`, so any single failure surfaces as `ParallelWaitError<(DasAsset?, DasAssetProof?), ...>` instead of the underlying error. Await sequentially or unwrap the first error; the wrapped type is awkward for callers to handle.
 
 - [ ] **ROB-03: CI's `android-plugin-compile` still auto-installs the platform it needs**

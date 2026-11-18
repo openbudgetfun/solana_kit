@@ -395,8 +395,13 @@ class AssetWithProof {
 
 /// Gets an asset and its Merkle proof from the DAS API.
 ///
-/// Fetches both the asset data and proof in parallel, then processes
+/// Fetches both the asset data and proof concurrently, then processes
 /// the proof to extract the fields needed for Bubblegum instructions.
+///
+/// A failure from either request is thrown directly. Callers can match
+/// [FormatException] or the client's own exception. The two requests are not
+/// joined with a record `wait`, which would wrap that failure in
+/// `ParallelWaitError` and hide the DAS parse or transport error.
 ///
 /// [dasClient] - The DAS API client to use.
 /// [assetId] - The compressed NFT address.
@@ -404,10 +409,10 @@ Future<AssetWithProof> getAssetWithProof({
   required DasApiClient dasClient,
   required String assetId,
 }) async {
-  final (asset, proof) = await (
+  final (asset, proof) = await _awaitBoth(
     dasClient.getAsset(assetId),
     dasClient.getAssetProof(assetId),
-  ).wait;
+  );
 
   final rootBytes = _base58ToBytes(proof.root);
 
@@ -481,6 +486,58 @@ Future<AssetWithProof> getAssetWithProof({
     creatorsRaw: creatorsRaw,
     inherited: inherited,
   );
+}
+
+/// Awaits [first] and [second] together and rethrows their original errors.
+///
+/// Listeners are attached before either future is awaited, so a failure in
+/// one request is not reported as an unhandled async error while the other
+/// request is still running. When both fail, [first]'s error is thrown, with
+/// the stack trace captured where that future failed.
+Future<(T1, T2)> _awaitBoth<T1 extends Object, T2 extends Object>(
+  Future<T1> first,
+  Future<T2> second,
+) async {
+  final firstSettled = _settle(first);
+  final secondSettled = _settle(second);
+  final left = await firstSettled;
+  final right = await secondSettled;
+  switch (left) {
+    case _Failure(:final error, :final stackTrace):
+      Error.throwWithStackTrace(error, stackTrace);
+    case _Success(value: final firstValue):
+      switch (right) {
+        case _Failure(:final error, :final stackTrace):
+          Error.throwWithStackTrace(error, stackTrace);
+        case _Success(value: final secondValue):
+          return (firstValue, secondValue);
+      }
+  }
+}
+
+/// Listens to [future] before the caller awaits it.
+Future<_Settled<T>> _settle<T extends Object>(Future<T> future) {
+  return future.then(_Success<T>.new, onError: _Failure<T>.new);
+}
+
+/// Outcome of one concurrent DAS request.
+sealed class _Settled<T extends Object> {
+  const _Settled();
+}
+
+/// A DAS request that completed with a value.
+final class _Success<T extends Object> extends _Settled<T> {
+  const _Success(this.value);
+
+  final T value;
+}
+
+/// A DAS request that completed with an error and the stack captured there.
+final class _Failure<T extends Object> extends _Settled<T> {
+  const _Failure(this.error, this.stackTrace);
+
+  final Object error;
+  final StackTrace stackTrace;
 }
 
 /// Converts a DAS creator record into the on-chain [Creator] shape.
