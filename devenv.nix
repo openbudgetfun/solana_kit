@@ -9,6 +9,41 @@
 let
   currentDir = builtins.dirOf __curPos.file;
   extra = inputs.ifiokjr-nixpkgs.packages.${pkgs.stdenv.system};
+  # The locked ifiokjr-nixpkgs build is pnpm 12.14.0, and its exported
+  # package does not take version/hashes as override arguments. Swap the
+  # standalone tarball so the shell binary matches package.json.
+  pnpmPinned =
+    let
+      pnpmVersion = "12.21.0";
+      pnpmPlatforms = {
+        "x86_64-linux" = {
+          npmPlatform = "exe.linux-x64";
+          hash = "sha256-XoUyJ6T6OHqVz29hQAqD0fx+MWSUPADidfh1a3WTneI=";
+        };
+        "aarch64-linux" = {
+          npmPlatform = "exe.linux-arm64";
+          hash = "sha256-Byb5jAnw8P5vuR43bE0+d5OlRMHx7D4guq6yu5HEfh8=";
+        };
+        "x86_64-darwin" = {
+          npmPlatform = "exe.darwin-x64";
+          hash = "sha256-HgBNdOV+pUJwpMMDrzopzq6nv2IhmLr8KrY3Z58LBy8=";
+        };
+        "aarch64-darwin" = {
+          npmPlatform = "exe.darwin-arm64";
+          hash = "sha256-uuPHJCCkM6NHtfH+GzfDMJyZxLtyIpphbYzgJraODjY=";
+        };
+      };
+      pnpmPlatform = pnpmPlatforms.${pkgs.stdenv.hostPlatform.system};
+    in
+    extra.pnpm.overrideAttrs (_old: {
+      version = pnpmVersion;
+      srcs = [
+        (pkgs.fetchurl {
+          url = "https://registry.npmjs.org/@pnpm/${pnpmPlatform.npmPlatform}/-/${pnpmPlatform.npmPlatform}-${pnpmVersion}.tgz";
+          sha256 = pnpmPlatform.hash;
+        })
+      ];
+    });
 in
 {
   packages =
@@ -28,7 +63,7 @@ in
       zizmor
       extra.mdt
       extra.monochange
-      extra.pnpm
+      pnpmPinned
       extra.surfpool
       extra.agave
     ]
