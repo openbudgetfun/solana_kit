@@ -8,6 +8,7 @@ import 'package:solana_kit_helius/src/transactions/priority_fee.dart';
 import 'package:solana_kit_helius/src/transactions/validate_tx_message.dart';
 import 'package:solana_kit_helius/src/types/priority_fee_types.dart';
 import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The maximum compute unit limit the runtime honours, mirroring Agave.
 const int maxSmartTransactionComputeUnits = 1400000;
@@ -54,7 +55,8 @@ class SmartTransaction {
   /// a per-unit rate (SIMD-0385).
   final BigInt priorityFeeLamports;
 
-  /// Instructions to include, with any compute budget instructions removed.
+  /// Instructions to include, with any compute budget instructions removed and
+  /// every supplied signer applied to the accounts they reference.
   ///
   /// The transaction carries the resolved limits through [computeUnits],
   /// [priorityFee], and [priorityFeeLamports] instead.
@@ -89,21 +91,33 @@ class SmartTransaction {
 /// On version 1 a `ComputeBudgetProgram` instruction is a no-op that still
 /// costs bytes and compute units (SIMD-0385); on legacy and version 0 the
 /// standard price-then-limit instruction pair applies.
+///
+/// Every supplied signer is applied to the user instructions before pricing:
+/// an account an instruction references that a signer also owns is promoted to
+/// a signer role, so the compiled message requires that signature. Skipping
+/// this would let a multi-signer transaction compile without the extra
+/// signature slots and fail on send.
 Future<SmartTransaction> txCreateSmartTransaction(
   JsonRpcClient rpcClient,
   CreateSmartTransactionInput input,
 ) async {
   const version = 0;
 
+  // One signer per address, fee payer first.
+  final feePayer = input.feePayer ?? _firstSigner(input);
+  final signerAddresses = <String>{feePayer, ...?input.signers};
+
   final userInstructions = input.instructions
       .where((instruction) => !_isComputeBudgetInstruction(instruction))
+      .map(
+        (instruction) =>
+            _applySignersToInstruction(signerAddresses, instruction),
+      )
       .toList(growable: false);
 
   // Fail before spending round trips on a transaction that cannot be built.
   assertNoAddressLookupsOnV1(version, userInstructions);
   _assertValidComputeUnitLimit(input.computeUnitLimit);
-
-  final feePayer = input.feePayer ?? _firstSigner(input);
 
   final draft = createTxMessage(
     CreateTxMessageInput(
@@ -196,6 +210,48 @@ const _computeBudgetProgramAddress =
 /// Returns `true` when [instruction] targets the compute budget program.
 bool _isComputeBudgetInstruction(Object? instruction) =>
     _programAddressOf(instruction) == _computeBudgetProgramAddress;
+
+/// Promotes the accounts [signerAddresses] own to signer roles on
+/// [instruction].
+///
+/// Mirrors upstream's `addSignersToInstruction`: an account meta whose address
+/// matches a signer and that is not yet a signer gains the signer bit,
+/// keeping its writable bit. Accounts are never appended, and an already
+/// marked account is left untouched so the instruction's original signer
+/// objects survive. Map-shaped instructions carry no roles to upgrade and pass
+/// through unchanged.
+Object? _applySignersToInstruction(
+  Set<String> signerAddresses,
+  Object? instruction,
+) {
+  if (instruction is! Instruction) return instruction;
+
+  final accounts = instruction.accounts;
+  if (accounts == null || accounts.isEmpty) return instruction;
+
+  var changed = false;
+  final updatedAccounts = accounts
+      .map((account) {
+        if (isSignerRole(account.role) ||
+            !signerAddresses.contains(account.address)) {
+          return account;
+        }
+        changed = true;
+        return AccountMeta(
+          address: account.address,
+          role: upgradeRoleToSigner(account.role),
+        );
+      })
+      .toList(growable: false);
+
+  return changed
+      ? Instruction(
+          programAddress: instruction.programAddress,
+          accounts: updatedAccounts,
+          data: instruction.data,
+        )
+      : instruction;
+}
 
 /// Returns the program address of [instruction] as a string, or `null` when it
 /// cannot be read.

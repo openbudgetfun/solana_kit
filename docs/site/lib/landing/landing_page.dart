@@ -432,6 +432,7 @@ class LandingPage extends StatelessComponent {
           'solana_kit_wallet_ui',
           'solana_kit_wallet_standard',
           'solana_kit_helius',
+          'solana_kit_privacy_rings',
           'solana_kit_jupiter',
           'solana_kit_pyth',
         ],

@@ -30,6 +30,10 @@ class CreateSmartTransactionInput {
   final List<Object?> instructions;
 
   /// Signers for the transaction.
+  ///
+  /// The port carries signer addresses only (no private keys), so signing is
+  /// left to the caller. Every address here that an instruction also
+  /// references is promoted to a required signer in the built transaction.
   final List<String>? signers;
 
   /// Public key of the fee payer.

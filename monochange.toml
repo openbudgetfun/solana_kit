@@ -153,6 +153,11 @@ path = "packages/solana_kit_pyth"
 [package.solana_kit_program_client_core]
 path = "packages/solana_kit_program_client_core"
 
+[package.solana_kit_privacy_rings]
+path = "packages/solana_kit_privacy_rings"
+tag = false
+release = false
+
 [package.solana_kit_programs]
 path = "packages/solana_kit_programs"
 

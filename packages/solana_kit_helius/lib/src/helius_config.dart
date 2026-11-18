@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/src/sensitive_string.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
@@ -16,6 +18,8 @@ class HeliusConfig {
     required String apiKey,
     this.cluster = HeliusCluster.mainnet,
     this.mevProtect = false,
+    this.parsedEventsUrl,
+    this.parsedEventsTimeoutMs,
   }) : _apiKey = SensitiveString(apiKey) {
     // Every Helius endpoint embeds the key in its URL, so an empty key is not
     // a degenerate case but a request that cannot succeed. Catching it here
@@ -35,6 +39,21 @@ class HeliusConfig {
 
   /// The Solana cluster to connect to.
   final HeliusCluster cluster;
+
+  /// Parsed Events base URL override, up to and including `/v1/parsed-events`,
+  /// such as a proxy or another Helius host. The method path goes after it and
+  /// the API key is added beside any query parameters it already carries.
+  ///
+  /// Defaults to [parsedEventsBaseUrl]. A devnet [cluster] still makes Parsed
+  /// Events methods reject, since Parsed Events is mainnet-only.
+  final String? parsedEventsUrl;
+
+  /// Time limit for each Parsed Events request, including reading the
+  /// response. A request that runs over throws [TimeoutException].
+  ///
+  /// Unset or non-positive: no limit. A per-call `timeout` on a Parsed Events
+  /// method works alongside this and wins when both are set.
+  final int? parsedEventsTimeoutMs;
 
   /// Whether to route transactions away from validators statistically linked
   /// to sandwich attacks.
