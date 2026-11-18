@@ -323,6 +323,7 @@ To revoke a pairing, use the wallet app's linked-dApps settings or the example a
 <!-- dprint-ignore -->
 | `solana_kit_mobile_wallet_adapter` version | [`mobile-wallet-adapter`](https://github.com/solana-mobile/mobile-wallet-adapter) | Released                |
 | ------------------------------------------ | --------------------------------------------------------------------------------- | ----------------------- |
+| _next release_                             | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.2`                         | _unreleased_            |
 | `0.7.1`                                    | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.1`                         | 2026-11-01              |
 | `0.7.0`                                    | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.0`                         | 2026-10-12              |
 | `0.6.0`                                    | `@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0`                         | 2026-09-21              |
