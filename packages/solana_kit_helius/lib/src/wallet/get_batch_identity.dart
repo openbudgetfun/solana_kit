@@ -6,7 +6,7 @@ import 'package:solana_kit_helius/src/types/wallet_types.dart';
 /// Sends a POST request to `/v0/addresses/identity?api-key={apiKey}` with
 /// the list of addresses in the request body. Returns a map of address to
 /// [Identity] information.
-Future<Map<String, Identity>> walletGetBatchIdentity(
+Future<List<BatchIdentityResult>> walletGetBatchIdentity(
   RestClient restClient,
   String apiKey,
   GetBatchIdentityRequest request,
@@ -15,9 +15,9 @@ Future<Map<String, Identity>> walletGetBatchIdentity(
     '/v0/addresses/identity?api-key=$apiKey',
     body: {'addresses': request.addresses},
   );
-  final map = result! as Map<String, Object?>;
-  return map.map(
-    (key, value) =>
-        MapEntry(key, Identity.fromJson(value! as Map<String, Object?>)),
-  );
+  final entries = result! as List<Object?>;
+  return [
+    for (final entry in entries)
+      BatchIdentityResult.fromJson(entry! as Map<String, Object?>),
+  ];
 }

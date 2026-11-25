@@ -183,22 +183,17 @@ Future<SignupResult> authSignup(
         client: httpClient,
         baseUrl: effectiveBaseUrl,
       );
-      var projectApiKey = details.apiKeys.firstOrNull?.keyId;
-      projectApiKey ??= (await developerCreateApiKey(
-        jwt,
-        project.id,
-        walletAddress,
-        userAgent: userAgent,
-        client: httpClient,
-        baseUrl: effectiveBaseUrl,
-      )).keyId;
+      // Never creates a key: a project can have zero keys even on a paid
+      // plan, and the result carries null for both fields then (upstream
+      // v4.0.0 #408). Call createApiKey when a key is needed.
+      final (:apiKey, :endpoints) = existingApiKey(details);
       return AlreadySubscribedResult(
         jwt: jwt,
         refId: refId,
         walletAddress: walletAddress,
         projectId: project.id,
-        apiKey: projectApiKey,
-        endpoints: buildEndpoints(projectApiKey),
+        apiKey: apiKey,
+        endpoints: endpoints,
       );
     }
 

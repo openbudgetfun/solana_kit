@@ -25,7 +25,7 @@ class DasClient {
       dasGetAsset(_rpcClient, request);
 
   /// Returns metadata for multiple digital assets in a single request.
-  Future<List<HeliusAsset>> getAssetBatch(GetAssetBatchRequest request) =>
+  Future<List<HeliusAsset?>> getAssetBatch(GetAssetBatchRequest request) =>
       dasGetAssetBatch(_rpcClient, request);
 
   /// Returns the Merkle proof for a compressed asset.

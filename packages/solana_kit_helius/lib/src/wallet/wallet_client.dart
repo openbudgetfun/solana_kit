@@ -22,7 +22,7 @@ class WalletClient {
       walletGetIdentity(_restClient, _apiKey, request);
 
   /// Returns identity information for multiple wallet addresses.
-  Future<Map<String, Identity>> getBatchIdentity(
+  Future<List<BatchIdentityResult>> getBatchIdentity(
     GetBatchIdentityRequest request,
   ) => walletGetBatchIdentity(_restClient, _apiKey, request);
 

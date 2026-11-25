@@ -633,3 +633,98 @@ class FundedByTransaction {
     if (timestamp != null) 'timestamp': timestamp,
   };
 }
+
+/// A resolved entry in a batch identity lookup, with the queried domain when
+/// the input was a domain.
+class ResolvedBatchIdentity extends Identity implements BatchIdentityResult {
+  /// Creates a resolved batch identity entry.
+  const ResolvedBatchIdentity({
+    required this.address,
+    required this.type,
+    required super.socials,
+    super.name,
+    super.pfpUrl,
+    super.domain,
+    this.inputDomain,
+  });
+
+  /// Creates a resolved entry from a JSON map.
+  factory ResolvedBatchIdentity.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return ResolvedBatchIdentity(
+      address: r.requireString('address'),
+      type: r.requireString('type'),
+      name: r.optString('name'),
+      pfpUrl: r.optString('pfpUrl'),
+      domain: r.optString('domain'),
+      socials: r.requireMap('socials'),
+      inputDomain: r.optString('inputDomain'),
+    );
+  }
+
+  /// The resolved Solana wallet address.
+  @override
+  final String address;
+
+  /// The entity type (e.g. "exchange").
+  @override
+  final String type;
+
+  /// The SNS/ANS domain from the request, present when the input was a domain.
+  final String? inputDomain;
+
+  @override
+  bool get unresolved => false;
+}
+
+/// A batch entry whose SNS/ANS domain input could not be resolved. The batch
+/// still succeeds and keeps request order.
+class UnresolvedBatchIdentity implements BatchIdentityResult {
+  /// Creates an unresolved batch identity entry.
+  const UnresolvedBatchIdentity({required this.inputDomain});
+
+  /// Creates an unresolved entry from a JSON map.
+  factory UnresolvedBatchIdentity.fromJson(Map<String, Object?> json) {
+    return UnresolvedBatchIdentity(
+      inputDomain: JsonReader(json).requireString('inputDomain'),
+    );
+  }
+
+  @override
+  String? get address => null;
+
+  @override
+  String get type => 'unknown';
+
+  /// The SNS/ANS domain that could not be resolved.
+  final String inputDomain;
+
+  @override
+  bool get unresolved => true;
+}
+
+/// One entry in a batch identity response: resolved, or an SNS/ANS domain
+/// that could not be resolved. Narrow with `entry.unresolved`.
+sealed class BatchIdentityResult {
+  /// Creates a batch identity result.
+  const BatchIdentityResult();
+
+  /// Parses one batch entry, selecting the resolved or unresolved shape by
+  /// the `unresolved` flag the endpoint sets on failures.
+  factory BatchIdentityResult.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    if (r.optBool('unresolved') ?? false) {
+      return UnresolvedBatchIdentity.fromJson(json);
+    }
+    return ResolvedBatchIdentity.fromJson(json);
+  }
+
+  /// The wallet address; null for an unresolved domain entry.
+  String? get address;
+
+  /// The identity type; "unknown" for an unresolved domain entry.
+  String get type;
+
+  /// Whether the entry's domain input could not be resolved.
+  bool get unresolved;
+}

@@ -7,9 +7,23 @@ import 'package:test/test.dart';
 
 void main() {
   group('ZkClient.getValidityProof', () {
-    test('sends correct request and deserializes response', () async {
+    test('deserializes the proof components as byte arrays', () async {
+      // Upstream v4.0.0 #397: a, b, and c are the curve points' bytes as
+      // integer arrays, not base64 strings.
       final mockResult = <String, Object?>{
-        'compressedProof': <Object?>['p1'],
+        'context': {'slot': 55},
+        'value': {
+          'compressedProof': {
+            'a': [1, 2, 3],
+            'b': [4, 5],
+            'c': [6, 7, 8],
+          },
+          'leafIndices': [0],
+          'leaves': ['leaf-1'],
+          'merkleTrees': ['tree-1'],
+          'rootIndices': [9],
+          'roots': ['root-1'],
+        },
       };
 
       final client = MockClient((request) async {
@@ -26,11 +40,19 @@ void main() {
       });
 
       final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
-      final result = await helius.zk.getValidityProof(
+      final response = await helius.zk.getValidityProof(
         const GetValidityProofRequest(hashes: ['h1']),
       );
 
-      expect(result.compressedProof, ['p1']);
+      expect(response.slot, 55);
+      expect(response.value.compressedProof.a, [1, 2, 3]);
+      expect(response.value.compressedProof.b, [4, 5]);
+      expect(response.value.compressedProof.c, [6, 7, 8]);
+      expect(response.value.leafIndices, [0]);
+      expect(response.value.leaves, ['leaf-1']);
+      expect(response.value.merkleTrees, ['tree-1']);
+      expect(response.value.rootIndices, [9]);
+      expect(response.value.roots, ['root-1']);
     });
   });
 }

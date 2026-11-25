@@ -77,15 +77,51 @@ void main() {
       IndexerHealth.fromJson,
       (value) => value.toJson(),
     );
-    expectJsonRoundTrip(
-      'ValidityProof roundtrips',
+    expectJsonRoundTrip<GetValidityProofResponse>(
+      'GetValidityProofResponse roundtrips',
       {
-        'compressedProof': ['a', 'b'],
-        'rootIndices': ['1', '2'],
-        'leafIndices': '3,4',
+        'context': {'slot': 55},
+        'value': {
+          'compressedProof': {
+            'a': [1, 2, 3],
+            'b': [4, 5],
+            'c': [6, 7, 8],
+          },
+          'leafIndices': [0],
+          'leaves': ['leaf-1'],
+          'merkleTrees': ['tree-1'],
+          'rootIndices': [9],
+          'roots': ['root-1'],
+        },
       },
-      ValidityProof.fromJson,
+      GetValidityProofResponse.fromJson,
       (value) => value.toJson(),
+    );
+    test(
+      'GetCompressedAccountResponse parses null fields and omits them in JSON',
+      () {
+        final response = GetCompressedAccountResponse.fromJson({
+          'context': {'slot': 100},
+          'value': {
+            'hash': 'h1',
+            'address': null,
+            'data': null,
+            'owner': 'o1',
+            'lamports': 5,
+            'seq': null,
+          },
+        });
+        expect(response.slot, 100);
+        final account = response.value!;
+        expect(account.address, isNull);
+        expect(account.data, isNull);
+        expect(account.seq, isNull);
+        // Null fields serialize as omitted keys.
+        expect(response.toJson(), {
+          'context': {'slot': 100},
+          'value': {'hash': 'h1', 'owner': 'o1', 'lamports': 5},
+        });
+      },
     );
     expectJsonRoundTrip(
       'NewAddressProof roundtrips',

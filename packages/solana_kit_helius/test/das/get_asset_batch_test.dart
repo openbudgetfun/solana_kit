@@ -33,7 +33,9 @@ void main() {
     test(
       'sends correct JSON-RPC request and deserializes list response',
       () async {
-        final mockAssets = <Object?>[_mockAsset('a'), _mockAsset('b')];
+        // One entry per requested id; null for an id that was not found
+        // (upstream v4.0.0 #410).
+        final mockAssets = <Object?>[_mockAsset('a'), null, _mockAsset('b')];
 
         final client = MockClient((request) async {
           expect(request.method, 'POST');
@@ -41,7 +43,7 @@ void main() {
           expect(body['method'], 'getAssetBatch');
           expect(body['jsonrpc'], '2.0');
           final params = body['params']! as Map<String, Object?>;
-          expect(params['ids'], ['a', 'b']);
+          expect(params['ids'], ['a', 'missing', 'b']);
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',
@@ -59,12 +61,14 @@ void main() {
         );
 
         final assets = await helius.das.getAssetBatch(
-          const GetAssetBatchRequest(ids: ['a', 'b']),
+          const GetAssetBatchRequest(ids: ['a', 'missing', 'b']),
         );
 
-        expect(assets.length, 2);
-        expect(assets[0].id, 'a');
-        expect(assets[1].id, 'b');
+        expect(assets, hasLength(3));
+        expect(assets[0]!.id, 'a');
+        // Absence keeps request order without failing the batch.
+        expect(assets[1], isNull);
+        expect(assets[2]!.id, 'b');
       },
     );
 
