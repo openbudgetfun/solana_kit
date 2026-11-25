@@ -706,9 +706,6 @@ class UnresolvedBatchIdentity implements BatchIdentityResult {
 /// One entry in a batch identity response: resolved, or an SNS/ANS domain
 /// that could not be resolved. Narrow with `entry.unresolved`.
 sealed class BatchIdentityResult {
-  /// Creates a batch identity result.
-  const BatchIdentityResult();
-
   /// Parses one batch entry, selecting the resolved or unresolved shape by
   /// the `unresolved` flag the endpoint sets on failures.
   factory BatchIdentityResult.fromJson(Map<String, Object?> json) {
