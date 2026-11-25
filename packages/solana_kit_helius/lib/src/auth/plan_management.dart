@@ -88,12 +88,13 @@ Future<PayRenewalResult> payRenewal(
   );
 }
 
-/// Provisions a project after a confirmed payment, returning the project id,
-/// api key, and endpoints.
-Future<({String projectId, String apiKey, SignupEndpoints endpoints})>
-_provisionApiKey(
-  String jwt,
-  String walletAddress, {
+/// Waits for the payment webhook to provision the project, then returns its
+/// first existing API key (or null for both fields). Never creates a key
+/// (upstream v4.0.0 #408); callers that need one call [developerCreateApiKey]
+/// themselves.
+Future<({String projectId, String? apiKey, SignupEndpoints? endpoints})>
+_waitForProject(
+  String jwt, {
   String? userAgent,
   http.Client? client,
   String baseUrl = heliusDeveloperApiUrl,
@@ -131,19 +132,11 @@ _provisionApiKey(
     client: client,
     baseUrl: baseUrl,
   );
-  var provisionedApiKey = details.apiKeys.firstOrNull?.keyId;
-  provisionedApiKey ??= (await developerCreateApiKey(
-    jwt,
-    projectId,
-    walletAddress,
-    userAgent: userAgent,
-    client: client,
-    baseUrl: baseUrl,
-  )).keyId;
+  final existing = existingApiKey(details);
   return (
     projectId: projectId,
-    apiKey: provisionedApiKey,
-    endpoints: buildEndpoints(provisionedApiKey),
+    apiKey: existing.apiKey,
+    endpoints: existing.endpoints,
   );
 }
 
@@ -213,9 +206,8 @@ Future<SignupAndPayResult> signupAndPay(
     interval: pollInterval,
   );
   if (outcome.kind == 'completed') {
-    final provisioned = await _provisionApiKey(
+    final provisioned = await _waitForProject(
       paymentRequired.jwt,
-      paymentRequired.walletAddress,
       userAgent: userAgent,
       client: client,
       baseUrl: effectiveBaseUrl,

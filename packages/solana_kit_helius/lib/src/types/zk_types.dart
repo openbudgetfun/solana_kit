@@ -5,10 +5,10 @@ class CompressedAccount {
   /// Creates a [CompressedAccount].
   const CompressedAccount({
     required this.hash,
-    required this.address,
-    required this.data,
     required this.owner,
     required this.lamports,
+    this.address,
+    this.data,
     this.leafIndex,
     this.tree,
     this.seq,
@@ -19,8 +19,8 @@ class CompressedAccount {
     final r = JsonReader(json);
     return CompressedAccount(
       hash: r.requireString('hash'),
-      address: r.requireString('address'),
-      data: r.requireMap('data'),
+      address: r.optString('address'),
+      data: r.optMap('data'),
       owner: r.requireString('owner'),
       lamports: r.requireInt('lamports'),
       leafIndex: r.optInt('leafIndex'),
@@ -32,11 +32,13 @@ class CompressedAccount {
   /// The hash of this compressed account.
   final String hash;
 
-  /// The address of this compressed account.
-  final String address;
+  /// The address of this compressed account, or null when it has none
+  /// (upstream v4.0.0 #397).
+  final String? address;
 
-  /// The account data as a JSON map.
-  final Map<String, Object?> data;
+  /// The account data as a JSON map, or null when the account holds none
+  /// (upstream v4.0.0 #397).
+  final Map<String, Object?>? data;
 
   /// The owner of this compressed account.
   final String owner;
@@ -50,14 +52,16 @@ class CompressedAccount {
   /// The address of the state tree holding this account, if known.
   final String? tree;
 
-  /// The sequence number of this account, if known.
+  /// The sequence number of this account, or null for an account in a V2
+  /// (batched) state tree that is still in the tree's output queue
+  /// (upstream v4.0.0 #397).
   final int? seq;
 
   /// Converts this [CompressedAccount] to JSON.
   Map<String, Object?> toJson() => {
     'hash': hash,
-    'address': address,
-    'data': data,
+    if (address != null) 'address': address,
+    if (data != null) 'data': data,
     'owner': owner,
     'lamports': lamports,
     if (leafIndex != null) 'leafIndex': leafIndex,
@@ -314,39 +318,156 @@ class IndexerHealth {
   Map<String, Object?> toJson() => {'status': status};
 }
 
-/// A validity proof for ZK compression operations.
-class ValidityProof {
-  /// Creates a [ValidityProof].
-  const ValidityProof({
+/// A Groth16 compressed proof (a, b, c curve points). Each component is the
+/// point's bytes as a JSON array of integers from 0 to 255 (upstream v4.0.0
+/// #397 — the indexer stopped sending these base64-encoded).
+class CompressedProof {
+  /// Creates a [CompressedProof].
+  const CompressedProof({required this.a, required this.b, required this.c});
+
+  /// Creates a [CompressedProof] from JSON.
+  factory CompressedProof.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    List<int> bytes(String key) =>
+        r.requireList<num>(key).map((byte) => byte.toInt()).toList();
+    return CompressedProof(a: bytes('a'), b: bytes('b'), c: bytes('c'));
+  }
+
+  /// First component (G1 point) of the Groth16 zero-knowledge proof, 32 bytes.
+  final List<int> a;
+
+  /// Second component (G2 point) of the Groth16 zero-knowledge proof, 64 bytes.
+  final List<int> b;
+
+  /// Third component (G1 point) of the Groth16 zero-knowledge proof, 32 bytes.
+  final List<int> c;
+
+  /// Converts this [CompressedProof] to JSON.
+  Map<String, Object?> toJson() => {'a': a, 'b': b, 'c': c};
+}
+
+/// A compressed validity proof with Merkle tree context.
+class CompressedProofWithContext {
+  /// Creates a [CompressedProofWithContext].
+  const CompressedProofWithContext({
     required this.compressedProof,
-    this.rootIndices,
-    this.leafIndices,
+    required this.leafIndices,
+    required this.leaves,
+    required this.merkleTrees,
+    required this.rootIndices,
+    required this.roots,
   });
 
-  /// Creates a [ValidityProof] from JSON.
-  factory ValidityProof.fromJson(Map<String, Object?> json) {
+  /// Creates a [CompressedProofWithContext] from JSON.
+  factory CompressedProofWithContext.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-    return ValidityProof(
-      compressedProof: r.requireList<String>('compressedProof'),
-      rootIndices: r.optList<String>('rootIndices'),
-      leafIndices: r.optString('leafIndices'),
+    return CompressedProofWithContext(
+      compressedProof: CompressedProof.fromJson(
+        r.requireMap('compressedProof'),
+      ),
+      leafIndices: r
+          .requireList<num>('leafIndices')
+          .map((index) => index.toInt())
+          .toList(),
+      leaves: r.requireList<String>('leaves'),
+      merkleTrees: r.requireList<String>('merkleTrees'),
+      rootIndices: r
+          .requireList<num>('rootIndices')
+          .map((index) => index.toInt())
+          .toList(),
+      roots: r.requireList<String>('roots'),
     );
   }
 
-  /// The compressed proof elements.
-  final List<String> compressedProof;
+  /// The Groth16 zero-knowledge proof components (a, b, c curve points).
+  final CompressedProof compressedProof;
 
-  /// The root indices used by the proof, if available.
-  final List<String>? rootIndices;
+  /// Zero-based indices of the leaves in their respective Merkle trees,
+  /// positionally aligned with [leaves] and [merkleTrees].
+  final List<int> leafIndices;
 
-  /// The leaf indices used by the proof, if available.
-  final String? leafIndices;
+  /// Base58-encoded leaf hashes of the compressed accounts being proven.
+  final List<String> leaves;
 
-  /// Converts this [ValidityProof] to JSON.
+  /// Base58-encoded public keys of the state Merkle trees containing the
+  /// proven accounts, positionally aligned with [leaves].
+  final List<String> merkleTrees;
+
+  /// Sequence indices of the roots used in the proof, positionally aligned
+  /// with [roots].
+  final List<int> rootIndices;
+
+  /// Base58-encoded root hashes of the Merkle trees at the time the proof was
+  /// generated.
+  final List<String> roots;
+
+  /// Converts this [CompressedProofWithContext] to JSON.
   Map<String, Object?> toJson() => {
-    'compressedProof': compressedProof,
-    if (rootIndices != null) 'rootIndices': rootIndices,
-    if (leafIndices != null) 'leafIndices': leafIndices,
+    'compressedProof': compressedProof.toJson(),
+    'leafIndices': leafIndices,
+    'leaves': leaves,
+    'merkleTrees': merkleTrees,
+    'rootIndices': rootIndices,
+    'roots': roots,
+  };
+}
+
+/// Response from `getValidityProof`.
+class GetValidityProofResponse {
+  /// Creates a [GetValidityProofResponse].
+  const GetValidityProofResponse({required this.slot, required this.value});
+
+  /// Creates a [GetValidityProofResponse] from JSON.
+  factory GetValidityProofResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    final context = JsonReader(r.requireMap('context'));
+    return GetValidityProofResponse(
+      slot: context.requireInt('slot'),
+      value: CompressedProofWithContext.fromJson(r.requireMap('value')),
+    );
+  }
+
+  /// Slot context at the time the proof was generated.
+  final int slot;
+
+  /// The validity proof and Merkle tree context.
+  final CompressedProofWithContext value;
+
+  /// Converts this [GetValidityProofResponse] to JSON.
+  Map<String, Object?> toJson() => {
+    'context': {'slot': slot},
+    'value': value.toJson(),
+  };
+}
+
+/// Response from `getCompressedAccount`.
+class GetCompressedAccountResponse {
+  /// Creates a [GetCompressedAccountResponse].
+  const GetCompressedAccountResponse({required this.slot, this.value});
+
+  /// Creates a [GetCompressedAccountResponse] from JSON.
+  factory GetCompressedAccountResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    final context = JsonReader(r.requireMap('context'));
+    return GetCompressedAccountResponse(
+      slot: context.requireInt('slot'),
+      value: r.optMap('value') == null
+          ? null
+          : CompressedAccount.fromJson(r.optMap('value')!),
+    );
+  }
+
+  /// The slot context for this response.
+  final int slot;
+
+  /// The compressed account data, or null if no matching account was found
+  /// (upstream v4.0.0 #397). Absence is not an error.
+  final CompressedAccount? value;
+
+  /// Converts this [GetCompressedAccountResponse] to JSON.
+  Map<String, Object?> toJson() => {
+    'context': {'slot': slot},
+    'value': value?.toJson(),
   };
 }
 

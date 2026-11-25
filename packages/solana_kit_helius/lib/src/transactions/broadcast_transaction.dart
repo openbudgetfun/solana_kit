@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
@@ -92,13 +93,6 @@ Future<void> _pollUntilLanded(
   var expired = false;
 
   while (true) {
-    if (!expired && stopwatch.elapsedMilliseconds > options.pollTimeoutMs) {
-      throw SolanaError(
-        SolanaErrorCode.heliusTransactionConfirmationTimeout,
-        {'timeoutMs': options.pollTimeoutMs, 'signature': signature},
-      );
-    }
-
     final status = await _signatureStatus(rpcClient, signature);
 
     if (status != null) {
@@ -122,6 +116,8 @@ Future<void> _pollUntilLanded(
       );
     }
 
+    // Expiry before the deadline: past both, the definite expiry error wins
+    // over the ambiguous timeout.
     final blockHeight = await rpcClient.call('getBlockHeight');
 
     if ((blockHeight! as num).toInt() > expiry) {
@@ -129,7 +125,20 @@ Future<void> _pollUntilLanded(
       continue;
     }
 
-    await Future<void>.delayed(Duration(milliseconds: options.pollIntervalMs));
+    // Deadline after the status read, so a transaction that landed during
+    // the last wait (capped at the deadline) is not reported as timed out
+    // (upstream #407).
+    final remainingMs = options.pollTimeoutMs - stopwatch.elapsedMilliseconds;
+    if (remainingMs <= 0) {
+      throw SolanaError(
+        SolanaErrorCode.heliusTransactionConfirmationTimeout,
+        {'timeoutMs': options.pollTimeoutMs, 'signature': signature},
+      );
+    }
+
+    await Future<void>.delayed(
+      Duration(milliseconds: math.min(options.pollIntervalMs, remainingMs)),
+    );
   }
 }
 

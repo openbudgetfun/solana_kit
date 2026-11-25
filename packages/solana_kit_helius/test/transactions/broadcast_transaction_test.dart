@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/solana_kit_helius.dart';
 import 'package:test/test.dart';
 
@@ -68,6 +69,78 @@ void main() {
 
       expect(signature, 'sig-123');
     });
+
+    test(
+      'times out after the deadline without a full-interval wait',
+      () async {
+        // Upstream #407: the status is read before the deadline check, the
+        // sleep caps at the remaining deadline, and the timeout fires only
+        // after a fresh read — a transaction that landed during the last
+        // wait is never reported as timed out.
+        var statusCalls = 0;
+        final client = MockClient((request) async {
+          if (request.url.host == 'mainnet.helius-rpc.com') {
+            return http.Response(jsonEncode('sig-timeout'), 200);
+          }
+
+          return _rpcResponse(request, (method) {
+            switch (method) {
+              case 'getLatestBlockhash':
+                return {
+                  'value': {
+                    'blockhash': 'hash',
+                    'lastValidBlockHeight': 1000,
+                  },
+                };
+              case 'getBlockHeight':
+                return 500;
+              case 'getSignatureStatuses':
+                statusCalls++;
+                // Never confirms.
+                return {
+                  'value': [null],
+                };
+            }
+
+            throw StateError('unexpected RPC method $method');
+          });
+        });
+
+        final helius = createHelius(
+          HeliusConfig(apiKey: 'test-key'),
+          client: client,
+        );
+
+        final started = DateTime.now();
+        await expectLater(
+          helius.transactions.broadcastTransaction(
+            const BroadcastTransactionRequest(transaction: 'base64-encoded-tx'),
+            options: const BroadcastTransactionOptions(
+              pollTimeoutMs: 150,
+              pollIntervalMs: 60000,
+            ),
+          ),
+          throwsA(
+            isA<SolanaError>().having(
+              (error) => error.code,
+              'code',
+              SolanaErrorCode.heliusTransactionConfirmationTimeout,
+            ),
+          ),
+        );
+        // Reads happen until the deadline; each fresh read can still observe
+        // a landing. The definitive assertion is the wall clock below: the
+        // sleep capped at the remaining deadline instead of the full interval.
+        expect(statusCalls, greaterThanOrEqualTo(1));
+        final elapsed = DateTime.now().difference(started);
+        expect(
+          elapsed.inMilliseconds,
+          lessThan(2000),
+          reason:
+              'the sleep is capped at the remaining deadline, not the interval',
+        );
+      },
+    );
 
     test('handles a bare-string JSON response', () async {
       final client = MockClient((request) async {

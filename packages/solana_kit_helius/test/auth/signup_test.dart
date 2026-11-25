@@ -239,7 +239,7 @@ void main() {
         expect(subscribed.projectId, 'p-1');
         expect(subscribed.apiKey, 'proj-key');
         expect(
-          subscribed.endpoints.mainnet,
+          subscribed.endpoints!.mainnet,
           'https://mainnet.helius-rpc.com/?api-key=proj-key',
         );
       },
@@ -298,20 +298,27 @@ void main() {
       }
     });
 
-    test('creates an API key when an existing project has none', () async {
-      final result = await authSignup(
-        _restClient(),
-        'api-key',
-        _preauthenticatedRequest(plan: 'agent'),
-        httpClient: _checkoutClient(
-          projects: () => [_project('p-1')],
-          projectApiKey: '',
-        ),
-      );
+    test(
+      'reports null apiKey and endpoints when the project has no keys',
+      () async {
+        // Upstream v4.0.0 #408: signup never creates a key; a project can
+        // have zero keys even on a paid plan.
+        final result = await authSignup(
+          _restClient(),
+          'api-key',
+          _preauthenticatedRequest(plan: 'agent'),
+          httpClient: _checkoutClient(
+            projects: () => [_project('p-1')],
+            projectApiKey: '',
+          ),
+        );
 
-      expect(result, isA<AlreadySubscribedResult>());
-      expect((result as AlreadySubscribedResult).apiKey, 'new-key');
-    });
+        expect(result, isA<AlreadySubscribedResult>());
+        final subscribed = result as AlreadySubscribedResult;
+        expect(subscribed.apiKey, isNull);
+        expect(subscribed.endpoints, isNull);
+      },
+    );
 
     test('rejects empty preauthenticated credentials', () async {
       const request = SignupRequest.preauthenticated(
@@ -496,13 +503,12 @@ void main() {
       expect(result, isA<SignupAndPayCompletedResult>());
       final completed = result as SignupAndPayCompletedResult;
       expect(completed.projectId, 'p-1');
-      expect(completed.apiKey, 'new-key');
+      // The mock project carries no keys, so the completed result has null
+      // fields and the flow never created one (upstream v4.0.0 #408).
+      expect(completed.apiKey, isNull);
+      expect(completed.endpoints, isNull);
       expect(completed.txSignature, 'sig123');
       expect(completed.paymentIntentId, 'pi-1');
-      expect(
-        completed.endpoints.mainnet,
-        'https://mainnet.helius-rpc.com/?api-key=new-key',
-      );
     });
 
     test('throws when no project is provisioned before the timeout', () async {

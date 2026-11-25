@@ -116,6 +116,7 @@ class GetTokenAccountsByOwnerV2Request {
     this.encoding,
     this.after,
     this.limit,
+    this.withContext,
   });
 
   /// Builds a request from a JSON map.
@@ -128,8 +129,13 @@ class GetTokenAccountsByOwnerV2Request {
       encoding: r.optString('encoding'),
       after: r.optString('after'),
       limit: r.optInt('limit'),
+      withContext: r.optBool('withContext'),
     );
   }
+
+  /// Whether to wrap the page in an RPC context object with slot info
+  /// (upstream v4.0.0 #409).
+  final bool? withContext;
 
   /// The owner address whose token accounts are being queried.
   final String ownerAddress;
@@ -157,6 +163,7 @@ class GetTokenAccountsByOwnerV2Request {
     if (encoding != null) 'encoding': encoding,
     if (after != null) 'after': after,
     if (limit != null) 'limit': limit,
+    if (withContext != null) 'withContext': withContext,
   };
 }
 
@@ -166,29 +173,47 @@ class GetTokenAccountsByOwnerV2Response {
   const GetTokenAccountsByOwnerV2Response({
     required this.accounts,
     this.cursor,
+    this.slot,
+    this.totalResults,
   });
 
   /// Builds a response from a JSON map.
   ///
-  /// The endpoint returns two page shapes: with `withContext` the accounts
-  /// and cursor sit at the top level of the result; without it the page
-  /// array is nested under `value` and the cursor travels as `paginationKey`
-  /// next to it. Both are accepted (upstream v3.4.0 #380).
+  /// Accepts every shape the endpoint returns (upstream v4.0.0 #409): the
+  /// default, where `value` is the accounts array with `paginationKey` next
+  /// to it; `withContext: true`, where `value` is the page
+  /// (`accounts`, `paginationKey`, optional `totalResults`) next to
+  /// `context`; and the flat shape with the accounts and cursor at the top
+  /// level.
   factory GetTokenAccountsByOwnerV2Response.fromJson(
     Map<String, Object?> json,
   ) {
-    final wrapped = json['value'] is List<Object?>;
-    final accountsJson =
-        ((wrapped ? json['value'] : json['accounts']) ?? <Object?>[])
-            as List<Object?>;
-    final cursor =
-        (wrapped ? json['paginationKey'] : json['cursor']) as String?;
+    final value = json['value'];
+    final accountsJson = switch (value) {
+      final List<Object?> accounts => accounts,
+      final Map<String, Object?> page =>
+        (page['accounts'] ?? <Object?>[]) as List<Object?>,
+      _ => (json['accounts'] ?? <Object?>[]) as List<Object?>,
+    };
+    final cursor = switch (value) {
+      final Map<String, Object?> page => page['paginationKey'] as String?,
+      _ => (json['paginationKey'] ?? json['cursor']) as String?,
+    };
+    final context = json['context'] is Map<String, Object?>
+        ? json['context']! as Map<String, Object?>
+        : null;
+    final totalResults = switch (value) {
+      final Map<String, Object?> page => page['totalResults'] as int?,
+      _ => null,
+    };
     return GetTokenAccountsByOwnerV2Response(
       accounts: [
         for (final account in accountsJson)
           TokenAccountV2.fromJson(account! as Map<String, Object?>),
       ],
       cursor: cursor,
+      slot: context?['slot'] as int?,
+      totalResults: totalResults,
     );
   }
 
@@ -198,10 +223,18 @@ class GetTokenAccountsByOwnerV2Response {
   /// Optional cursor used to fetch the next page of results.
   final String? cursor;
 
+  /// The slot context, present when the request set `withContext`.
+  final int? slot;
+
+  /// The total number of results across pages, when the endpoint reports it.
+  final int? totalResults;
+
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
     'accounts': accounts.map((e) => e.toJson()).toList(),
     if (cursor != null) 'cursor': cursor,
+    if (slot != null) 'context': {'slot': slot},
+    if (totalResults != null) 'totalResults': totalResults,
   };
 }
 

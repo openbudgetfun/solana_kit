@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
@@ -21,7 +23,10 @@ Future<SmartTransactionResult> txPollTransactionConfirmation(
   final commitment = request.commitment?.toJson() ?? 'confirmed';
   final stopwatch = Stopwatch()..start();
 
-  while (stopwatch.elapsedMilliseconds < timeoutMs) {
+  while (true) {
+    // The status read happens before the deadline check, so a transaction
+    // that confirmed (or failed on-chain) during the last wait is reported
+    // as such instead of as a timeout (upstream #407).
     final result = await rpcClient.call('getSignatureStatuses', [
       [request.signature],
       {'searchTransactionHistory': true},
@@ -53,11 +58,19 @@ Future<SmartTransactionResult> txPollTransactionConfirmation(
       }
     }
 
-    await Future<void>.delayed(Duration(milliseconds: intervalMs));
-  }
+    // Check the deadline after the status read. The wait stops at the
+    // deadline, so the last read lands there rather than up to a full
+    // interval past it.
+    final remainingMs = timeoutMs - stopwatch.elapsedMilliseconds;
+    if (remainingMs <= 0) {
+      throw SolanaError(SolanaErrorCode.heliusTransactionConfirmationTimeout, {
+        'timeoutMs': timeoutMs,
+        'signature': request.signature,
+      });
+    }
 
-  throw SolanaError(SolanaErrorCode.heliusTransactionConfirmationTimeout, {
-    'timeoutMs': timeoutMs,
-    'signature': request.signature,
-  });
+    await Future<void>.delayed(
+      Duration(milliseconds: math.min(intervalMs, remainingMs)),
+    );
+  }
 }

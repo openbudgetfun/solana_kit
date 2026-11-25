@@ -35,7 +35,7 @@ class ZkClient {
   final JsonRpcClient _rpcClient;
 
   /// Returns a compressed account by its address.
-  Future<CompressedAccount> getCompressedAccount(
+  Future<GetCompressedAccountResponse> getCompressedAccount(
     GetCompressedAccountRequest request,
   ) => zkGetCompressedAccount(_rpcClient, request);
 
@@ -151,8 +151,9 @@ class ZkClient {
   ) => zkGetTransactionWithCompressionInfo(_rpcClient, request);
 
   /// Returns a validity proof for the given hashes.
-  Future<ValidityProof> getValidityProof(GetValidityProofRequest request) =>
-      zkGetValidityProof(_rpcClient, request);
+  Future<GetValidityProofResponse> getValidityProof(
+    GetValidityProofRequest request,
+  ) => zkGetValidityProof(_rpcClient, request);
 
   /// Returns transaction signatures for the given compressed asset.
   Future<CompressedSignatureList> getSignaturesForAsset(

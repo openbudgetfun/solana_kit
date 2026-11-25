@@ -113,11 +113,14 @@ class AlreadySubscribedResult extends SignupResult {
   /// Project identifier.
   final String projectId;
 
-  /// API key for the project.
-  final String apiKey;
+  /// The project's first existing API key, or null if it has none.
+  ///
+  /// Signup never creates a key (upstream v4.0.0 #408); call the auth
+  /// client's createApiKey to add one.
+  final String? apiKey;
 
-  /// RPC endpoints for the project.
-  final SignupEndpoints endpoints;
+  /// RPC endpoints for [apiKey], or null when [apiKey] is null.
+  final SignupEndpoints? endpoints;
 }
 
 /// User has an existing project on a different plan; upgrade required.
@@ -646,11 +649,14 @@ class SignupAndPayCompletedResult extends SignupAndPayResult {
   /// Provisioned project identifier.
   final String projectId;
 
-  /// Provisioned API key.
-  final String apiKey;
+  /// The project's first existing API key, or null if it has none.
+  ///
+  /// Signup never creates a key (upstream v4.0.0 #408); call the auth
+  /// client's createApiKey to add one.
+  final String? apiKey;
 
-  /// RPC endpoints for the project.
-  final SignupEndpoints endpoints;
+  /// RPC endpoints for [apiKey], or null when [apiKey] is null.
+  final SignupEndpoints? endpoints;
 
   /// The payment transaction signature.
   final String txSignature;
@@ -760,11 +766,12 @@ class SignupAndPayAlreadySubscribedResult extends SignupAndPayResult {
   /// Project identifier.
   final String projectId;
 
-  /// API key for the project.
-  final String apiKey;
+  /// The project's first existing API key, or null if it has none
+  /// (upstream v4.0.0 #408).
+  final String? apiKey;
 
-  /// RPC endpoints for the project.
-  final SignupEndpoints endpoints;
+  /// RPC endpoints for [apiKey], or null when [apiKey] is null.
+  final SignupEndpoints? endpoints;
 }
 
 /// The user has an existing project on a different plan; upgrade required.

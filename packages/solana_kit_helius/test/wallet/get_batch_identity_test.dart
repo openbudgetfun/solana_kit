@@ -14,21 +14,26 @@ void main() {
         expect(request.url.queryParameters['api-key'], isNotEmpty);
         final body = jsonDecode(request.body) as Map<String, Object?>;
         final addresses = (body['addresses']! as List<Object?>).cast<String>();
-        expect(addresses, contains('addr1'));
-        expect(addresses, contains('addr2'));
+        expect(addresses, contains('alice.sol'));
+        expect(addresses, contains('nonexistent-xyz.sol'));
         return http.Response(
-          jsonEncode(<String, Object?>{
-            'addr1': <String, Object?>{
+          jsonEncode(<Object?>[
+            <String, Object?>{
+              'address': 'wallet-addr-1',
+              'type': 'exchange',
               'name': 'Alice',
               'domain': 'alice.sol',
+              'inputDomain': 'alice.sol',
               'socials': <String, Object?>{},
             },
-            'addr2': <String, Object?>{
-              'name': 'Bob',
-              'domain': 'bob.sol',
-              'socials': <String, Object?>{},
+            // A domain that does not resolve still gets an entry, in order.
+            <String, Object?>{
+              'address': null,
+              'type': 'unknown',
+              'inputDomain': 'nonexistent-xyz.sol',
+              'unresolved': true,
             },
-          }),
+          ]),
           200,
           headers: {'content-type': 'application/json'},
         );
@@ -40,14 +45,24 @@ void main() {
       );
 
       final identities = await helius.wallet.getBatchIdentity(
-        const GetBatchIdentityRequest(addresses: ['addr1', 'addr2']),
+        const GetBatchIdentityRequest(
+          addresses: ['alice.sol', 'nonexistent-xyz.sol'],
+        ),
       );
 
       expect(identities, hasLength(2));
-      expect(identities['addr1']?.name, 'Alice');
-      expect(identities['addr1']?.domain, 'alice.sol');
-      expect(identities['addr2']?.name, 'Bob');
-      expect(identities['addr2']?.domain, 'bob.sol');
+      final resolved = identities.first as ResolvedBatchIdentity;
+      expect(resolved.unresolved, isFalse);
+      expect(resolved.address, 'wallet-addr-1');
+      expect(resolved.type, 'exchange');
+      expect(resolved.name, 'Alice');
+      expect(resolved.domain, 'alice.sol');
+      expect(resolved.inputDomain, 'alice.sol');
+      final unresolved = identities.last as UnresolvedBatchIdentity;
+      expect(unresolved.unresolved, isTrue);
+      expect(unresolved.address, isNull);
+      expect(unresolved.type, 'unknown');
+      expect(unresolved.inputDomain, 'nonexistent-xyz.sol');
     });
 
     test('throws on HTTP error', () async {
